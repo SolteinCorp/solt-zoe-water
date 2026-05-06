@@ -1,0 +1,783 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* website_solt_recurring_payment
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0-20260105\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-28 18:16+0000\n"
+"PO-Revision-Date: 2026-01-28 18:16+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "$0.00"
+msgstr ""
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "1 element"
+msgstr "1 elemento"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "10 elements"
+msgstr "10 elementos"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "160 elements"
+msgstr "160 elementos"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "20 elements"
+msgstr "20 elementos"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "40 elements"
+msgstr "40 elementos"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "80 elements"
+msgstr "80 elementos"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
+msgid ""
+"<i class=\"fa fa-calendar\"/>\n"
+"                                                    <small class=\"fw-bold\">Upcoming Payment</small>"
+msgstr ""
+"<i class=\"fa fa-calendar\"/>\n"
+"                                                    <small class=\"fw-bold\">Próximo pago</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
+msgid ""
+"<i class=\"fa fa-credit-card\"/>\n"
+"                                                    <small class=\"fw-bold\">Recurring Total</small>"
+msgstr ""
+"<i class=\"fa fa-credit-card\"/>\n"
+"                                                    <small class=\"fw-bold\">Total recurrente</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "<i class=\"fa fa-exchange me-1\"/> Change Plan"
+msgstr "<i class=\"fa fa-exchange me-1\"/> Cambiar plan"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid ""
+"<i class=\"fa fa-exclamation-triangle me-2\"/>\n"
+"                                                    <strong>Your subscription is past due!</strong> Please update your\n"
+"                                                    payment method to avoid\n"
+"                                                    service interruption."
+msgstr ""
+"<i class=\"fa fa-exclamation-triangle me-2\"/>\n"
+"                                                    <strong>¡Su suscripción está vencida!</strong> Actualice su método de\n"
+"                                                    pago para evitar la interrupción del servicio."
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "<i class=\"fa fa-file-text-o me-1\"/> View Invoices"
+msgstr "<i class=\"fa fa-file-text-o me-1\"/> Ver facturas"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "<i class=\"fa fa-fw fa-check\"/> Active"
+msgstr "<i class=\"fa fa-fw fa-check\"/> Activo"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "<i class=\"fa fa-fw fa-check\"/> Paid"
+msgstr "<i class=\"fa fa-fw fa-check\"/> Pagado"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "<i class=\"fa fa-fw fa-check\"/> Reversed"
+msgstr "<i class=\"fa fa-fw fa-check\"/> Revertido"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "<i class=\"fa fa-fw fa-clock-o\"/> Waiting Payment"
+msgstr "<i class=\"fa fa-fw fa-clock-o\"/> Esperando pago"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "<i class=\"fa fa-fw fa-repeat\"/> To Renew"
+msgstr "<i class=\"fa fa-fw fa-repeat\"/> Para renovar"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "<i class=\"fa fa-fw fa-times\"/> Closed"
+msgstr "<i class=\"fa fa-fw fa-times\"/> Cerrado"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid ""
+"<i class=\"fa fa-info-circle me-2\"/>\n"
+"                                                    This subscription has been closed."
+msgstr ""
+"<i class=\"fa fa-info-circle me-2\"/>\n"
+"                                                    Esta suscripción ha sido cerrada."
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_payment_method
+msgid ""
+"<i class=\"fa fa-info-circle me-2\"/>\n"
+"                                No payment methods available. Please add one first."
+msgstr ""
+"<i class=\"fa fa-info-circle me-2\"/>\n"
+"                                No hay métodos de pago disponibles. Por favor, agregue uno primero."
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "<i class=\"fa fa-money-bill me-1\"/> Pay Invoice"
+msgstr "<i class=\"fa fa-money-bill me-1\"/> Pagar factura"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "<i class=\"fa fa-refresh me-1\"/> Renew Subscription"
+msgstr "<i class=\"fa fa-refresh me-1\"/> Renovar suscripción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "<i class=\"fa fa-times me-1\"/> Close Subscription"
+msgstr "<i class=\"fa fa-times me-1\"/> Cerrar suscripción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
+msgid "<option value=\"\">-- Select a plan --</option>"
+msgstr "<option value=\"\">-- Seleccione un plan --</option>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "<option value=\"\">Choose a reason...</option>"
+msgstr "<option value=\"\">Elija una razón...</option>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "<small class=\"d-none\">Process Status:</small>"
+msgstr "<small class=\"d-none\">Estatus del proceso:</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "<small class=\"fw-bold font-size-13\">Next Invoice</small>"
+msgstr "<small class=\"fw-bold font-size-13\">Próxima factura</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "<small class=\"fw-bold font-size-13\">Recurring</small>"
+msgstr "<small class=\"fw-bold font-size-13\">Recurrente</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "<small class=\"fw-bold font-size-13\">Start</small>"
+msgstr "<small class=\"fw-bold font-size-13\">Inicio</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "<small class=\"fw-bold font-size-13\">Total</small>"
+msgstr "<small class=\"fw-bold font-size-13\">Total</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "<small class=\"text-muted\">Billing Period</small>"
+msgstr "<small class=\"text-muted\">Período de facturación</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "<small class=\"text-muted\">Payment Method</small>"
+msgstr "<small class=\"text-muted\">Método de pago</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "<small class=\"text-muted\">Status</small>"
+msgstr "<small class=\"text-muted\">Estatus</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "<small class=\"text-muted\">Your contact</small>"
+msgstr "<small class=\"text-muted\">Su contacto</small>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "<span class=\"fw-bold\">Plan:</span>"
+msgstr "<span class=\"fw-bold\">Plan:</span>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid "<span class=\"input-group-text\">months</span>"
+msgstr "<span class=\"input-group-text\">meses</span>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions_menu
+msgid "<span>Subscription:</span>"
+msgstr "<span>Suscripción:</span>"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "<strong>Subtotal</strong>"
+msgstr ""
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "<strong>Total</strong>"
+msgstr ""
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
+msgid "@username"
+msgstr ""
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Action"
+msgstr "Acción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "Additional comments (optional)"
+msgstr "Comentarios adicionales (opcional)"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "All"
+msgstr "Todo"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Amount"
+msgstr "Cantidad"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_payment_method
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid ""
+"Change Payment\n"
+"                                                                    Method"
+msgstr ""
+"Cambiar método de\n"
+"                                                                    pago"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
+msgid "Change Plan"
+msgstr "Cambiar plan"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
+msgid "Change Plan for"
+msgstr "Cambiar plan para"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_payment_method
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "Close Subscription"
+msgstr "Cerrar suscripción"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Closing text: %s"
+msgstr "Texto de cierre: %s"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "Communication history"
+msgstr "Historial de comunicación"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Company"
+msgstr "Compañía"
+
+#. module: website_solt_recurring_payment
+#: model:ir.model,name:website_solt_recurring_payment.model_res_partner
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid "Current end date:"
+msgstr "Fecha de finalización actual:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
+msgid "Current plan:"
+msgstr "Plan actual:"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+#, python-format
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Customer Information"
+msgstr "Información del cliente"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Date"
+msgstr "Fecha"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Date:"
+msgstr "Fecha:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "End Date:"
+msgstr "Fecha de finalización:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid "Extend subscription by:"
+msgstr "Extender suscripción por:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "In Payment"
+msgstr "En pago"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Invoice #"
+msgstr "Factura #"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Invoices for"
+msgstr "Facturas para"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Last Invoices"
+msgstr "Últimas facturas"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "Let us know if there's anything we could have done better..."
+msgstr "Háganos saber si hay algo que podríamos haber hecho mejor..."
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "My Subscriptions"
+msgstr "Mis subscripciones"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Name"
+msgstr "Nombre"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+#, python-format
+msgid "Next Invoice Date"
+msgstr "Fecha de la próxima factura"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Next Invoice:"
+msgstr "Próxima factura:"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "No"
+msgstr "No"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "None"
+msgstr "Ninguno"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "Not Assigned"
+msgstr "No asignado"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Not Paid"
+msgstr "No pagado"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Not assigned"
+msgstr "No asignado"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "Not defined"
+msgstr "No definido"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid "Not set"
+msgstr "No establecido"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "Overview"
+msgstr "Resumen"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Paid"
+msgstr "Pagado"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Partial"
+msgstr "Parcial"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_payment_method
+msgid "Payment Method for"
+msgstr "Método de pago para"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Payment method updated from portal"
+msgstr "Método de pago actualizado desde el portal"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Plan"
+msgstr "Plan"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Plan:"
+msgstr "Plan:"
+
+#. module: website_solt_recurring_payment
+#. odoo-javascript
+#: code:addons/website_solt_recurring_payment/static/src/xml/payment_form_templates.xml:0
+#, python-format
+msgid "Please provide another payment method for these subscriptions first."
+msgstr ""
+"Por favor, proporcione primero otro método de pago para estas suscripciones."
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Price List"
+msgstr "Lista de precios"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Product"
+msgstr "Producto"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "Reason:"
+msgstr "Razón:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "Recurring monthly income"
+msgstr "Ingresos mensuales recurrentes"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "Recurring plan"
+msgstr "Plan recurrente"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid "Renew Subscription"
+msgstr "Renovar suscripción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Reversed"
+msgstr "Revertido"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Sale order"
+msgstr "Orden de venta"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "Salesperson"
+msgstr "Vendedor"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_payment_method
+msgid "Save Payment Method"
+msgstr "Guardar método de pago"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Search in All"
+msgstr "Buscar en todo"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_payment_method
+msgid "Select a payment method for automatic billing:"
+msgstr "Seleccione un método de pago para la facturación automática:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
+msgid "Select new plan:"
+msgstr "Seleccione un nuevo plan:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "Set Payment Method"
+msgstr "Establecer método de pago"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+#, python-format
+msgid "Start Date"
+msgstr "Fecha de inicio"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Start Date:"
+msgstr "Fecha de inicio:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "Start date"
+msgstr "Fecha de inicio"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "State"
+msgstr "Estatus"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "Status"
+msgstr "Estatus"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Subscription -"
+msgstr "Suscripción -"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Subscription Information"
+msgstr "Información de suscripción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Subscription Items"
+msgstr "Elementos de suscripción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
+msgid "Subscription Name"
+msgstr "Nombre de suscripción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_home_solt_subscription
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions_menu
+msgid "Subscriptions"
+msgstr "Suscripciones"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Taxes"
+msgstr "Impuestos"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "Tell us, why are you leaving?"
+msgstr "Dinos, ¿por qué te vas?"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "The field '%s' does not exist in the targeted model"
+msgstr "El campo '%s' no existe en el modelo de destino."
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "The selected subscription dont exists."
+msgstr "La suscripción seleccionada no existe."
+
+#. module: website_solt_recurring_payment
+#. odoo-javascript
+#: code:addons/website_solt_recurring_payment/static/src/xml/payment_form_templates.xml:0
+#, python-format
+msgid ""
+"This payment method cannot be deleted, because it is currently linked to the\n"
+"                following active subscriptions:"
+msgstr ""
+"Este método de pago no se puede eliminar, ya que actualmente está vinculado "
+"a las siguientes suscripciones activas:"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
+msgid "Unit Price"
+msgstr "Precio unitario"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
+msgid "View"
+msgstr "Ver"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_home_solt_subscription
+msgid "View your active and past subscriptions"
+msgstr "Ver sus suscripciones activas y pasadas"
+
+#. module: website_solt_recurring_payment
+#. odoo-javascript
+#: code:addons/website_solt_recurring_payment/static/src/js/payment_form.js:0
+#, python-format
+msgid "Warning!"
+msgstr "¡Advertencia!"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "We are sorry to see you go."
+msgstr "Lamentamos verte ir."
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+#, python-format
+msgid "Yes"
+msgstr "Sí"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "You are about to permanently close your subscription"
+msgstr "Está a punto de cerrar permanentemente su suscripción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
+msgid "You do not have any active subscriptions."
+msgstr "No tienes suscripciones activas."
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "customer name"
+msgstr "nombre del cliente"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
+msgid ""
+"partner\n"
+"                                                    name"
+msgstr ""
+"nombre del\n"
+"                                                    socio"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
+msgid "process status"
+msgstr "estatus del proceso"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
+msgid "subscription"
+msgstr "suscripción"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
+msgid "that is valid until"
+msgstr "que es válido hasta"
