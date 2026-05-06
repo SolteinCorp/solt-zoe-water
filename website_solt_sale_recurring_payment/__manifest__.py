@@ -1,6 +1,3 @@
-# Copyright 2026 Soltein SA. de CV.
-# License LGPL-3 or later (http://www.gnu.org/licenses/lgpl.html)
-
 {
     "name": "Website Sale Recurring Payments",
     "summary": "Website, Soltein, Recurring Payments, Subscriptions",
@@ -9,7 +6,12 @@
     "category": "Soltein SA de CV/Sales",
     "version": "18.0.1.0.0",
     "license": "LGPL-3",
-    "depends": ["website_common", "solt_sale_recurring_payment", "website_solt_recurring_payment", "website_sale"],
+    "depends": [
+        "website_common",
+        "solt_sale_recurring_payment",
+        "website_solt_recurring_payment",
+        "website_sale",
+    ],
     "data": [
         "templates/payment_form_templates.xml",
         "templates/subscription_templates.xml",

@@ -1,6 +1,3 @@
-# Copyright 2026 Soltein SA. de CV.
-# License LGPL-3 or later (http://www.gnu.org/licenses/lgpl.html)
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.http import request
@@ -48,11 +45,7 @@ class ProductTemplate(models.Model):
                 seen_plans |= pricing.plan_id
 
     def _website_can_be_added(self, pricelist=None, pricing=None, product=None):
-        """Check if the recurring product can be added to the website cart.
-
-        With multiple plans per cart allowed, this simply checks that at least
-        one valid pricing exists for the product.
-        """
+        """Check if the recurring product can be added to the website cart."""
         target_product = product or self
         if not target_product.recurring_ok:
             return True
@@ -113,7 +106,7 @@ class ProductTemplate(models.Model):
                 "price": f"{pricing_record.plan_id.name}: {formatted_price}",
                 "price_value": unit_price,
                 "table_price": formatted_price,
-                "table_name": pricing_record.plan_id.name.replace(" ", "\u00a0"),
+                "table_name": pricing_record.plan_id.name.replace(" ", " "),
                 "can_be_added": True,
                 "is_no_subscription": False,
             }
@@ -155,7 +148,7 @@ class ProductTemplate(models.Model):
                 f" / {unit_translation.get(minimum_period, minimum_period)}"
             )
 
-        # Build "Sin suscripci\u00f3n / Pago \u00fanico" as the default first option (plan_id=0)
+        # Build "Sin suscripción / Pago único" as the default first option (plan_id=0)
         no_sub_price = combination_info["price"]
         no_sub_formatted = format_amount(self.env, amount=no_sub_price, currency=currency)
         no_sub_label = _("No subscription")
@@ -167,7 +160,7 @@ class ProductTemplate(models.Model):
             "table_name": no_sub_label,
             "can_be_added": True,
             "is_no_subscription": True,
-            "to_minimum_billing_period": "\u2014",
+            "to_minimum_billing_period": "—",
         }
         pricings_list = [no_sub_entry] + real_pricings
 
@@ -214,11 +207,9 @@ class ProductTemplate(models.Model):
             0,
         )
 
-    def _get_sales_prices(self, website):
+    def _get_sales_prices(self, pricelist, fiscal_position):
         """Extend catalog pricing to include subscription pricing info."""
-        prices = super()._get_sales_prices(website)
-        pricelist = website.pricelist_id
-        fiscal_position = website.fiscal_position_id.sudo()
+        prices = super()._get_sales_prices(pricelist, fiscal_position)
         currency = pricelist.currency_id or self.env.company.currency_id
         today = fields.Date.context_today(self)
 
@@ -251,7 +242,7 @@ class ProductTemplate(models.Model):
                 lambda tax: tax.company_id == tax.env.company
             )
             if product_taxes:
-                mapped_taxes = fiscal_position.map_tax(product_taxes)
+                mapped_taxes = fiscal_position.sudo().map_tax(product_taxes)
                 unit_price = self.env["product.template"]._apply_taxes_to_price(
                     unit_price, currency, product_taxes, mapped_taxes, template
                 )

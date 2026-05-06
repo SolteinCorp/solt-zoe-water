@@ -8,7 +8,8 @@
     <!-- Catalog: show billing period after price on product cards -->
     <template id="products_item" inherit_id="website_sale.products_item">
         <xpath expr="//span[@itemprop='priceCurrency']" position="after">
-            <span t-if="template_price_vals.get('is_subscription') and template_price_vals['is_plan_possible']" class="h6">
+            <span t-if="template_price_vals.get('is_subscription') and template_price_vals['is_plan_possible']"
+                  class="h6">
                 <span class="o_subscription_unit" t-esc="template_price_vals['temporal_unit_display']"/>
             </span>
         </xpath>
@@ -21,8 +22,7 @@
         </xpath>
         <xpath expr="//h3[hasclass('css_editable_mode_hidden')]" position="after">
             <t t-if="combination_info.get('is_subscription') and combination_info['pricings']">
-                <select t-if="combination_info['subscription_pricing_select']"
-                        name="plan_id" class="form-select plan_select fs-5" required="1" t-nocache="1">
+                <select name="plan_id" class="form-select plan_select fs-5" required="1">
                     <t t-foreach="combination_info['pricings']" t-as="pricing">
                         <option t-att-value="pricing['plan_id']"
                                 t-att-selected="pricing['plan_id'] == combination_info['subscription_default_pricing_plan_id']">
@@ -30,14 +30,6 @@
                         </option>
                     </t>
                 </select>
-                <h5 t-else="">
-                    <span class="o_subscription_price" t-esc="combination_info['subscription_default_pricing_price']"/>
-                    <del t-if="combination_info['compare_list_price'] and (combination_info['compare_list_price'] &gt; combination_info['price'])">
-                        <bdi dir="inherit">
-                            <span t-field="product.compare_list_price"/>
-                        </bdi>
-                    </del>
-                </h5>
                 <t t-if="is_view_active('website_sale.tax_indication')" t-call="website_sale.tax_indication"/>
             </t>
         </xpath>
@@ -46,7 +38,7 @@
     <!-- Checkout summary: billing period per line -->
     <template id="cart_summary_inherit_recurring" inherit_id="website_sale.checkout_layout">
         <xpath expr="//table[@id='cart_products']//td[@name='website_sale_cart_summary_line_price']" position="inside">
-            <div t-if="line.recurring_ok and line.plan_id">
+            <div t-if="line.recurring_ok and line.plan_id" class="small text-muted">
                 <span t-esc="line.plan_id.name"/>
             </div>
         </xpath>
@@ -54,83 +46,23 @@
 
     <!-- Cart lines: billing period per line -->
     <template id="cart_lines_subscription" inherit_id="website_sale.cart_lines">
-        <xpath expr="//div[@name='website_sale_cart_line_price']/small" position="before">
-            <div t-if="line.recurring_ok and line.plan_id">
+        <xpath expr="//div[@name='website_sale_cart_line_price']" position="inside">
+            <div t-if="line.recurring_ok and line.plan_id" class="small text-muted">
                 <span t-esc="line.plan_id.name"/>
             </div>
         </xpath>
     </template>
 
-    <!-- Pricing comparison table -->
-    <template id="pricing_table" name="Pricing Table">
-        <table id="oe_wsale_subscription_pricing_table"
-               t-attf-class="o_not_editable table {{is_accordion and 'table-sm mb-0'}}">
-            <tbody t-if="combination_info['pricings']">
-                <t t-foreach="combination_info['pricings']" t-as="pricing">
-                    <t t-set="hide_border_bottom_classes"
-                       t-value="'border-bottom-0' if pricing_last and is_accordion else ''"/>
-                    <tr>
-                        <td t-attf-class="w-50 ps-0 {{hide_border_bottom_classes}}"
-                            t-esc="pricing['table_name']"/>
-                        <td t-attf-class="w-50 pe-0 text-end {{hide_border_bottom_classes}}"
-                            t-esc="pricing['table_price']"/>
-                    </tr>
-                </t>
-            </tbody>
-        </table>
-    </template>
 
     <!-- Product page: show pricing table and add plan_id data attribute to add-to-cart button -->
     <template id="product_subscription_details" inherit_id="website_sale.product">
-        <div id="product_documents" position="before">
-            <t t-if="combination_info.get('is_subscription')
-                    and combination_info['pricings']
-                    and not (is_view_active('website_sale_comparison.accordion_specs_item') or is_view_active('website_sale.accordion_more_information'))">
-                <h5>Pricing</h5>
-                <t t-call="website_solt_sale_recurring_payment.pricing_table"/>
-            </t>
-        </div>
         <a id="add_to_cart" position="attributes">
             <attribute name="t-att-data-subscription-plan-id">
-                combination_info['subscription_default_pricing_plan_id'] if combination_info.get('is_subscription') and combination_info.get('pricings') else ''
+                combination_info['subscription_default_pricing_plan_id'] if combination_info.get(
+                    'is_subscription') and combination_info.get('pricings') else ''
             </attribute>
         </a>
     </template>
 
-    <!-- Accordion: pricing section in product details accordion -->
-    <template
-            id="accordion_subscription_item"
-            name="Subscription Accordion Item"
-            inherit_id="website_sale.product_accordion">
-        <xpath expr="//div[@id='product_accordion']/div" position="before">
-            <div t-if="combination_info.get('is_subscription') and combination_info.get('pricings')
-                    and (is_view_active('website_sale_comparison.accordion_specs_item') or is_view_active('website_sale.accordion_more_information'))"
-                 class="accordion-item">
-                <div class="accordion-header mb-0 h6">
-                    <button
-                            class="accordion-button collapsed fw-medium"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#subscription_pricing"
-                            aria-expanded="false"
-                            aria-controls="subscription_pricing"
-                    >
-                        Pricing
-                    </button>
-                </div>
-                <div
-                        id="subscription_pricing"
-                        class="accordion-collapse collapse"
-                        data-bs-parent="#product_accordion"
-                >
-                    <div class="accordion-body pt-0">
-                        <t t-call="website_solt_sale_recurring_payment.pricing_table">
-                            <t t-set="is_accordion" t-value="True"/>
-                        </t>
-                    </div>
-                </div>
-            </div>
-        </xpath>
-    </template>
 
 </odoo>

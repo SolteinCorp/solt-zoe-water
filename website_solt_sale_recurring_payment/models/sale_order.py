@@ -1,6 +1,3 @@
-# Copyright 2026 Soltein SA. de CV.
-# License LGPL-3 or later (http://www.gnu.org/licenses/lgpl.html)
-
 from odoo import fields, models
 
 
@@ -22,11 +19,10 @@ class SaleOrder(models.Model):
     def _cart_update_order_line(self, product_id, quantity, order_line, **kwargs):
         """Set the subscription plan on the order line when adding a recurring product.
 
-        For new lines, inject plan_id into kwargs so it's included in the
-        create values, ensuring _get_pricelist_price uses the plan pricing
-        from the start. For existing lines, update plan_id if needed.
+        plan_id=0 is the "Sin suscripción / Pago único" sentinel — no subscription is created.
+        For existing lines, update plan_id if a real plan is provided.
         """
-        line_product_id = (order_line.product_id.id if order_line else product_id)
+        line_product_id = order_line.product_id.id if order_line else product_id
         cart_product = self.env["product.product"].browse(line_product_id)
 
         plan = False
@@ -46,7 +42,6 @@ class SaleOrder(models.Model):
         )
 
         if plan and order_line and order_line.exists() and quantity > 0:
-            # Resolve the correct pricing for this plan
             pricing = (
                 self.env["solt.recurring.pricing"]
                 .sudo()
@@ -61,7 +56,6 @@ class SaleOrder(models.Model):
                     order_line.company_id,
                     fields.Date.today(),
                 )
-                # Write plan_id and price_unit together to avoid compute overwrites
                 order_line.write({
                     'plan_id': plan.id,
                     'price_unit': price,
@@ -73,7 +67,7 @@ class SaleOrder(models.Model):
     def _prepare_order_line_values(
         self, product_id, quantity, linked_line_id=False,
         no_variant_attribute_value_ids=None, product_custom_attribute_values=None,
-        combo_item_id=None, **kwargs
+        **kwargs
     ):
         """Include plan_id in the order line creation values."""
         values = super()._prepare_order_line_values(
@@ -81,11 +75,9 @@ class SaleOrder(models.Model):
             linked_line_id=linked_line_id,
             no_variant_attribute_value_ids=no_variant_attribute_value_ids,
             product_custom_attribute_values=product_custom_attribute_values,
-            combo_item_id=combo_item_id,
             **kwargs,
         )
         plan_id = kwargs.get("plan_id")
         if plan_id:
             values["plan_id"] = int(plan_id)
         return values
-

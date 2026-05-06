@@ -19,6 +19,7 @@ WebsiteSale.include({
 
     /**
      * Include subscription plan_id in RPC parameters for server-side processing.
+     * plan_id=0 means "Sin suscripción / Pago único" — not passed to avoid creating a subscription.
      *
      * @override
      */
