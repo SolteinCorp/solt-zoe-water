@@ -9,7 +9,6 @@
                     <field name="subscription_id" readonly="1"/>
                     <field name="action_type" widget="radio" options="{'horizontal': true}"/>
                 </group>
-
                 <!-- Change Plan section -->
                 <group col="2" invisible="action_type != 'change_plan'" string="Change Plan">
                     <field name="current_plan_id" readonly="1"/>

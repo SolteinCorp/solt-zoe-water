@@ -2,7 +2,7 @@
 from dateutil.relativedelta import relativedelta
 from odoo import Command, _, _lt, api, fields, models
 from odoo.exceptions import ValidationError
-from odoo.tools.date_utils import get_timedelta
+from odoo.tools import get_timedelta
 
 
 class SoltSaleRecurringPlan(models.Model):
@@ -82,7 +82,7 @@ class SoltSaleRecurringPlan(models.Model):
     auto_archive_delay_display = fields.Char(
         string="Automatic Archiving After",
         compute="_compute_auto_archive_delay_display",
-        help="Number of days after closing before automatic archiving.",
+        help="Automatic Archiving After",
     )
     invoice_mail_template_id = fields.Many2one('mail.template', string='Invoice Email Template',
                                                domain=[('model', '=', 'account.move')],
@@ -139,7 +139,7 @@ class SoltSaleRecurringPlan(models.Model):
         """
         return {
             'name': _('Subscriptions'),
-            'view_mode': 'list,form',
+            'view_mode': 'tree,form',
             'domain': [('plan_id', 'in', self.ids), ('state', '=', 'active')],
             'res_model': 'solt.subscription',
             'type': 'ir.actions.act_window',
@@ -181,13 +181,11 @@ class SoltSaleRecurringPlan(models.Model):
 
     @api.depends('auto_close_limit')
     def _compute_auto_close_limit_display(self):
-        """Compute a human-readable label for the automatic closing delay."""
         for plan in self:
             plan.auto_close_limit_display = _lt('%s days', plan.auto_close_limit)
 
     @api.depends('auto_archive_delay')
     def _compute_auto_archive_delay_display(self):
-        """Compute a human-readable label for the automatic archiving delay."""
         for plan in self:
             plan.auto_archive_delay_display = _lt('%s days', plan.auto_archive_delay)
 

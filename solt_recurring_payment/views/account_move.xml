@@ -8,8 +8,19 @@
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='to_check']" position="after">
                 <separator/>
-                <filter string="Has Subscriptions" name="subscription_count" domain="[('subscription_count', '>', 0)]"/>
+                <filter string="Recurring" name="recurring_documents" domain="[('is_recurring_document', '=', True)]"/>
             </xpath>
+        </field>
+    </record>
+
+    <record id="account_invoice_tree_inherit_recurring" model="ir.ui.view">
+        <field name="name">account.move.tree.recurring</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <field name="is_recurring_document" string="Recurring" optional="show"/>
+            </field>
         </field>
     </record>
 

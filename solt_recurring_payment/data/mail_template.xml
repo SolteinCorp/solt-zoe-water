@@ -5,9 +5,7 @@
         <field name="name">Subscription: Payment Failure</field>
         <field name="model_id" ref="solt_recurring_payment.model_solt_subscription"/>
         <field name="subject">Termination of subscription {{ object.client_order_ref or object.name }}</field>
-        <field name="email_from">{{ (
-                object.user_id.email_formatted or object.company_id.email or user.email_formatted) }}
-        </field>
+        <field name="email_from">{{ (object.user_id.email_formatted or object.company_id.email or user.email_formatted) }}</field>
         <field name="email_to">{{ object.partner_id.email_formatted }}</field>
         <field name="description">Sent to customer to indicate that subscription is automatically terminated</field>
         <field name="body_html" type="html">
@@ -132,9 +130,7 @@
         <field name="name">Subscription: Payment Reminder</field>
         <field name="model_id" ref="solt_recurring_payment.model_solt_subscription"/>
         <field name="subject">Payment reminder for subscription {{ object.client_order_ref or object.name }}</field>
-        <field name="email_from">{{ (
-                object.user_id.email_formatted or object.company_id.email or user.email_formatted) }}
-        </field>
+        <field name="email_from">{{ (object.user_id.email_formatted or object.company_id.email or user.email_formatted) }}</field>
         <field name="email_to">{{ object.partner_id.email_formatted }}</field>
         <field name="description">Sent to customer when payment failed but subscription is not yet cancelled</field>
         <field name="body_html" type="html">
@@ -262,9 +258,7 @@
         <field name="name">Subscription: Payment Success And Invoice</field>
         <field name="model_id" ref="account.model_account_move"/>
         <field name="subject">Invoice for subscription {{ ctx.get('code', ctx.get('subscription_name')) }}</field>
-        <field name="email_from">{{ (
-                object.invoice_user_id.email_formatted or object.company_id.email or user.email_formatted) }}
-        </field>
+        <field name="email_from">{{ (object.invoice_user_id.email_formatted or object.company_id.email or user.email_formatted) }}</field>
         <field name="email_to">{{ object.partner_id.email_formatted }}</field>
         <field name="description">Sent automatically with subscription invoice when payment is successful</field>
         <field name="body_html" type="html">
@@ -389,8 +383,7 @@
         <field name="name">Subscription: Rating Request</field>
         <field name="model_id" ref="solt_recurring_payment.model_solt_subscription"/>
         <field name="subject">{{ object.company_id.name }}: Service Rating Request</field>
-        <field name="email_from">{{ (object._rating_get_operator().email_formatted or user.email_formatted) }}
-        </field>
+        <field name="email_from">{{ (object._rating_get_operator().email_formatted or user.email_formatted) }}</field>
         <field name="partner_to">{{ object._rating_get_partner().id }}</field>
         <field name="auto_delete" eval="True"/>
         <field name="description">Set on subscription's stage (e.g. Closed, Upsell) to ask a rating to customers

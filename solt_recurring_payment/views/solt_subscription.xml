@@ -12,6 +12,11 @@
                             type="object"
                             class="btn-primary"
                             invisible="state != 'draft'"/>
+                    <button name="action_to_draft"
+                            string="Set to Draft"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'active' or invoice_count != 0"/>
                     <button name="action_open_renew_wizard"
                             string="Manage"
                             type="object"
@@ -21,7 +26,7 @@
                             type="object"
                             invisible="state != 'closed'"/>
                     <button name="action_open_close_wizard"
-                            string="Close"
+                            string="Cancelar"
                             type="object"
                             invisible="state != 'active'"/>
                     <field name="state"
@@ -59,7 +64,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="partner_id" widget="res_partner_many2one" readonly="state != 'draft'"/>
+                            <field name="partner_id" string="Contact" widget="res_partner_many2one" readonly="state != 'draft'"/>
                             <field name="plan_id" options="{'no_create': True}" readonly="state != 'draft'"/>
                             <field name="pricelist_id" groups="product.group_product_pricelist"
                                    readonly="state != 'draft'"
@@ -79,20 +84,17 @@
                     </group>
                     <notebook>
                         <page string="Subscription Lines" name="lines">
-                            <field name="subscription_line_ids"
-                                   context="{'default_subscription_id': id, 'default_subscription_type': type}"
-                                   readonly="state != 'draft'">
+                            <field name="subscription_line_ids" context="{'default_subscription_id': id, 'default_subscription_type': type}" readonly="state != 'draft'">
                                 <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
-                                    <field name="product_id" domain="product_domain"/>
+                                    <field name="product_id"/>
                                     <field name="analytic_distribution" widget="analytic_distribution"
                                            optional="hide"
                                            groups="analytic.group_analytic_accounting"/>
                                     <field name="name" optional="hide"/>
                                     <field name="product_uom_qty"/>
                                     <field name="company_id" column_invisible="True"/>
-                                    <field name="product_uom_id" groups="uom.group_uom"
-                                           domain="[('category_id', '=', product_uom_category_id)]"/>
+                                    <field name="product_uom" groups="uom.group_uom"/>
                                     <field name="price_unit"/>
                                     <field name="discount" optional="show"/>
                                     <field name="tax_ids" widget="many2many_tags" optional="hide"/>
@@ -100,6 +102,7 @@
                                     <field name="price_total" optional="show"/>
                                     <field name="recurring_monthly" optional="hide"/>
                                     <field name="product_uom_category_id" column_invisible="True"/>
+                                    <field name="product_uom" column_invisible="True"/>
                                     <field name="subscription_type" column_invisible="True"/>
                                     <field name="currency_id" column_invisible="True"/>
                                     <field name="product_domain" column_invisible="True"/>
@@ -109,6 +112,7 @@
                                 <group colspan="8">
                                     <field name="internal_note" placeholder="Internal notes..." colspan="2" nolabel="1" readonly="state != 'draft'"/>
                                 </group>
+                                <!-- Totals (only invoices / receipts) -->
                                 <group colspan="4">
                                     <group class="oe_subtotal_footer">
                                         <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" colspan="2" readonly="1"/>
@@ -169,7 +173,7 @@
         </field>
     </record>
 
-    <!-- SUBSCRIPTION LIST VIEW -->
+    <!-- SUBSCRIPTION TREE VIEW -->
     <record id="solt_subscription_view_tree" model="ir.ui.view">
         <field name="name">solt.subscription.tree</field>
         <field name="model">solt.subscription</field>

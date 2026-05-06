@@ -14,6 +14,7 @@ INTERVAL_FACTOR = {
 
 class SoltSaleSubscriptionLine(models.Model):
     _name = 'solt.subscription.line'
+    _inherit = 'analytic.mixin'
     _description = 'Subscription Line'
     _order = 'subscription_id, sequence, id'
 
@@ -28,6 +29,7 @@ class SoltSaleSubscriptionLine(models.Model):
     subscription_type = fields.Selection(
         related='subscription_id.type',
         string='Type',
+        default='sale'
     )
     origin_line_id = fields.Reference(
         [('sale.order.line', 'Sale Order Line'), ('purchase.order.line', 'Purchase Order Line')],
@@ -53,11 +55,16 @@ class SoltSaleSubscriptionLine(models.Model):
         default=10,
         help='Gives the sequence order when displaying a list of subscription lines.',
     )
+    product_domain = fields.Char(
+        string='Product Domain',
+        compute='_compute_product_domain',
+        help='Domain to filter products based on the subscription type.',
+    )
     product_id = fields.Many2one(
         'product.product',
         string='Product',
         required=True,
-        domain="[(('recurring_ok', '=', True))]",
+        domain="product_domain",
         help='Product to be invoiced recurrently.',
     )
     product_template_id = fields.Many2one(
@@ -77,11 +84,10 @@ class SoltSaleSubscriptionLine(models.Model):
         default=1.0,
         help='Quantity of the product to invoice.',
     )
-    product_uom_id = fields.Many2one(
+    product_uom = fields.Many2one(
         'uom.uom',
         string='Unit of Measure',
         required=True,
-        default=lambda self: self.env.ref('uom.product_uom_unit', raise_if_not_found=False),
         domain="[('category_id', '=', product_uom_category_id)]",
         help='Unit of measure for the product.',
     )
@@ -89,11 +95,6 @@ class SoltSaleSubscriptionLine(models.Model):
         string='Category of UOM',
         related='product_id.uom_id.category_id',
         help='UoM category related to the selected product.',
-    )
-    product_domain = fields.Char(
-        string='Product Domain',
-        compute='_compute_product_domain',
-        help='Domain to filter products based on the subscription type.',
     )
     price_unit = fields.Float(
         string='Unit Price',
@@ -137,27 +138,9 @@ class SoltSaleSubscriptionLine(models.Model):
         store=True,
         help='Monthly recurring amount for this line, normalized to a monthly value.',
     )
-    currency_rate = fields.Float(
-        compute='_compute_currency_rate',
-        help="Currency rate from company currency to document currency."
-    )
-
-    @api.depends('currency_id', 'company_id', 'subscription_id.next_invoice_date', 'subscription_id.end_date')
-    def _compute_currency_rate(self):
-        for line in self:
-            if line.currency_id:
-                line.currency_rate = self.env['res.currency']._get_conversion_rate(
-                    from_currency=line.company_id.currency_id,
-                    to_currency=line.currency_id,
-                    company=line.company_id,
-                    date=line.subscription_id.end_date or line.subscription_id.next_invoice_date or fields.Date.context_today(line)
-                )
-            else:
-                line.currency_rate = 1
 
     @api.depends('subscription_type')
     def _compute_product_domain(self):
-        """Compute the product domain based on the subscription type."""
         for line in self:
             if line.subscription_type == 'sale':
                 line.product_domain = "[('sale_ok', '=', True)]"
@@ -201,7 +184,6 @@ class SoltSaleSubscriptionLine(models.Model):
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
-        """Dispatch product data setup based on subscription type."""
         if not self.product_id:
             return
 
@@ -211,25 +193,32 @@ class SoltSaleSubscriptionLine(models.Model):
             self._set_sale_product_data()
 
     def _set_purchase_product_data(self):
-        """Set product data for purchase subscriptions using vendor prices."""
+        """Set product data for purchase subscriptions."""
         self.ensure_one()
         if not self.product_id:
             return
 
+        # Set description and UoM for purchase
         self.name = self.product_id.display_name
         if self.product_id.description_purchase:
             self.name += '\n' + self.product_id.description_purchase
-        self.product_uom_id = self.product_id.uom_po_id or self.product_id.uom_id
-        self.tax_ids = self.product_id.supplier_taxes_id.filtered(lambda tax: tax.company_id == self.company_id)
+        self.product_uom = self.product_id.uom_po_id or self.product_id.uom_id
 
+        # Set default taxes for purchase
+        self.tax_ids = self.product_id.supplier_taxes_id.filtered(
+            lambda t: t.company_id == self.company_id
+        )
+
+        # Get price from vendor/seller
         price_data = self._get_purchase_price_data()
         self.price_unit = price_data['price_unit']
         self.discount = price_data.get('discount', 0.0)
 
     def _get_purchase_price_data(self):
-        """Get price data for purchase subscriptions from vendor/seller records.
-
-        :return: dict with 'price_unit' and 'discount'
+        """
+        Get price data for purchase subscriptions from vendor/seller.
+        Returns a dict with 'price_unit' and 'discount'.
+        This method is reusable for invoice line preparation.
         """
         self.ensure_one()
         if not self.product_id:
@@ -241,9 +230,16 @@ class SoltSaleSubscriptionLine(models.Model):
         if not plan:
             return {'price_unit': self.product_id.standard_price, 'discount': 0.0}
 
-        product_uom = self.product_uom_id or self.product_id.uom_po_id or self.product_id.uom_id
-        tax_ids = self.tax_ids or self.product_id.supplier_taxes_id.filtered(lambda tax: tax.company_id == self.company_id)
+        # Use existing product_uom or fallback to product defaults
+        product_uom = self.product_uom
+        if not product_uom:
+            product_uom = self.product_id.uom_po_id if self.product_id.uom_po_id.id else self.product_id.uom_id
+        # Use existing tax_ids or fallback to supplier taxes
+        tax_ids = self.tax_ids or self.product_id.supplier_taxes_id.filtered(
+            lambda t: t.company_id == self.company_id
+        )
 
+        # Select seller filtering by partner
         seller = self.product_id._select_seller(
             partner_id=partner,
             quantity=self.product_uom_qty,
@@ -252,22 +248,31 @@ class SoltSaleSubscriptionLine(models.Model):
         )
 
         if seller:
+            # Use seller price with tax and currency conversion
             price_unit = self.env['account.tax']._fix_tax_included_price_company(
-                seller.price, self.product_id.supplier_taxes_id, tax_ids, self.company_id
+                seller.price,
+                self.product_id.supplier_taxes_id,
+                tax_ids,
+                self.company_id
             )
             price_unit = seller.currency_id._convert(
-                price_unit, self.currency_id, self.company_id, fields.Date.today(), False
+                price_unit,
+                self.currency_id,
+                self.company_id,
+                fields.Date.today(),
+                False
             )
             price_unit = float_round(
                 price_unit,
                 precision_digits=max(
                     self.currency_id.decimal_places,
-                    self.env['decimal.precision'].precision_get('Product Price'),
-                ),
+                    self.env['decimal.precision'].precision_get('Product Price')
+                )
             )
             price_unit = seller.product_uom._compute_price(price_unit, product_uom)
             return {'price_unit': price_unit, 'discount': seller.discount or 0.0}
         else:
+            # Fallback to standard price if no seller found
             po_line_uom = product_uom or self.product_id.uom_po_id
             price_unit = self.env['account.tax']._fix_tax_included_price_company(
                 self.product_id.uom_id._compute_price(self.product_id.standard_price, po_line_uom),
@@ -276,25 +281,48 @@ class SoltSaleSubscriptionLine(models.Model):
                 self.company_id,
             )
             price_unit = self.product_id.cost_currency_id._convert(
-                price_unit, self.currency_id, self.company_id, fields.Date.today(), False
+                price_unit,
+                self.currency_id,
+                self.company_id,
+                fields.Date.today(),
+                False
             )
             price_unit = float_round(
                 price_unit,
                 precision_digits=max(
                     self.currency_id.decimal_places,
-                    self.env['decimal.precision'].precision_get('Product Price'),
-                ),
+                    self.env['decimal.precision'].precision_get('Product Price')
+                )
             )
             return {'price_unit': price_unit, 'discount': 0.0}
 
     def _set_sale_product_data(self):
-        """Set product data for sale subscriptions using recurring pricing."""
+        """Set product data for sale subscriptions."""
         self.ensure_one()
         if not self.product_id:
             return
 
+        # Set description and UoM for sale
         self.name = self.product_id.get_product_multiline_description_sale()
-        self.product_uom_id = self.product_id.uom_id
+        self.product_uom = self.product_id.uom_id
+
+        # Set default taxes for sale
+        self.tax_ids = self.product_id.taxes_id.filtered(
+            lambda t: t.company_id == self.company_id
+        )
+
+        # Get price from subscription pricing
+        self.price_unit = self._get_sale_price_data()
+
+    def _get_sale_price_data(self):
+        """
+        Get price for sale subscriptions from solt.recurring.pricing.
+        Returns the price_unit value.
+        This method is reusable for invoice line preparation.
+        """
+        self.ensure_one()
+        if not self.product_id:
+            return 0.0
 
         plan = self.subscription_id.plan_id
         pricelist = self.subscription_id.pricelist_id
@@ -304,16 +332,14 @@ class SoltSaleSubscriptionLine(models.Model):
                 self.product_id, plan, pricelist
             )
             if pricing:
-                self.price_unit = pricing.currency_id._convert(
+                return pricing.currency_id._convert(
                     pricing.price,
                     self.currency_id,
                     self.company_id,
                     fields.Date.today(),
                 )
-            else:
-                self.price_unit = self.product_id.lst_price
-
-        self.tax_ids = self.product_id.taxes_id.filtered(lambda tax: tax.company_id == self.company_id)
+        # Fallback to product price
+        return self.product_id.lst_price
 
     def _prepare_invoice_line(self):
         """Prepare invoice line values for this subscription line."""
@@ -334,13 +360,22 @@ class SoltSaleSubscriptionLine(models.Model):
             period_desc = f"\n{format_start} - {format_end}"
             description = f"{description} - {plan.billing_period_display}{period_desc}"
 
+        # For purchase subscriptions, recalculate price from vendor (may have changed)
+        if self.subscription_type == 'purchase':
+            price_data = self._get_purchase_price_data()
+            price_unit = price_data['price_unit']
+            discount = price_data.get('discount', 0.0)
+        else:
+            price_unit = self.price_unit
+            discount = self.discount
+
         return {
             'name': description,
             'product_id': self.product_id.id,
-            'product_uom_id': self.product_uom_id.id,
+            'product_uom_id': self.product_uom.id,
             'quantity': self.product_uom_qty,
-            'price_unit': self.price_unit,
-            'discount': self.discount,
+            'price_unit': price_unit,
+            'discount': discount,
             'tax_ids': [Command.set(self.tax_ids.ids)],
             'subscription_id': subscription.id,
             'analytic_distribution': self._get_analytic_distribution(),
@@ -369,8 +404,9 @@ class SoltSaleSubscriptionLine(models.Model):
         2. If no pricing found, calculate proportionally using INTERVAL_FACTOR
            (e.g. monthly $100 → annual $1,200 and vice versa).
 
-        :param new_plan: solt.recurring.plan - the target plan
-        :param old_plan: solt.recurring.plan - the source plan
+        Args:
+            new_plan: solt.recurring.plan - the target plan
+            old_plan: solt.recurring.plan - the source plan
         """
         self.ensure_one()
         pricing = self.env['solt.recurring.pricing']._get_first_suitable_recurring_pricing(
@@ -381,29 +417,27 @@ class SoltSaleSubscriptionLine(models.Model):
                 pricing.price, self.currency_id, self.company_id, fields.Date.today()
             )
         else:
+            # Proportional fallback: normalize to monthly then convert to new period
             old_monthly_factor = INTERVAL_FACTOR.get(old_plan.billing_period_unit, 1.0) / old_plan.billing_period_value
             new_monthly_factor = INTERVAL_FACTOR.get(new_plan.billing_period_unit, 1.0) / new_plan.billing_period_value
             self.price_unit = self.price_unit * old_monthly_factor / new_monthly_factor
 
-    def _prepare_base_line_for_taxes_computation(self, **kwargs):
+    def _convert_to_tax_base_line_dict(self, **kwargs):
         """ Convert the current record to a dictionary in order to use the generic taxes computation method
         defined on account.tax.
 
         :return: A python dictionary.
         """
         self.ensure_one()
-        company = self.subscription_id.company_id or self.env.company
-        base_values = {
-            'tax_ids': self.tax_ids,
-            'quantity': self.product_uom_qty,
-            'partner_id': self.subscription_id.partner_id,
-            'currency_id': self.subscription_id.currency_id or company.currency_id,
-            'rate': self.currency_rate,
-            'name': self.name,
-        }
-        # if self._is_global_discount():
-        #     base_values['special_type'] = 'global_discount'
-        # elif self.is_downpayment:
-        #     base_values['special_type'] = 'down_payment'
-        base_values.update(kwargs)
-        return self.env['account.tax']._prepare_base_line_for_taxes_computation(self, **base_values)
+        return self.env['account.tax']._convert_to_tax_base_line_dict(
+            self,
+            partner=self.subscription_id.partner_id,
+            currency=self.subscription_id.currency_id,
+            product=self.product_id,
+            taxes=self.tax_ids,
+            price_unit=self.price_unit,
+            quantity=self.product_uom_qty,
+            discount=self.discount,
+            price_subtotal=self.price_subtotal,
+            **kwargs,
+        )

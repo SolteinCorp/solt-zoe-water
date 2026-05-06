@@ -21,7 +21,6 @@
                                             <label class="o_form_label bold" t-out="plan['plan_name']"/>
                                         </td>
                                         <td class="o_list_monetary">
-                                            <span class="bold" t-out="plan['formatted_price_unit']"/>
                                         </td>
                                     </tr>
                                     <tr>

@@ -105,7 +105,7 @@
             <field name="code">model._cron_invoice_subscriptions()</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
-            <field name="nextcall" eval="(DateTime.now() + timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="nextcall" eval="(datetime.now() + timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S')"/>
         </record>
 
         <record model="ir.cron" id="ir_cron_recurring_payment_auto_archive">
@@ -115,17 +115,7 @@
             <field name="code">model._cron_auto_archive_subscriptions()</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
-            <field name="nextcall" eval="(DateTime.now() + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')"/>
-        </record>
-
-        <record model="ir.cron" id="ir_cron_recurring_payment_expiration">
-            <field name="name">Recurring payment: Check Expiration</field>
-            <field name="model_id" ref="model_solt_subscription"/>
-            <field name="state">code</field>
-            <field name="code">model._cron_check_expiration()</field>
-            <field name="interval_number">1</field>
-            <field name="interval_type">days</field>
-            <field name="nextcall" eval="(DateTime.now() + timedelta(hours=7)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="nextcall" eval="(datetime.now() + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')"/>
         </record>
     </data>
 </odoo>

@@ -24,13 +24,15 @@
                     <label for="recurring_ok" string="Recurring"/>
                 </span>
             </div>
-            <!-- Pass recurring_ok context so supplierinfo form shows plan_id field -->
-            <xpath expr="//page[@name='purchase']//field[@name='seller_ids']" position="attributes">
-                <attribute name="context">{'default_product_tmpl_id': id, 'product_template_invisible_variant': True, 'recurring_ok': recurring_ok}</attribute>
+            <xpath expr="//page[@name='purchase']" position="attributes">
+                <attribute name="invisible" remove="1" separator=" or "></attribute>
             </xpath>
-            <xpath expr="//page[@name='purchase']//field[@name='variant_seller_ids']" position="attributes">
-                <attribute name="context">{'model': 'product.template', 'recurring_ok': recurring_ok}</attribute>
-            </xpath>
+            <group name="purchase" position="before">
+                <field name="seller_ids" context="{'default_product_tmpl_id': id, 'product_template_invisible_variant': True, 'recurring_ok': recurring_ok}" nolabel="1" invisible="product_variant_count &gt; 1"
+                       readonly="product_variant_count &gt; 1"/>
+                <field name="variant_seller_ids" context="{'model': 'product.template', 'recurring_ok': recurring_ok}" nolabel="1" invisible="product_variant_count &lt;= 1"
+                       readonly="product_variant_count &lt;= 1"/>
+            </group>
             <page name="sales" position="after">
                 <page string="Recurring Prices" name="subscription_pricing" invisible="not recurring_ok or not sale_ok">
                     <field name="product_subscription_pricing_ids" nolabel="1" colspan="2">
@@ -56,7 +58,6 @@
         </field>
     </record>
 
-    <!-- Pass recurring_ok context in product.product form so supplierinfo shows plan_id -->
     <record id="view_product_product_supplier_inherit_recurring" model="ir.ui.view">
         <field name="name">product.product.form.recurring</field>
         <field name="model">product.product</field>

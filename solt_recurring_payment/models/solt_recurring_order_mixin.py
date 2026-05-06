@@ -9,17 +9,18 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 INTERVAL_FACTOR = {
-    'day': 30.437,
-    'week': 30.437 / 7.0,
-    'month': 1.0,
-    'year': 1.0 / 12.0,
+    "day": 30.437,
+    "week": 30.437 / 7.0,
+    "month": 1.0,
+    "year": 1.0 / 12.0,
 }
 
 
 class RecurringOrderMixin(models.AbstractModel):
     """Mixin to add subscription/recurring functionality to orders (Sale and Purchase)."""
-    _name = 'solt.recurring.order.mixin'
-    _description = 'Recurring Order Mixin'
+
+    _name = "solt.recurring.order.mixin"
+    _description = "Recurring Order Mixin"
 
     is_subscription = fields.Boolean(
         string="Has Subscriptions",
@@ -64,20 +65,20 @@ class RecurringOrderMixin(models.AbstractModel):
         compute="_compute_subscription_period_total",
         string="Resumen de Suscripciones",
         store=True,
-        help="Summary of subscription totals grouped by plan (for quotation display only). Contains plan information and period totals."
+        help="Summary of subscription totals grouped by plan (for quotation display only). Contains plan information and period totals.",
     )
 
     def _compute_subscription_ids(self):
         subscriptions = self.env["solt.subscription"].read_group(
-            domain=[('origin_id', 'in', self.mapped(lambda rec: f'{rec._name},{rec.id}'))],
-            fields=['ids:array_agg(id)'],
-            groupby=['origin_id'],
+            domain=[("origin_id", "in", self.mapped(lambda rec: f"{rec._name},{rec.id}"))],
+            fields=["ids:array_agg(id)"],
+            groupby=["origin_id"],
             lazy=False,
         )
         subs_map = defaultdict(list)
         for sub in subscriptions:
-            order_id = int(sub['origin_id'].split(',')[1])
-            subs_map[order_id].extend(sub['ids'])
+            order_id = int(sub["origin_id"].split(",")[1])
+            subs_map[order_id].extend(sub["ids"])
         for order in self:
             order.subscription_ids = tuple(subs_map.get(order.id, []))
             order.subscription_count = len(subs_map.get(order.id, []))
@@ -86,7 +87,7 @@ class RecurringOrderMixin(models.AbstractModel):
     @api.depends("order_line.recurring_ok", "subscription_ids", "state")
     def _compute_is_subscription(self):
         for order in self:
-            order.is_subscription = any(order.order_line.mapped("recurring_ok"))
+            order.is_subscription = any(order.order_line.mapped("plan_id"))
 
     @api.depends("order_line.recurring_ok", "order_line.price_subtotal")
     def _compute_recurring_total(self):
@@ -99,8 +100,15 @@ class RecurringOrderMixin(models.AbstractModel):
         for order in self:
             order.recurring_monthly = sum(order.order_line.mapped("recurring_monthly"))
 
-    @api.depends("order_line.recurring_ok", "order_line.plan_id", "order_line.price_subtotal",
-        "order_line.required_recurring_quantity", "order_line.subscription_period_total", "currency_id")
+    @api.depends(
+        "order_line.recurring_ok",
+        "order_line.product_id",
+        "order_line.plan_id",
+        "order_line.price_subtotal",
+        "order_line.required_recurring_quantity",
+        "order_line.subscription_period_total",
+        "currency_id",
+    )
     def _compute_subscription_period_total(self):
         """Compute subscription summary grouped by plan for quotation display as JSON."""
         for order in self:
@@ -109,60 +117,63 @@ class RecurringOrderMixin(models.AbstractModel):
                 continue
 
             # Separate subscription and non-subscription lines
-            subscription_lines = order.order_line.filtered(lambda line: line.recurring_ok and line.plan_id)
-            non_subscription_lines = order.order_line.filtered(lambda line: not line.recurring_ok)
+            subscription_lines = order.order_line.filtered(lambda line: line.plan_id)
+            non_subscription_lines = order.order_line.filtered(lambda line: not line.plan_id)
 
             # Group subscription lines by plan
             plans_data = {}
             amount_subscription_subtotal = 0.0
             amount_subscription_tax = 0.0
             amount_subscription_total = 0.0
-            labels = dict(self.env['solt.recurring.plan']._fields['billing_period_unit']._description_selection(self.env))
+            labels = dict(self.env["solt.recurring.plan"]._fields["billing_period_unit"]._description_selection(self.env))
             for line in subscription_lines:
                 plan = line.plan_id
                 if plan.id not in plans_data:
                     plans_data[plan.id] = {
-                        'id': plan.id,
-                        'plan_name': plan.name,
-                        'plan_id': plan.id,
-                        'billing_period_unit': plan.billing_period_unit,
-                        'billing_period_display': labels[plan.billing_period_unit],
-                        'price_unit': 0.0,
-                        'periodic_amount': 0.0,
-                        'periodic_tax_amount': 0.0,
-                        'period_total': 0.0,
-                        'period': line.required_recurring_quantity or 0,
+                        "id": plan.id,
+                        "plan_name": plan.name,
+                        "plan_id": plan.id,
+                        "billing_period_unit": plan.billing_period_unit,
+                        "billing_period_display": labels[plan.billing_period_unit],
+                        "price_unit": 0.0,
+                        "periodic_amount": 0.0,
+                        "periodic_tax_amount": 0.0,
+                        "period_total": 0.0,
+                        "period": line.required_recurring_quantity or 0,
                     }
 
-                taxes = line._get_tax_ids()
-                quantity = line.product_uom_qty * (line.required_recurring_quantity or 1)
-                price_unit = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-                tax_results = taxes.with_company(line.company_id).compute_all(
-                    price_unit,
-                    currency=line.order_id.currency_id,
-                    quantity=quantity,
-                    product=line.product_id,
+                tax_base_line_dict = self.env["account.tax"]._convert_to_tax_base_line_dict(
+                    line,
                     partner=line.order_id.partner_id,
+                    currency=line.order_id.currency_id,
+                    product=line.product_id,
+                    taxes=line._get_tax_ids(),
+                    price_unit=line.price_unit,
+                    quantity=line.product_uom_qty * (line.required_recurring_quantity or 1),
+                    discount=line.discount,
+                    price_subtotal=line.price_subtotal,
                 )
-                amount_untaxed = tax_results['total_excluded']
-                amount_tax = tax_results['total_included'] - tax_results['total_excluded']
-                plans_data[plan.id]['price_unit'] += line.price_unit
-                plans_data[plan.id]['periodic_amount'] += amount_untaxed
-                plans_data[plan.id]['periodic_tax_amount'] += amount_tax
-                plans_data[plan.id]['period_total'] += amount_untaxed + amount_tax
+                tax_results = self.env["account.tax"].with_company(line.company_id)._compute_taxes([tax_base_line_dict])
+                totals = list(tax_results["totals"].values())[0]
+                amount_untaxed = totals["amount_untaxed"]
+                amount_tax = totals["amount_tax"]
+                plans_data[plan.id]["price_unit"] += line.price_unit
+                plans_data[plan.id]["periodic_amount"] += amount_untaxed
+                plans_data[plan.id]["periodic_tax_amount"] += amount_tax
+                plans_data[plan.id]["period_total"] += amount_untaxed + amount_tax
 
                 amount_subscription_subtotal += amount_untaxed
                 amount_subscription_tax += amount_tax
                 amount_subscription_total += amount_untaxed + amount_tax
 
                 # Use the maximum period if lines have different values
-                if line.required_recurring_quantity > plans_data[plan.id]['period']:
-                    plans_data[plan.id]['period'] = line.required_recurring_quantity
+                if line.required_recurring_quantity > plans_data[plan.id]["period"]:
+                    plans_data[plan.id]["period"] = line.required_recurring_quantity
 
             # Calculate totals
-            amount_non_subscription = sum(non_subscription_lines.mapped('price_subtotal'))
-            amount_tax_non_subscription = sum(non_subscription_lines.mapped('price_tax'))
-            amount_total_non_subscription = sum(non_subscription_lines.mapped('price_total'))
+            amount_non_subscription = sum(non_subscription_lines.mapped("price_subtotal"))
+            amount_tax_non_subscription = sum(non_subscription_lines.mapped("price_tax"))
+            amount_total_non_subscription = sum(non_subscription_lines.mapped("price_total"))
 
             amount_subscription_subtotal += amount_non_subscription
             amount_subscription_tax += amount_tax_non_subscription
@@ -170,14 +181,14 @@ class RecurringOrderMixin(models.AbstractModel):
 
             # Create the JSON structure
             order.subscription_period_total = {
-                'amount_non_subscription': amount_non_subscription,
-                'amount_tax_non_subscription': amount_tax_non_subscription,
-                'amount_total_non_subscription': amount_total_non_subscription,
-                'amount_subscription_subtotal': amount_subscription_subtotal,
-                'amount_subscription_tax': amount_subscription_tax,
-                'amount_subscription_total': amount_subscription_total,
-                'plans': tuple(plans_data.values()),
-                'currency_id': order.currency_id.id,
+                "amount_non_subscription": amount_non_subscription,
+                "amount_tax_non_subscription": amount_tax_non_subscription,
+                "amount_total_non_subscription": amount_total_non_subscription,
+                "amount_subscription_subtotal": amount_subscription_subtotal,
+                "amount_subscription_tax": amount_subscription_tax,
+                "amount_subscription_total": amount_subscription_total,
+                "plans": tuple(plans_data.values()),
+                "currency_id": order.currency_id.id,
             }
 
     def _get_recurring_order_line(self) -> RecurringOrderLineMixin:
@@ -187,10 +198,12 @@ class RecurringOrderMixin(models.AbstractModel):
     def _create_subscriptions(self):
         """
         Create subscriptions from recurring lines.
-        Lines are grouped by (plan_id, start_recurring_date) to create separate subscriptions.
+        Lines are grouped by plan_id to create separate subscriptions.
+        The subscription start_date is always the order date.
+        The next_invoice_date is calculated from the maximum free_periods of the grouped lines.
         """
-        for order in self.filtered('is_subscription'):
-            recurring_lines = order._get_recurring_order_line().filtered("recurring_ok")
+        for order in self.filtered("is_subscription"):
+            recurring_lines = order._get_recurring_order_line().filtered("plan_id")
             if not recurring_lines:
                 continue
             # Validate all recurring lines have a plan
@@ -202,31 +215,41 @@ class RecurringOrderMixin(models.AbstractModel):
                         "\n".join(lines_without_plan.mapped("product_id.display_name")),
                     )
                 )
-            # Group lines by (plan_id, start_recurring_date)
+            # Group lines by plan_id
             groups = {}
             for line in recurring_lines:
-                key = line._get_subscription_grouping_key()
+                key = line.plan_id.id
                 groups.setdefault(key, order.env[line._name])
                 groups[key] |= line
             # Create subscriptions
             Subscription = order.env["solt.subscription"]
-            for (plan_id, start_recurring_date), lines in groups.items():
-                subscription_vals = order._prepare_subscription_values(plan_id, start_recurring_date, lines)
+            for plan_id, lines in groups.items():
+                subscription_vals = order._prepare_subscription_values(plan_id, lines)
                 subscription = Subscription.create(subscription_vals)
                 # Link lines to subscription
                 lines.write({"subscription_id": subscription.id})
                 _logger.info("Created subscription %s from order %s with %d lines", subscription.name, order.name, len(lines))
 
-    def _prepare_subscription_values(self, plan_id, start_date, lines):
-        """Prepare values for creating a subscription."""
+    def _prepare_subscription_values(self, plan_id, lines):
+        """Prepare values for creating a subscription.
+
+        The start_date is always the order date.
+        The next_invoice_date is calculated by adding free_periods * billing_period
+        to the order date. If no free periods, next_invoice_date equals start_date.
+        """
         self.ensure_one()
+        order_date = self.date_order.date() if hasattr(self.date_order, "date") else self.date_order
+        plan = self.env["solt.recurring.plan"].browse(plan_id)
+        max_free_periods = max(lines.mapped("free_periods") or [0])
+        next_invoice_date = order_date + (plan.billing_period * max_free_periods) if max_free_periods else order_date
         return {
-            "origin_id": f'{self._name},{self.id}',
+            "origin_id": f"{self._name},{self.id}",
             "partner_id": self.partner_id.id,
             "company_id": self.company_id.id,
             "currency_id": self.currency_id.id,
             "plan_id": plan_id,
-            "start_date": start_date,
+            "start_date": order_date,
+            "next_invoice_date": next_invoice_date,
             "user_id": self.user_id.id,
             "subscription_line_ids": [Command.create(line._prepare_subscription_line_values()) for line in lines],
         }

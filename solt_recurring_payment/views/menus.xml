@@ -21,8 +21,13 @@
             <menuitem id="menu_solt_recurring_product"
                       action="product_action_subscription"
                       sequence="10"/>
-            <menuitem action="product.product_pricelist_action2" id="menu_solt_recurring_pricelist" sequence="50"
-                      groups="product.group_product_pricelist"/>
+            <!-- Customer pricelists added by solt_sale_recurring_payment -->
+        </menuitem>
+
+        <menuitem id="partner_menu_catalog"
+                  name="Contacts"
+                  sequence="40">
+            <!-- Customer/Supplier menus added by solt_sale/purchase_recurring_payment -->
         </menuitem>
 
         <menuitem id="menu_solt_subscription_config"

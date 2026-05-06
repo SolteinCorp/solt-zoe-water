@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0-20260105\n"
+"Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-31 04:45+0000\n"
-"PO-Revision-Date: 2026-01-31 04:45+0000\n"
+"POT-Creation-Date: 2026-04-23 20:08+0000\n"
+"PO-Revision-Date: 2026-04-23 20:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,19 +16,41 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid " (not archived)"
+msgstr " (no archivado)"
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__percentage_satisfaction
 msgid "% Satisfaction"
 msgstr "% Satisfacción"
 
 #. module: solt_recurring_payment
 #. odoo-python
-#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #, python-format
-msgid "%s - Plan change adjustment (%s days)"
-msgstr "%s - Ajuste por cambio de plan (%s días)"
+msgid "%s - Plan change adjustment (%s → %s)"
+msgstr "%s - Ajuste por cambio de plan (%s → %s)"
 
 #. module: solt_recurring_payment
 #. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "%s - Prorated for remaining period"
+msgstr "%s - Prorrateado por el período restante"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "%s - Unused period credit"
+msgstr "%s - Crédito por período no utilizado"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
 #: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
 #, python-format
 msgid "%s days"
@@ -835,18 +857,17 @@ msgid "Action Needed"
 msgstr "Acción necesaria"
 
 #. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
-#, python-format
-msgid "Activated from plan change. Previous subscription closed: %s"
-msgstr "Activado por cambio de plan. Suscripción anterior cerrada: %s"
-
-#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__active
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__active
 #: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__state__active
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
 msgid "Active"
 msgstr "Activo"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__active_skill_assignment_id
+msgid "Active Skill"
+msgstr "Habilidad activa"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_ids
@@ -881,6 +902,11 @@ msgid "Activity Types"
 msgstr "Tipos de actividad"
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_renew_wizard__action_type__upsell
+msgid "Add Products"
+msgstr "Agregar productos"
+
+#. module: solt_recurring_payment
 #: model_terms:ir.actions.act_window,help:solt_recurring_payment.mail_activity_plan_action_subscription
 msgid "Add a new plan"
 msgstr "Añadir un nuevo plan"
@@ -895,6 +921,14 @@ msgstr "Añadir una regla de precios"
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__closing_note
 msgid "Additional Notes"
 msgstr "Notas adicionales"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"All automatic payment retries exhausted (%(max)d days). Subscription closed."
+msgstr "Todos los reintentos de pago automático agotados (%(max)d días). Suscripción cerrada."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__related_plan_ids
@@ -932,6 +966,8 @@ msgstr "Cuentas analíticas vinculadas a través de la distribución"
 
 #. module: solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
 msgid "Archived"
 msgstr "Archivado"
 
@@ -939,6 +975,17 @@ msgstr "Archivado"
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_attachment_count
 msgid "Attachment Count"
 msgstr "Cantidad de archivos adjuntos"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__auto_archive_delay
+msgid "Automatic Archiving"
+msgstr "Archivado automático"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__auto_archive_delay_display
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__auto_archive_delay_display
+msgid "Automatic Archiving After"
+msgstr "Archivado automático tras"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__auto_close_limit
@@ -961,11 +1008,30 @@ msgstr "Fallo de renovación automática"
 #: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #, python-format
 msgid ""
-"Automatic payment failed after multiple attempts. Contract closed "
-"automatically."
+"Automatic payment failed (day %(days)d). Email sent. Next retry: day "
+"%(next)d. Error: %(error)s"
 msgstr ""
-"El pago automático ha fallado tras varios intentos. El contrato se ha "
-"cerrado  automáticamente."
+"El pago automático ha fallado (día %(days)d). Correo electrónico enviado. Próximo intento: día %(next)d. Error: %(error)s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Automatic payment failed (day %(days)d). Next retry: day %(next)d. Error: "
+"%(error)s"
+msgstr ""
+"El pago automático ha fallado (día %(days)d). Próximo intento: día %(next)d. Error: %(error)s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Automatic payment failed after all retries (day %(days)d/%(max)d). "
+"Subscription closed automatically."
+msgstr ""
+"El pago automático ha fallado después de todos los reintentos (día %(days)d/%(max)d). Suscripción cerrada automáticamente."
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -977,34 +1043,6 @@ msgid ""
 msgstr ""
 "El pago automático ha fallado. Comprueba la factura correspondiente %s. No "
 "podemos procesar automáticamente un pago negativo."
-
-#. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
-#, python-format
-msgid "Automatic payment failed. Email sent to customer. Error: %s"
-msgstr ""
-"El pago automático ha fallado. Se ha enviado un correo electrónico al "
-"cliente. Error: %s"
-
-#. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
-#, python-format
-msgid ""
-"Automatic payment failed. No country specified on payment_token's partner"
-msgstr ""
-"El pago automático ha fallado. No se ha especificado ningún país en el "
-"payment_token del socio."
-
-#. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
-#, python-format
-msgid "Automatic payment failed. No email sent this time. Error: %s"
-msgstr ""
-"El pago automático ha fallado. No se ha enviado ningún correo electrónico "
-"esta vez. Error: %s"
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -1068,14 +1106,25 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Cancelar"
+msgstr ""
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_uom_category_id
 msgid "Category of UOM"
 msgstr "Categoría de UM"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_renew_wizard__action_type__change_plan
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
 msgid "Change Plan"
 msgstr "Cambiar plan"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_renew_wizard__action_type__service_change
+msgid "Change Services"
+msgstr "Cambiar servicios"
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -1091,9 +1140,9 @@ msgid "Closable"
 msgstr "Se puede cerrar"
 
 #. module: solt_recurring_payment
-#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
-msgid "Close"
-msgstr "Cerrar"
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__close_date
+msgid "Close Date"
+msgstr "Fecha de cierre"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__close_reason_id
@@ -1154,6 +1203,19 @@ msgid "Company related to the subscription."
 msgstr "Empresa relacionada con la suscripción."
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__service_change_line_ids
+msgid ""
+"Complete product set for the new subscription created by the service change."
+msgstr "Conjunto completo de productos para la nueva suscripción creada por el cambio de servicio."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__available_plan_ids_domain
+msgid ""
+"Computed domain restricting selectable plans to those related to the current"
+" plan."
+msgstr "Dominio computado que restringe los planes seleccionables a aquellos relacionados con el plan actual."
+
+#. module: solt_recurring_payment
 #: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_subscription_config
 msgid "Configuration"
 msgstr "Configuración"
@@ -1166,8 +1228,15 @@ msgstr "Confirmar"
 
 #. module: solt_recurring_payment
 #: model:ir.model,name:solt_recurring_payment.model_res_partner
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__partner_id
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
 msgid "Contact"
 msgstr "Contacto"
+
+#. module: solt_recurring_payment
+#: model:ir.ui.menu,name:solt_recurring_payment.partner_menu_catalog
+msgid "Contacts"
+msgstr "Contactos"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__subscription_count
@@ -1197,8 +1266,16 @@ msgstr "¡Crea tu primera suscripción!"
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__create_uid
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__create_uid
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__create_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__create_uid
 msgid "Created by"
 msgstr "Creado por"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Created from service change. Previous subscription: %s"
+msgstr "Creado a partir de un cambio de servicio. Suscripción anterior: %s"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__create_date
@@ -1208,8 +1285,17 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__create_date
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__create_date
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__create_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__create_date
 msgid "Created on"
 msgstr "Creado el"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_supplierinfo__plan_id
+msgid ""
+"Cuando se establece, este precio aplica únicamente a suscripciones que usen "
+"este plan recurrente. Dejar vacío para que aplique independientemente del "
+"plan."
+msgstr ""
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__currency_id
@@ -1260,7 +1346,6 @@ msgstr ""
 " usuarios con acceso a ventas pueden gestionar estas reglas."
 
 #. module: solt_recurring_payment
-#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__partner_id
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
 msgid "Customer"
 msgstr "Cliente"
@@ -1293,8 +1378,19 @@ msgstr ""
 "Porcentaje de satisfacción del cliente basado en las valoraciones recibidas."
 
 #. module: solt_recurring_payment
+#: model:solt.recurring.plan,name:solt_recurring_payment.solt_subscription_plan_daily
+msgid "Daily"
+msgstr "Diario"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_recurring_plan__billing_period_unit__day
+msgid "Days"
+msgstr "Días"
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__description
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__name
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__name
 msgid "Description"
 msgstr "Descripción"
 
@@ -1312,6 +1408,15 @@ msgstr "Descripción..."
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__sequence
 msgid "Determines the display order of the reasons."
 msgstr "Determina el orden de visualización de los motivos."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard_line__line_type
+msgid ""
+"Determines whether this line is an upsell addition or part of a service "
+"change."
+msgstr ""
+"Determina si esta línea es una adición de venta adicional o parte de un cambio "
+"de servicio."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__discount
@@ -1336,6 +1441,7 @@ msgstr "Mostrar tarde"
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__display_name
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__display_name
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__display_name
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__display_name
 msgid "Display Name"
 msgstr "Nombre para mostrar"
 
@@ -1345,9 +1451,9 @@ msgid "Distribution of the amount among analytic accounts"
 msgstr "Distribución del importe entre cuentas analíticas"
 
 #. module: solt_recurring_payment
-#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__available_plan_ids_domain
-msgid "Domain filter for available plans that can be selected"
-msgstr "Filtro de dominio para planes disponibles que se pueden seleccionar"
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__product_domain
+msgid "Domain to filter products based on the subscription type."
+msgstr "Dominio para filtrar productos según el tipo de suscripción."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__available_plan_ids_domain
@@ -1356,13 +1462,6 @@ msgid ""
 msgstr ""
 "Dominio utilizado para filtrar los planes de suscripción disponibles para "
 "esta línea de producto."
-
-#. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
-#, python-format
-msgid "Downgrade credit note: %s"
-msgstr "Nota de crédito por rebaja de calificación: %s"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__state__draft
@@ -1397,7 +1496,7 @@ msgstr "Fecha de finalización"
 #. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_end_of_contract
 msgid "End of Contract"
-msgstr ""
+msgstr "Fin del contrato"
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -1463,6 +1562,7 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr "Icono de fuente impresionante, por ejemplo fa-tasks"
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__free_periods
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__free_periods
 msgid "Free Periods"
 msgstr "Período gratuito"
@@ -1486,7 +1586,6 @@ msgstr "Tiene mensaje"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_mixin__is_subscription
-#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.account_invoice_groupby_inherit
 msgid "Has Subscriptions"
 msgstr "Recurrente"
 
@@ -1503,6 +1602,7 @@ msgstr "Le ayuda a gestionar las suscripciones y la facturación recurrente."
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__id
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__id
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__id
 msgid "ID"
 msgstr ""
 
@@ -1537,15 +1637,6 @@ msgstr ""
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__payment_token_id
 msgid "If set, automatic payments will use this token."
 msgstr "Si se establece, los pagos automáticos utilizarán este token."
-
-#. module: solt_recurring_payment
-#: model:ir.model.fields,help:solt_recurring_payment.field_product_product__recurring_invoice
-#: model:ir.model.fields,help:solt_recurring_payment.field_product_template__recurring_invoice
-msgid ""
-"If set, confirming a sale order with this product will create a subscription"
-msgstr ""
-"Si se configura, la confirmación de un pedido de venta con este producto "
-"creará una suscripción"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__journal_id
@@ -1590,10 +1681,10 @@ msgid "Indicates if this order has recurring product lines."
 msgstr "Indica si este pedido tiene líneas de productos recurrentes."
 
 #. module: solt_recurring_payment
-#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__recurring_invoice
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__recurring_ok
 msgid "Indicates if this product line is a recurring (subscription) product."
 msgstr ""
-"Indica si esta línea de producto es un producto recurrente (suscripción)."
+"Indica si esta línea de producto es un producto recurrente (de suscripción)."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__payment_exception
@@ -1606,6 +1697,27 @@ msgid "Indicates that there is a pending payment transaction."
 msgstr "Indica que hay una transacción de pago pendiente."
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_bank_statement_line__is_recurring_document
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_move__is_recurring_document
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_payment__is_recurring_document
+msgid "Indicates this document was generated from a recurring subscription."
+msgstr ""
+"Indica que este documento fue generado a partir de una suscripción "
+"recurrente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_supplierinfo__recurring_ok
+msgid ""
+"Indicates whether the product can be sold or bought recurringly. This field "
+"is inherited from the product template and cannot be edited directly on the "
+"supplier info. To change this setting, please edit the product template."
+msgstr ""
+"Indica si el producto se puede vender o comprar de forma recurrente. Este "
+"campo se hereda de la plantilla de producto y no se puede editar "
+"directamente en la información del proveedor. Para cambiar esta "
+"configuración, edite la plantilla de producto."
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__active
 msgid ""
 "Indicates whether the recurring plan is active. Inactive plans are not "
@@ -1613,6 +1725,13 @@ msgid ""
 msgstr ""
 "Indica si el plan recurrente está activo. Los planes inactivos no están "
 "disponibles para nuevas suscripciones."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_product__recurring_ok
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_template__recurring_ok
+msgid "Indicates whether this product can be sold or buy recurringly."
+msgstr ""
+"Indica si este producto se puede vender o comprar de forma recurrente."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__internal_note
@@ -1630,6 +1749,24 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
 msgid "Internal notes..."
 msgstr "Notas internas..."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Invoice %(invoice)s unpaid (day %(days)d). Reminder sent. Subscription will "
+"close on day %(max)d if not paid."
+msgstr ""
+"Factura %(invoice)s sin pagar (día %(days)d). Recordatorio enviado. La "
+"suscripción se cerrará el día %(max)d si no se paga."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Invoice %(invoice)s unpaid for %(days)d days. Subscription closed."
+msgstr "Factura %(invoice)s sin pagar durante %(days)d días. Suscripción cerrada."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__invoice_count
@@ -1690,6 +1827,13 @@ msgid "Is Protected"
 msgstr "Está protegido"
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_product__recurring_ok
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_template__recurring_ok
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__recurring_ok
+msgid "Is Recurring"
+msgstr "Es recurrente"
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__is_invoice_cron
 msgid "Is a Subscription invoiced in cron"
 msgstr "¿Es una suscripción facturada en cron?"
@@ -1710,6 +1854,11 @@ msgid "KPIs"
 msgstr ""
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__llm_enabled
+msgid "LLM Enabled"
+msgstr "LLM habilitado"
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__write_uid
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__write_uid
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__write_uid
@@ -1717,6 +1866,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__write_uid
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__write_uid
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__write_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
@@ -1728,6 +1878,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__write_date
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__write_date
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__write_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
 
@@ -1735,6 +1886,32 @@ msgstr "Última actualización el"
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
 msgid "Last Year"
 msgstr "Año pasado"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard_line__price_unit
+msgid ""
+"Leave empty to auto-resolve from recurring pricing or product list price."
+msgstr "Dejar vacío para resolver automáticamente a partir de los precios recurrentes o el precio de lista del producto."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+msgid "Leave empty to keep the current plan."
+msgstr "Dejar vacío para mantener el plan actual."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__service_change_plan_id
+msgid "Leave empty to keep the same plan."
+msgstr "Dejar vacío para mantener el mismo plan."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard_line__name
+msgid "Leave empty to use the product default description."
+msgstr "Dejar vacío para usar la descripción predeterminada del producto."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__line_type
+msgid "Line Type"
+msgstr "Tipo de línea"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__available_plan_ids
@@ -1745,6 +1922,17 @@ msgstr ""
 "Lista de planes recurrentes disponibles para las líneas de suscripción "
 "actuales y los productos . Se utiliza para restringir los planes "
 "seleccionables en función de la compatibilidad del producto."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Manage"
+msgstr "Gestionar"
+
+#. module: solt_recurring_payment
+#: model:ir.actions.act_window,name:solt_recurring_payment.solt_subscription_renew_wizard_action
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+msgid "Manage Subscription"
+msgstr "Renovar / Venta adicional"
 
 #. module: solt_recurring_payment
 #: model:res.groups,comment:solt_recurring_payment.group_subscription_manager
@@ -1791,12 +1979,12 @@ msgstr ""
 #. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_missing_features
 msgid "Missing Features"
-msgstr ""
+msgstr "Faltan características"
 
 #. module: solt_recurring_payment
 #: model:solt.recurring.plan,name:solt_recurring_payment.solt_subscription_plan_monthly
 msgid "Monthly"
-msgstr ""
+msgstr "Mensual"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_mixin__recurring_monthly
@@ -1831,6 +2019,11 @@ msgid "Months"
 msgstr "Meses"
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__llm_mute
+msgid "Mute LLM"
+msgstr "Silenciar LLM"
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__my_activity_date_deadline
 msgid "My Activity Deadline"
 msgstr "Fecha límite de mi actividad"
@@ -1859,6 +2052,12 @@ msgstr "Nuevo"
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__new_plan_id
 msgid "New Plan"
 msgstr "Nuevo plan"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__service_change_line_ids
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+msgid "New Product Set"
+msgstr "Nuevo conjunto de productos"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_calendar_event_id
@@ -1890,8 +2089,8 @@ msgstr "Fecha de la próxima factura"
 #. odoo-python
 #: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #, python-format
-msgid "No Payment Method"
-msgstr "Sin método de pago"
+msgid "No payment received for %(days)d days. Subscription closed."
+msgstr "No se ha recibido el pago durante %(days)d días. Suscripción cerrada."
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -1903,7 +2102,7 @@ msgstr "Método de pago no válido"
 #. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_not_using
 msgid "Not Using the Service"
-msgstr ""
+msgstr "No usar el servicio"
 
 #. module: solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
@@ -1921,9 +2120,26 @@ msgid "Number of active subscriptions for this plan."
 msgstr "Número de suscripciones activas para este plan."
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__auto_archive_delay
+msgid ""
+"Number of days after a subscription is closed before it is automatically "
+"archived. Archived subscriptions are hidden from default views and can be "
+"permanently deleted."
+msgstr ""
+"Número de días después de que una suscripción se cierre antes de que se "
+"archive automáticamente. Las suscripciones archivadas están ocultas en las "
+"vistas predeterminadas y se pueden eliminar permanentemente."
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_has_error_counter
 msgid "Number of errors"
 msgstr "Número de errores"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__free_periods
+msgid ""
+"Number of free recurring periods before the first invoice is generated."
+msgstr "Número de períodos recurrentes gratuitos antes de que se genere la primera factura."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__free_periods
@@ -1947,7 +2163,7 @@ msgstr "Número de mensajes con error de entrega"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__extend_months
-msgid "Number of months to extend the subscription by"
+msgid "Number of months to extend the subscription by."
 msgstr "Número de meses para prolongar la suscripción"
 
 #. module: solt_recurring_payment
@@ -1973,6 +2189,13 @@ msgid "Number of subscriptions associated with this invoice"
 msgstr "Número de suscripciones asociadas a esta factura"
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_supplierinfo__required_recurring_quantity
+msgid ""
+"Número mínimo de periodos de suscripción requeridos para este precio de "
+"proveedor."
+msgstr ""
+
+#. module: solt_recurring_payment
 #. odoo-python
 #: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #, python-format
@@ -1983,8 +2206,26 @@ msgstr "Solo las suscripciones activas pueden cerrarse."
 #. odoo-python
 #: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #, python-format
-msgid "Only churned subscriptions can be reopened."
-msgstr "Solo las suscripciones canceladas pueden reabrirse."
+msgid "Only active subscriptions can be reset to draft."
+msgstr "Solo las suscripciones activas pueden restablecerse a borrador."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Only closed subscriptions can be archived. The following subscriptions are "
+"not closed: %s"
+msgstr ""
+"Solo las suscripciones cerradas pueden ser archivadas. Las siguientes "
+"suscripciones no están cerradas: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Only closed subscriptions can be reopened."
+msgstr "Solo las suscripciones cerradas pueden reabrirse."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__related_plan_ids
@@ -2016,6 +2257,11 @@ msgstr "Suscripción de origen"
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
 msgid "Other Info"
 msgstr "Otra información"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard_line__wizard_id
+msgid "Parent wizard that owns this line."
+msgstr "Asistente principal que posee esta línea."
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -2068,6 +2314,11 @@ msgid "Pending Transaction"
 msgstr "Transacción pendiente"
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_supplierinfo__required_recurring_quantity
+msgid "Periodos Requeridos"
+msgstr ""
+
+#. module: solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
 msgid "Plan"
 msgstr ""
@@ -2075,7 +2326,7 @@ msgstr ""
 #. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_plan_change
 msgid "Plan Change"
-msgstr ""
+msgstr "Cambio de plan"
 
 #. module: solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
@@ -2086,9 +2337,8 @@ msgstr "Nombre del plan"
 #. odoo-python
 #: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
 #, python-format
-msgid "Plan can only be changed for active subscriptions. Current state: %s"
-msgstr ""
-"El plan solo se puede cambiar para suscripciones activas. Estado actual: %s"
+msgid "Plan can only be changed for active subscriptions."
+msgstr "El plan solo se puede cambiar para suscripciones activas."
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -2108,31 +2358,53 @@ msgstr ""
 
 #. module: solt_recurring_payment
 #. odoo-python
-#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #, python-format
-msgid "Plan change requested to %s. New subscription: %s. Invoice to pay: %s"
+msgid "Plan changed from %s to %s (same price, no proration)."
+msgstr "Plan cambiado de %s a %s (mismo precio, sin prorrateo)."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_supplierinfo__plan_id
+msgid "Plan de Suscripción"
 msgstr ""
-"Se ha solicitado un cambio en el plan a %s. Nueva suscripción: %s. Factura a"
-" pagar: %s"
 
 #. module: solt_recurring_payment
 #. odoo-python
-#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #, python-format
-msgid "Plan changed to %s. New subscription: %s"
-msgstr "El plan ha cambiado a %s. Nueva suscripción: %s"
+msgid "Plan downgraded from %s to %s. Credit note: %s"
+msgstr "Plan degradado de %s a %s. Nota de crédito: %s"
 
 #. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
-#, python-format
-msgid "Plan downgraded to %s. New subscription active: %s"
-msgstr "Plan rebajado a %s. Nueva suscripción activa: %s"
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__service_change_plan_id
+msgid "Plan for New Subscription"
+msgstr "Plan para la nueva suscripción"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__plan_id
 msgid "Plan for this recurring product line."
 msgstr "Plan para esta línea de producto recurrente."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Plan upgraded from %s to %s. Proration invoice: %s"
+msgstr "Plan mejorado de %s a %s. Factura de prorrateo: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Please add at least one product to upsell."
+msgstr "Por favor, agregue al menos un producto para la venta adicional."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Please define the new product set."
+msgstr "Por favor, defina el nuevo conjunto de productos."
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -2151,7 +2423,7 @@ msgstr "Por favor, seleccione un nuevo plan."
 #. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_bad_support
 msgid "Poor Customer Support"
-msgstr ""
+msgstr "Soporte al cliente deficiente"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__access_url
@@ -2178,11 +2450,6 @@ msgstr ""
 "esta suscripción."
 
 #. module: solt_recurring_payment
-#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_recurring_pricelist
-msgid "Pricelists"
-msgstr "Listas de precios"
-
-#. module: solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
 msgid "Pricing"
 msgstr "Precios"
@@ -2195,8 +2462,15 @@ msgstr "Regla de precios de productos de pago recurrente"
 #. module: solt_recurring_payment
 #: model:ir.model,name:solt_recurring_payment.model_product_template
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__product_id
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
 msgid "Product"
 msgstr "Producto"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_domain
+msgid "Product Domain"
+msgstr "Dominio del producto"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_template_id
@@ -2219,6 +2493,11 @@ msgid "Product template related to the selected product."
 msgstr "Plantilla de producto relacionada con el producto seleccionado."
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard_line__product_id
+msgid "Product to add or include in the new service set."
+msgstr "Producto para agregar o incluir en el nuevo conjunto de servicios."
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__product_id
 msgid "Product to be invoiced recurrently."
 msgstr "Producto que se facturará de forma recurrente."
@@ -2230,6 +2509,17 @@ msgstr "Producto que se facturará de forma recurrente."
 #: model:ir.ui.menu,name:solt_recurring_payment.product_menu_catalog
 msgid "Products"
 msgstr "Productos"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__upsell_line_ids
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+msgid "Products to Add"
+msgstr "Productos para agregar"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__upsell_line_ids
+msgid "Products to add to the current subscription as an upsell."
+msgstr "Productos para agregar a la suscripción actual como venta adicional."
 
 #. module: solt_recurring_payment
 #. odoo-javascript
@@ -2265,7 +2555,13 @@ msgid "Purchase Order Line"
 msgstr "Línea de orden de compra"
 
 #. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+msgid "Qty"
+msgstr ""
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_uom_qty
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__product_uom_qty
 msgid "Quantity"
 msgstr "Cantidad"
 
@@ -2273,6 +2569,11 @@ msgstr "Cantidad"
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__product_uom_qty
 msgid "Quantity of the product to invoice."
 msgstr "Cantidad del producto a facturar."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard_line__product_uom_qty
+msgid "Quantity of the product."
+msgstr "Cantidad del producto."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_avg_text
@@ -2320,19 +2621,28 @@ msgid "Reason"
 msgstr "Razón"
 
 #. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.account_invoice_groupby_inherit
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.account_invoice_tree_inherit_recurring
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.product_template_view_form_recurring
 msgid "Recurring"
 msgstr "Recurrente"
 
 #. module: solt_recurring_payment
-#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__recurring_invoice
-msgid "Recurring Invoice"
-msgstr "Factura recurrente"
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_bank_statement_line__is_recurring_document
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_move__is_recurring_document
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_payment__is_recurring_document
+msgid "Recurring Document"
+msgstr "Documento recurrente"
 
 #. module: solt_recurring_payment
 #: model:ir.model,name:solt_recurring_payment.model_solt_recurring_order_line_mixin
 msgid "Recurring Line Order Mixin"
 msgstr "Mixin de línea de pedido recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_supplierinfo__recurring_ok
+msgid "Recurring OK"
+msgstr "Recurrente"
 
 #. module: solt_recurring_payment
 #: model:ir.model,name:solt_recurring_payment.model_solt_recurring_order_mixin
@@ -2377,6 +2687,11 @@ msgstr "Total recurrente"
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__recurring_monthly
 msgid "Recurring monthly for this order."
 msgstr "Recurrente mensual para este pedido."
+
+#. module: solt_recurring_payment
+#: model:ir.actions.server,name:solt_recurring_payment.ir_cron_recurring_payment_auto_archive_ir_actions_server
+msgid "Recurring payment: Auto Archive Closed Subscriptions"
+msgstr "Pago recurrente: Archivo automático de suscripciones cerradas"
 
 #. module: solt_recurring_payment
 #: model:ir.actions.server,name:solt_recurring_payment.ir_cron_recurring_payment_expiration_ir_actions_server
@@ -2426,23 +2741,9 @@ msgstr "Planes relacionados"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__user_extend
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
 msgid "Renew"
 msgstr "Renovar"
-
-#. module: solt_recurring_payment
-#: model:ir.actions.act_window,name:solt_recurring_payment.solt_subscription_renew_wizard_action
-msgid "Renew / Change Plan"
-msgstr "Renovar / Venta adicional"
-
-#. module: solt_recurring_payment
-#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
-msgid "Renew / Change Plan Subscription"
-msgstr "Renovar/Cambiar la suscripción al plan"
-
-#. module: solt_recurring_payment
-#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
-msgid "Renew / Upsell"
-msgstr "Renovar / Venta adicional"
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -2535,7 +2836,7 @@ msgstr "Seleccione los productos en los que se aplicará este precio."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__new_plan_id
-msgid "Select the new plan to switch to"
+msgid "Select the new plan to switch to."
 msgstr "Seleccione el nuevo plan al que desea cambiarse."
 
 #. module: solt_recurring_payment
@@ -2556,9 +2857,7 @@ msgstr "Seleccione el plan recurrente al que se aplica esta regla de precios."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__action_type
-msgid ""
-"Select whether to renew the current subscription or change to a different "
-"plan"
+msgid "Select the type of change to apply to the subscription."
 msgstr ""
 "Seleccione si desea renovar la suscripción actual o cambiar a un plan "
 "diferente."
@@ -2599,6 +2898,34 @@ msgid "Sequence"
 msgstr "Secuencia"
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__tax_totals
+msgid ""
+"Serialized tax totals for the subscription, used for reporting and invoicing"
+" purposes."
+msgstr ""
+"Totales de impuestos serializados para la suscripción, utilizados para "
+"informes y propósitos de facturación."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_renew_wizard_line__line_type__service_change
+msgid "Service Change"
+msgstr "Cambio de servicio"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Service change completed. New subscription: %s"
+msgstr "Cambio de servicio completado. Nueva suscripción: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Service change is only available for active subscriptions."
+msgstr "El cambio de servicio solo está disponible para suscripciones activas."
+
+#. module: solt_recurring_payment
 #: model:mail.template,description:solt_recurring_payment.mail_template_subscription_rating
 msgid ""
 "Set on subscription's stage (e.g. Closed, Upsell) to ask a rating to customers\n"
@@ -2608,18 +2935,30 @@ msgstr ""
 "            "
 
 #. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Set to Draft"
+msgstr "Establecer en borrador"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__llm_mute
+msgid "Silence the AI assistant for this thread without disabling it."
+msgstr "Silencia el asistente de IA para este hilo sin desactivarlo."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__skill_mode
+msgid "Skill Mode"
+msgstr "Modo de habilidad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__skill_oneshot_pending
+msgid "Skill Oneshot Pending"
+msgstr "Habilidad de un solo disparo pendiente"
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__start_date
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
 msgid "Start Date"
 msgstr "Fecha de inicio"
-
-#. module: solt_recurring_payment
-#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__start_recurring_date
-msgid ""
-"Start date for this subscription line. If not set, uses the order date."
-msgstr ""
-"Fecha de inicio de esta línea de suscripción. Si no se establece, se utiliza"
-" la fecha del pedido."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__state
@@ -2708,20 +3047,9 @@ msgid "Subscription Plans"
 msgstr "Planes de suscripción"
 
 #. module: solt_recurring_payment
-#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_product__recurring_invoice
-#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_template__recurring_invoice
-msgid "Subscription Product"
-msgstr "Producto de suscripción"
-
-#. module: solt_recurring_payment
 #: model:ir.model,name:solt_recurring_payment.model_solt_subscription_renew_wizard
 msgid "Subscription Renew/Change Plan Wizard"
 msgstr "Asistente de renovación/venta adicional de suscripción"
-
-#. module: solt_recurring_payment
-#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__start_recurring_date
-msgid "Subscription Start Date"
-msgstr "Fecha de inicio de suscripción"
 
 #. module: solt_recurring_payment
 #: model:mail.message.subtype,name:solt_recurring_payment.subtype_subscription_state_change
@@ -2734,11 +3062,27 @@ msgid "Subscription User"
 msgstr "Usuario de suscripción"
 
 #. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_subscription_renew_wizard_line
+msgid "Subscription Wizard Line"
+msgstr "Línea de asistente de suscripción"
+
+#. module: solt_recurring_payment
 #. odoo-python
 #: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
 #, python-format
 msgid "Subscription extended by %d months. New end date: %s"
 msgstr "Suscripción extendida por %d meses. Nueva fecha de finalización: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Subscription overdue (day %(days)d). Reminder sent. Next check: day "
+"%(next)d. Closes on day %(max)d if no payment."
+msgstr ""
+"Suscripción atrasada (día %(days)d). Recordatorio enviado. Próxima verificación: "
+"día %(next)d. Se cierra el día %(max)d si no se realiza el pago."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_product_pricelist__product_subscription_pricing_ids
@@ -2848,7 +3192,7 @@ msgstr "Importe subtotal sin impuestos."
 #. module: solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.subscription_period_total
 msgid "Subtotal:"
-msgstr "Subtotal:"
+msgstr ""
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__subscription_period_total
@@ -2861,14 +3205,24 @@ msgstr ""
 "período."
 
 #. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_product_supplierinfo
+msgid "Supplier Pricelist"
+msgstr "Lista de precios del proveedor"
+
+#. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_competitor
 msgid "Switched to Competitor"
-msgstr ""
+msgstr "Cambiado a competidor"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__price_tax
 msgid "Tax Amount"
 msgstr "Importe del impuesto"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__tax_totals
+msgid "Tax Total"
+msgstr "Total de impuestos"
 
 #. module: solt_recurring_payment
 #. odoo-javascript
@@ -2958,20 +3312,19 @@ msgid "The company to which this recurring plan belongs."
 msgstr "La empresa a la que pertenece este plan recurrente."
 
 #. module: solt_recurring_payment
-#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__current_plan_id
-msgid ""
-"The current recurring plan associated with this subscription (read-only)."
-msgstr "El plan recurrente actual asociado a esta suscripción (solo lectura)."
-
-#. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__partner_id
-msgid "The customer associated with this subscription."
+msgid "The customer or supplier associated with this subscription."
 msgstr "El cliente asociado a esta suscripción."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__start_date
 msgid "The date when the subscription becomes active."
 msgstr "Fecha en que comienza la suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__close_date
+msgid "The date when the subscription was actually closed."
+msgstr "La fecha en que la suscripción se cerró realmente."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__end_date
@@ -2999,16 +3352,6 @@ msgstr ""
 #, python-format
 msgid "The following refund %s has been made on this subscription."
 msgstr "El siguiente reembolso %s se ha realizado en esta suscripción."
-
-#. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
-#, python-format
-msgid ""
-"The last invoice (%s) of this subscription is unpaid after the due date."
-msgstr ""
-"La última factura (%s) de esta suscripción está pendiente de pago después de"
-" la fecha de vencimiento."
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -3062,6 +3405,13 @@ msgid "The next invoice date should be after the start date."
 msgstr "La próxima fecha de factura debe ser posterior a la fecha de inicio."
 
 #. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_order_line_mixin.py:0
+#, python-format
+msgid "The number of free periods cannot be negative for product '%s'."
+msgstr "El número de períodos gratuitos no puede ser negativo para el producto '%s'."
+
+#. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__origin_id
 msgid "The original document from which this subscription was created."
 msgstr "El documento original a partir del cual se creó esta suscripción."
@@ -3081,18 +3431,6 @@ msgstr ""
 "Las condiciones de pago que se aplican a esta suscripción. Determina la "
 "fecha de vencimiento de las facturas. Por defecto, se aplican las "
 "condiciones de pago del cliente."
-
-#. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/models/solt_recurring_order_line_mixin.py:0
-#, python-format
-msgid ""
-"The product '%s' is marked as a subscription product but has no subscription"
-" pricing configured. Please configure pricing for this product."
-msgstr ""
-"El producto '%s' está marcado como un producto de suscripción pero no tiene "
-"precios de suscripción configurados. Por favor, configure los precios para "
-"este producto."
 
 #. module: solt_recurring_payment
 #. odoo-python
@@ -3117,6 +3455,7 @@ msgstr "El motivo del cierre de la suscripción, si procede."
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__plan_id
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__current_plan_id
 msgid "The recurring plan that defines the billing cycle and rules."
 msgstr "El plan recurrente que define el ciclo de facturación y las reglas."
 
@@ -3156,15 +3495,6 @@ msgid "The subscription line created from this line."
 msgstr "La línea de suscripción creada a partir de esta línea."
 
 #. module: solt_recurring_payment
-#. odoo-python
-#: code:addons/solt_recurring_payment/models/solt_recurring_order_line_mixin.py:0
-#, python-format
-msgid "The subscription start date (%s) cannot be before the order date (%s)."
-msgstr ""
-"La fecha de inicio de la suscripción (%s) no puede ser anterior a la fecha "
-"del pedido (%s)."
-
-#. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__renewed_subscription_ids
 msgid "The subscription that renewed this one."
 msgstr "La suscripción que renovó esta."
@@ -3186,7 +3516,7 @@ msgstr "La suscripción que se va a cerrar"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__subscription_id
-msgid "The subscription to renew/change"
+msgid "The subscription to manage."
 msgstr "La suscripción que se va a renovar o modificar"
 
 #. module: solt_recurring_payment
@@ -3239,7 +3569,7 @@ msgstr ""
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__billing_period_unit
-msgid "Time unit for the billing period (weeks, months, or years)"
+msgid "Time unit for the billing period (days, weeks, months, or years)"
 msgstr ""
 "Unidad de tiempo para el período de facturación (semanas, meses o años)"
 
@@ -3256,7 +3586,7 @@ msgstr "Hoy"
 #. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_too_expensive
 msgid "Too Expensive"
-msgstr ""
+msgstr "Demasiado caro"
 
 #. module: solt_recurring_payment
 #. odoo-javascript
@@ -3325,7 +3655,7 @@ msgstr "Importe total del impuesto para esta línea."
 #. module: solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.subscription_period_total
 msgid "Total:"
-msgstr "Total:"
+msgstr ""
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__type
@@ -3361,8 +3691,14 @@ msgstr "Unidad"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__price_unit
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__price_unit
 msgid "Unit Price"
 msgstr "Precio unitario"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+msgid "Unit Price (optional)"
+msgstr "Precio unitario (opcional)"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_uom
@@ -3382,12 +3718,12 @@ msgstr "Precio unitario del producto."
 #. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_unknown
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 #. module: solt_recurring_payment
 #: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_unpaid
 msgid "Unpaid Subscription"
-msgstr ""
+msgstr "Suscripción sin pagar"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__auto_close_limit
@@ -3409,11 +3745,32 @@ msgid "UoM category related to the selected product."
 msgstr "Categoría UoM relacionada con el producto seleccionado."
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_renew_wizard_line__line_type__upsell
+msgid "Upsell"
+msgstr "Venta adicional"
+
+#. module: solt_recurring_payment
 #. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
 #, python-format
-msgid "Upgrade charge invoice: %s"
-msgstr "Factura de cargo por actualización: %s"
+msgid "Upsell is only available for active subscriptions."
+msgstr "La venta adicional solo está disponible para suscripciones activas."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Upsell: %d product(s) added (no proration, next period starts billing)."
+msgstr "Venta adicional: %d producto(s) agregado(s) (sin prorrateo, el próximo período comienza a facturar)."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Upsell: %d product(s) added. Proration invoice: %s"
+msgstr "Venta adicional: %d producto(s) agregado(s). Factura de prorrateo: %s"
 
 #. module: solt_recurring_payment
 #: model:res.groups,comment:solt_recurring_payment.group_subscription_user
@@ -3441,9 +3798,25 @@ msgid "Weeks"
 msgstr "Semanas"
 
 #. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__active
+msgid ""
+"When unchecked, the subscription is archived and hidden from default views."
+msgstr "Cuando está desmarcada, la suscripción se archiva y se oculta de las vistas predeterminadas."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__llm_enabled
+msgid "Whether the LLM assistant is active for this thread."
+msgstr "Si el asistente LLM está activo para este hilo."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard_line__wizard_id
+msgid "Wizard"
+msgstr "Asistente"
+
+#. module: solt_recurring_payment
 #: model:solt.recurring.plan,name:solt_recurring_payment.solt_subscription_plan_yearly
 msgid "Yearly"
-msgstr ""
+msgstr "Anual"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_recurring_plan__billing_period_unit__year
@@ -3469,6 +3842,17 @@ msgstr ""
 
 #. module: solt_recurring_payment
 #. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"You can only delete subscriptions that are in draft or closed and archived. "
+"Subscription '%s' is in state '%s'%s."
+msgstr ""
+"Solo puede eliminar suscripciones que estén en borrador o cerradas y archivadas. "
+"La suscripción '%s' está en estado '%s'%s."
+
+#. module: solt_recurring_payment
+#. odoo-python
 #: code:addons/solt_recurring_payment/models/res_partner.py:0
 #, python-format
 msgid ""
@@ -3489,9 +3873,8 @@ msgstr "No puede confirmar una suscripción sin líneas."
 #. odoo-python
 #: code:addons/solt_recurring_payment/models/solt_subscription.py:0
 #, python-format
-msgid "You cannot delete an active subscription. Please close it first."
-msgstr ""
-"No se puede eliminar una suscripción activa. Cierre primero la suscripción."
+msgid "You cannot reset to draft a subscription that has generated invoices."
+msgstr "No puede restablecer a borrador una suscripción que ha generado facturas."
 
 #. module: solt_recurring_payment
 #: model_terms:ir.actions.act_window,help:solt_recurring_payment.product_action_subscription
@@ -3521,6 +3904,13 @@ msgstr "mensaje"
 #. odoo-python
 #: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
 #, python-format
+msgid "per %d days"
+msgstr "por %d días"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
 msgid "per %d months"
 msgstr "por %d meses"
 
@@ -3537,6 +3927,13 @@ msgstr "por %d semanas"
 #, python-format
 msgid "per %d years"
 msgstr "por %d años"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid "per day"
+msgstr "por día"
 
 #. module: solt_recurring_payment
 #. odoo-python

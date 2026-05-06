@@ -7,16 +7,16 @@ from dateutil.relativedelta import relativedelta
 from odoo import Command, _, api, fields, models
 from odoo.exceptions import AccessError, UserError
 from odoo.osv import expression
-from odoo.tools import config, plaintext2html, split_every, str2bool
+from odoo.tools import config, plaintext2html, str2bool
 from psycopg2._psycopg import TransactionRollbackError
 
 _logger = logging.getLogger(__name__)
 
 SUBSCRIPTION_STATES = [('draft', 'Draft'), ('active', 'Active'), ('closed', 'Closed')]
 
-SUBSCRIPTION_DRAFT_STATE = ['draft']
-SUBSCRIPTION_ACTIVE_STATE = ['active']
-SUBSCRIPTION_CLOSED_STATE = ['closed']
+# Progressive retry schedule: days after next_invoice_date to retry token payment.
+# Days 1-3: daily retries, Day 7: weekly retry, Day 15: final retry (close if fails).
+PAYMENT_RETRY_DAYS = [1, 2, 3, 7, 15]
 
 
 class SoltSaleSubscription(models.Model):
@@ -53,11 +53,11 @@ class SoltSaleSubscription(models.Model):
     )
     partner_id = fields.Many2one(
         'res.partner',
-        string='Customer',
+        string='Contact',
         required=True,
         tracking=True,
         check_company=True,
-        help="The customer associated with this subscription."
+        help="The customer or supplier associated with this subscription."
     )
     commercial_partner_id = fields.Many2one(
         'res.partner',
@@ -117,6 +117,7 @@ class SoltSaleSubscription(models.Model):
     )
     start_date = fields.Date(
         string='Start Date',
+        required=True,
         tracking=True,
         help="The date when the subscription becomes active."
     )
@@ -145,6 +146,7 @@ class SoltSaleSubscription(models.Model):
         help="The date when the subscription was actually closed.",
     )
     active = fields.Boolean(
+        string='Active',
         default=True,
         tracking=True,
         help="When unchecked, the subscription is archived and hidden from default views.",
@@ -186,6 +188,7 @@ class SoltSaleSubscription(models.Model):
         store=True,
         help="Total amount for the subscription before taxes."
     )
+    tax_totals = fields.Binary(compute='_compute_tax_totals', string='Tax Total', exportable=False, help='Serialized tax totals for the subscription, used for reporting and invoicing purposes.')
     amount_tax = fields.Monetary(
         string='Taxes',
         compute='_compute_amounts',
@@ -197,12 +200,6 @@ class SoltSaleSubscription(models.Model):
         compute='_compute_amounts',
         store=True,
         help="Total amount for the subscription, including taxes."
-    )
-    tax_totals = fields.Binary(
-        string='Tax Total',
-        compute='_compute_tax_totals',
-        exportable=False,
-        help='Serialized tax totals for the subscription, used for reporting and invoicing purposes.',
     )
 
     # === INVOICING === #
@@ -307,8 +304,19 @@ class SoltSaleSubscription(models.Model):
 
     # === SQL CONSTRAINTS === #
     _sql_constraints = [
-        ('check_start_date_lower_next_invoice_date', 'CHECK((next_invoice_date IS NULL OR start_date IS NULL) OR (next_invoice_date >= start_date))', 'The next invoice date should be after the start date.'),
+        (
+            'check_start_date_lower_next_invoice_date',
+            'CHECK((next_invoice_date IS NULL OR start_date IS NULL) OR (next_invoice_date >= start_date))',
+            'The next invoice date should be after the start date.',
+        )
     ]
+
+    @api.depends_context('lang')
+    @api.depends('subscription_line_ids.tax_ids', 'subscription_line_ids.price_subtotal', 'amount_total', 'amount_untaxed')
+    def _compute_tax_totals(self):
+        for order in self:
+            subscription_line_idss = order.subscription_line_ids
+            order.tax_totals = self.env['account.tax']._prepare_tax_totals([x._convert_to_tax_base_line_dict() for x in subscription_line_idss], order.currency_id or order.company_id.currency_id, )
 
     @api.depends('plan_id', 'subscription_line_ids.product_id.product_subscription_pricing_ids')
     def _compute_available_plan_ids(self):
@@ -338,24 +346,11 @@ class SoltSaleSubscription(models.Model):
 
     @api.depends('subscription_line_ids.price_subtotal')
     def _compute_amounts(self):
-        """Compute untaxed, tax, and total amounts from subscription lines."""
         for subscription in self:
             lines = subscription.subscription_line_ids
             subscription.amount_untaxed = sum(lines.mapped('price_subtotal'))
             subscription.amount_tax = sum(lines.mapped('price_tax'))
             subscription.amount_total = sum(lines.mapped('price_total'))
-
-    @api.depends_context("lang")
-    @api.depends("subscription_line_ids.tax_ids", "subscription_line_ids.price_subtotal", "amount_total", "amount_untaxed")
-    def _compute_tax_totals(self):
-        """Compute the serialized tax totals for the subscription."""
-        for subscription in self:
-            AccountTax = self.env["account.tax"]
-            order_lines = subscription.subscription_line_ids
-            base_lines = [line._prepare_base_line_for_taxes_computation() for line in order_lines]
-            AccountTax._add_tax_details_in_base_lines(base_lines, subscription.company_id)
-            AccountTax._round_base_lines_tax_details(base_lines, subscription.company_id)
-            subscription.tax_totals = AccountTax._get_tax_totals_summary(base_lines=base_lines, currency=subscription.currency_id or subscription.company_id.currency_id, company=subscription.company_id, )
 
     @api.depends('subscription_line_ids.price_subtotal')
     def _compute_recurring_total(self):
@@ -365,7 +360,7 @@ class SoltSaleSubscription(models.Model):
     @api.depends('subscription_line_ids.recurring_monthly', 'state')
     def _compute_recurring_monthly(self):
         for subscription in self:
-            if subscription.state in SUBSCRIPTION_ACTIVE_STATE:
+            if subscription.state == 'active':
                 subscription.recurring_monthly = sum(subscription.subscription_line_ids.mapped('recurring_monthly'))
             else:
                 subscription.recurring_monthly = 0
@@ -387,7 +382,7 @@ class SoltSaleSubscription(models.Model):
     def _compute_display_late(self):
         today = fields.Date.today()
         for subscription in self:
-            subscription.display_late = subscription.state in SUBSCRIPTION_ACTIVE_STATE and subscription.next_invoice_date and subscription.next_invoice_date < today
+            subscription.display_late = subscription.state == 'active' and subscription.next_invoice_date and subscription.next_invoice_date < today
 
     @api.depends('rating_percentage_satisfaction')
     def _compute_percentage_satisfaction(self):
@@ -419,21 +414,8 @@ class SoltSaleSubscription(models.Model):
         subscriptions = super().create(vals_list)
         return subscriptions
 
-    def copy(self, default=None):
-        """
-        Duplicate the subscription record.
-
-        Sets the state to 'draft', clears start and next invoice dates, and sets the origin subscription.
-        :param default: Optional dictionary of default values for the copy.
-        :return: The duplicated subscription record.
-        """
-        default = dict(default or {})
-        default.update({'state': 'draft', 'start_date': False, 'next_invoice_date': False, 'origin_subscription_id': self.id})
-        return super().copy(default)
-
     @api.ondelete(at_uninstall=False)
     def _unlink_except_confirmed(self):
-        """Prevent deletion unless the subscription is in draft or closed and archived."""
         for subscription in self:
             if subscription.state == 'draft':
                 continue
@@ -448,20 +430,16 @@ class SoltSaleSubscription(models.Model):
             ))
 
     def write(self, vals):
-        """Override write to enforce archiving rules: only closed subscriptions can be archived."""
+        """Override the write method to enforce business rules on state transitions and archiving."""
         if 'active' in vals and not vals['active']:
-            non_archivable = self.filtered(lambda sub: sub.state != 'closed')
+            non_archivable = self.filtered(lambda subscription: subscription.state != 'closed')
             if non_archivable:
                 raise UserError(_(
                     "Only closed subscriptions can be archived. "
                     "The following subscriptions are not closed: %s",
                     ', '.join(non_archivable.mapped('name')),
                 ))
-        previously_active = (
-            self.filtered(lambda sub: sub.active)
-            if 'active' in vals and not vals['active']
-            else self.env['solt.subscription']
-        )
+        previously_active = self.filtered(lambda subscription: subscription.active) if 'active' in vals and not vals['active'] else self.env['solt.subscription']
         result = super().write(vals)
         if previously_active:
             previously_active._post_archived()
@@ -469,8 +447,369 @@ class SoltSaleSubscription(models.Model):
 
     # === ACTION METHODS === #
 
+    def _post_activate(self):
+        """Hook called after a subscription transitions to 'active' state.
+        Override in integration modules to trigger deployment actions.
+        """
+
+    def _post_close(self):
+        """Hook called after a subscription transitions to 'closed' state.
+        Override in integration modules to trigger teardown actions.
+        """
+
+    def _post_archived(self):
+        """Hook called after a subscription is archived (active=False).
+        Override in integration modules to trigger final cleanup actions.
+        """
+
+    def _post_plan_change(self, old_plan, new_plan):
+        """Hook called after an in-place plan change.
+        Override in integration modules to update configuration without redeploying.
+
+        Args:
+            old_plan: solt.recurring.plan - the previous plan
+            new_plan: solt.recurring.plan - the new plan
+        """
+
+    def _post_upsell(self, new_lines):
+        """Hook called after upsell lines are added to the subscription.
+        Override in integration modules to deploy new resources.
+
+        Args:
+            new_lines: solt.subscription.line recordset - the newly added lines
+        """
+
+    # === PRORATION HELPERS === #
+
+    @staticmethod
+    def _compute_period_days(plan):
+        """Compute the approximate billing period in days for proration calculations.
+
+        Args:
+            plan: solt.recurring.plan record
+        Returns:
+            int: number of days in the billing period
+        """
+        billing_unit = plan.billing_period_unit
+        billing_value = plan.billing_period_value
+        if billing_unit == 'day':
+            return billing_value
+        elif billing_unit == 'week':
+            return billing_value * 7
+        elif billing_unit == 'month':
+            return billing_value * 30
+        elif billing_unit == 'year':
+            return billing_value * 365
+        return billing_value
+
+    def _compute_proration_factor(self, plan=None):
+        """Compute the proration factor (fraction of period remaining).
+
+        Args:
+            plan: solt.recurring.plan (defaults to self.plan_id)
+        Returns:
+            float: fraction between 0.0 and 1.0
+        """
+        self.ensure_one()
+        if plan is None:
+            plan = self.plan_id
+        today = fields.Date.today()
+        next_invoice = self.next_invoice_date or today
+        days_remaining = (next_invoice - today).days
+        if days_remaining <= 0:
+            return 0.0
+        period_days = self._compute_period_days(plan)
+        if period_days <= 0:
+            return 0.0
+        return days_remaining / period_days
+
+    def _create_proration_move(self, proration_line_data, move_type='out_invoice'):
+        """Create a proration invoice or credit note.
+
+        Args:
+            proration_line_data: list of dicts with keys:
+                product_id (int), description (str), quantity (float),
+                price_unit (float), tax_ids (list of int, optional)
+            move_type: 'out_invoice' for upgrade, 'out_refund' for downgrade
+        Returns:
+            account.move record (posted) or empty recordset if no lines
+        """
+        self.ensure_one()
+        if not proration_line_data:
+            return self.env['account.move']
+
+        today = fields.Date.today()
+        invoice_vals = self._prepare_invoice()
+        invoice_vals.update({
+            'invoice_date': today,
+            'move_type': move_type,
+            'invoice_line_ids': [],
+        })
+
+        for line_data in proration_line_data:
+            product = self.env['product.product'].browse(line_data['product_id'])
+            accounts = product.product_tmpl_id.get_product_accounts(
+                fiscal_pos=self.fiscal_position_id
+            )
+            income_account = accounts.get('income')
+
+            line_vals = {
+                'product_id': line_data['product_id'],
+                'name': line_data['description'],
+                'quantity': line_data['quantity'],
+                'price_unit': abs(line_data['price_unit']),
+                'subscription_id': self.id,
+            }
+            if income_account:
+                line_vals['account_id'] = income_account.id
+            if line_data.get('tax_ids'):
+                line_vals['tax_ids'] = [Command.set(line_data['tax_ids'])]
+
+            invoice_vals['invoice_line_ids'].append(Command.create(line_vals))
+
+        if not invoice_vals['invoice_line_ids']:
+            return self.env['account.move']
+
+        proration_move = self.env['account.move'].sudo().create(invoice_vals)
+        proration_move.action_post()
+        return proration_move
+
+    def _create_unused_period_credit_note(self):
+        """Generate a credit note for the unused portion of the current billing period.
+
+        Returns:
+            account.move: The posted credit note or empty recordset
+        """
+        self.ensure_one()
+        proration_factor = self._compute_proration_factor()
+        if proration_factor <= 0:
+            return self.env['account.move']
+
+        credit_line_data = []
+        for line in self.subscription_line_ids:
+            prorated_amount = line.price_unit * proration_factor
+            if prorated_amount > 0:
+                credit_line_data.append({
+                    'product_id': line.product_id.id,
+                    'description': _('%s - Unused period credit', line.product_id.name),
+                    'quantity': line.product_uom_qty,
+                    'price_unit': prorated_amount,
+                    'tax_ids': line.tax_ids.ids,
+                })
+
+        return self._create_proration_move(credit_line_data, move_type='out_refund')
+
+    # === PLAN CHANGE IN-PLACE === #
+
+    def _change_plan_inplace(self, new_plan):
+        """Change the subscription plan in-place without creating a new subscription.
+
+        Updates plan_id, recalculates line prices, generates proration invoice/credit
+        note for the difference, and adjusts next_invoice_date.
+
+        Does NOT call _post_activate/_post_close (instances stay untouched).
+        Calls _post_plan_change hook for integration modules.
+
+        Args:
+            new_plan: solt.recurring.plan record to switch to
+        Returns:
+            account.move: The proration invoice/credit note or empty recordset
+        """
+        self.ensure_one()
+        old_plan = self.plan_id
+        today = fields.Date.today()
+
+        # Capture old prices before recalculation
+        old_line_prices = {line.id: line.price_subtotal for line in self.subscription_line_ids}
+
+        # Calculate proration factor using old plan's period
+        old_proration_factor = self._compute_proration_factor(old_plan)
+
+        # Update plan and recalculate line prices
+        self.plan_id = new_plan
+        for line in self.subscription_line_ids:
+            line._recalculate_price_for_plan(new_plan, old_plan)
+
+        # Calculate proration factor using new plan's period (same days_remaining, different period)
+        new_proration_factor = self._compute_proration_factor(new_plan)
+
+        # Calculate prorated difference per line
+        proration_line_data = []
+        total_difference = 0.0
+        for line in self.subscription_line_ids:
+            old_prorated = old_line_prices.get(line.id, 0.0) * old_proration_factor
+            new_prorated = line.price_subtotal * new_proration_factor
+            difference = new_prorated - old_prorated
+
+            if difference != 0:
+                total_difference += difference
+                proration_line_data.append({
+                    'product_id': line.product_id.id,
+                    'description': _(
+                        '%s - Plan change adjustment (%s → %s)',
+                        line.product_id.name, old_plan.name, new_plan.name,
+                    ),
+                    'quantity': line.product_uom_qty,
+                    'price_unit': difference / line.product_uom_qty if line.product_uom_qty else difference,
+                    'tax_ids': line.tax_ids.ids,
+                })
+
+        # Generate proration document
+        proration_move = self.env['account.move']
+        if total_difference > 0:
+            proration_move = self._create_proration_move(proration_line_data, move_type='out_invoice')
+            self.message_post(body=_(
+                "Plan upgraded from %s to %s. Proration invoice: %s",
+                old_plan.name, new_plan.name, proration_move._get_html_link(),
+            ))
+        elif total_difference < 0:
+            # For credit note, amounts are already absolute in _create_proration_move
+            proration_move = self._create_proration_move(proration_line_data, move_type='out_refund')
+            self.message_post(body=_(
+                "Plan downgraded from %s to %s. Credit note: %s",
+                old_plan.name, new_plan.name, proration_move._get_html_link(),
+            ))
+        else:
+            self.message_post(body=_(
+                "Plan changed from %s to %s (same price, no proration).",
+                old_plan.name, new_plan.name,
+            ))
+
+        # Adjust next_invoice_date to start new billing cycle from today
+        self.next_invoice_date = today + new_plan.billing_period
+
+        # Call hook for integration modules
+        self._post_plan_change(old_plan, new_plan)
+
+        return proration_move
+
+    # === UPSELL === #
+
+    def _upsell_add_lines(self, wizard_lines):
+        """Add new product lines to this active subscription with proration.
+
+        Creates subscription lines from the wizard lines, generates a prorated
+        invoice for the remaining period, and calls _post_upsell hook.
+
+        Args:
+            wizard_lines: solt.subscription.renew.wizard.line recordset
+        Returns:
+            account.move: The proration invoice or empty recordset
+        """
+        self.ensure_one()
+        if self.state != 'active':
+            raise UserError(_("Upsell is only available for active subscriptions."))
+
+        proration_factor = self._compute_proration_factor()
+        new_lines = self.env['solt.subscription.line']
+        proration_line_data = []
+
+        for wizard_line in wizard_lines:
+            # Resolve price from recurring pricing or use wizard-provided price
+            if wizard_line.price_unit:
+                resolved_price = wizard_line.price_unit
+            else:
+                resolved_price = self.env['solt.subscription.line']._get_price_from_pricing(
+                    wizard_line.product_id, self.plan_id, self.pricelist_id,
+                    self.currency_id, self.company_id,
+                )
+
+            # Resolve taxes
+            product_taxes = wizard_line.product_id.taxes_id.filtered(
+                lambda tax: tax.company_id == self.company_id
+            )
+
+            # Create subscription line
+            subscription_line = self.env['solt.subscription.line'].create({
+                'subscription_id': self.id,
+                'product_id': wizard_line.product_id.id,
+                'name': wizard_line.name or wizard_line.product_id.get_product_multiline_description_sale(),
+                'product_uom_qty': wizard_line.product_uom_qty,
+                'price_unit': resolved_price,
+                'product_uom': wizard_line.product_id.uom_id.id,
+                'tax_ids': [Command.set(product_taxes.ids)],
+            })
+            new_lines |= subscription_line
+
+            # Calculate proration for remaining period
+            if proration_factor > 0:
+                prorated_price = resolved_price * proration_factor
+                proration_line_data.append({
+                    'product_id': wizard_line.product_id.id,
+                    'description': _(
+                        '%s - Prorated for remaining period',
+                        wizard_line.product_id.name,
+                    ),
+                    'quantity': wizard_line.product_uom_qty,
+                    'price_unit': prorated_price,
+                    'tax_ids': product_taxes.ids,
+                })
+
+        # Generate proration invoice
+        proration_move = self.env['account.move']
+        if proration_line_data:
+            proration_move = self._create_proration_move(proration_line_data)
+            self.message_post(body=_(
+                "Upsell: %d product(s) added. Proration invoice: %s",
+                len(new_lines), proration_move._get_html_link(),
+            ))
+        else:
+            self.message_post(body=_(
+                "Upsell: %d product(s) added (no proration, next period starts billing).",
+                len(new_lines),
+            ))
+
+        # Call hook for integration modules
+        self._post_upsell(new_lines)
+
+        return proration_move
+
+    # === SERVICE CHANGE === #
+
+    def _prepare_service_change_data(self, new_subscription):
+        """Prepare data for service change transfer.
+
+        Computes which products are kept (exist in both old and new),
+        created (only in new), and destroyed (only in old).
+
+        Args:
+            new_subscription: solt.subscription - the new subscription being created
+        Returns:
+            dict with classification of products for instance management
+        """
+        old_products = self.subscription_line_ids.mapped('product_id')
+        new_products = new_subscription.subscription_line_ids.mapped('product_id')
+        return {
+            'old_subscription': self,
+            'new_subscription': new_subscription,
+            'keep_products': old_products & new_products,
+            'create_products': new_products - old_products,
+            'destroy_products': old_products - new_products,
+        }
+
+    def _execute_service_change(self, service_change_data):
+        """Execute the service change transfer.
+
+        Override in integration modules to handle resource management:
+        - keep_products: transfer existing instances from old to new subscription
+        - create_products: deploy new instances for the new subscription
+        - destroy_products: tear down instances only in the old subscription
+
+        Args:
+            service_change_data: dict returned by _prepare_service_change_data
+        """
+
     def action_confirm(self):
-        """Confirm the subscription, set it to active, and trigger the post-activate hook."""
+        """Confirm the subscription and set it to 'Active'.
+
+        The start_date is always the order date (set at creation).
+        The next_invoice_date is pre-calculated from free_periods at creation,
+        but on the first confirmation it is adjusted to account for the actual
+        first payment date:
+        - Online payments: first_payment_date == order date (same day).
+        - Quotation payments: first_payment_date may differ from order date.
+        This adjustment only applies on the first activation (draft → active).
+        """
         today = fields.Date.today()
         for subscription in self:
             if subscription.state != 'draft':
@@ -484,6 +823,8 @@ class SoltSaleSubscription(models.Model):
             else:
                 # Adjust next_invoice_date relative to the actual first payment
                 # date (today) instead of the original order date (start_date).
+                # This handles the case where a quotation is confirmed days after
+                # the order was created, shifting the free period accordingly.
                 first_payment_offset = today - subscription.start_date
                 if first_payment_offset.days > 0:
                     subscription.next_invoice_date += first_payment_offset
@@ -492,13 +833,34 @@ class SoltSaleSubscription(models.Model):
             subscription._post_activate()
         return True
 
+    def action_to_draft(self):
+        """Reset the subscription back to 'Draft' state."""
+        for subscription in self:
+            if subscription.state != 'active':
+                raise UserError(_("Only active subscriptions can be reset to draft."))
+            if subscription.invoice_count > 0:
+                raise UserError(_("You cannot reset to draft a subscription that has generated invoices."))
+            subscription.write({
+                'state': 'draft',
+                'next_invoice_date': False,
+                'end_date': False,
+                'close_reason_id': False,
+                'close_date': False,
+                'active': True,
+            })
+            subscription._post_close()
+        return True
+
     def set_close(self, close_reason_id=None):
-        """Close the subscription, record the close date, and trigger the post-close hook."""
+        """Close the subscription and record the close date."""
         today = fields.Date.today()
         for subscription in self:
-            if subscription.state not in SUBSCRIPTION_ACTIVE_STATE:
+            if subscription.state != 'active':
                 raise UserError(_("Only active subscriptions can be closed."))
-            close_vals = {'state': 'closed', 'close_date': today}
+            close_vals = {
+                'state': 'closed',
+                'close_date': today,
+            }
             if close_reason_id:
                 close_vals['close_reason_id'] = close_reason_id
             subscription.write(close_vals)
@@ -506,7 +868,7 @@ class SoltSaleSubscription(models.Model):
         return True
 
     def action_reopen(self):
-        """Reopen a closed subscription back to active state and trigger the post-activate hook."""
+        """Reopen a closed subscription back to active state."""
         today = fields.Date.today()
         for subscription in self:
             if subscription.state != 'closed':
@@ -555,292 +917,11 @@ class SoltSaleSubscription(models.Model):
         if self.invoice_count > 1:
             action['domain'] = [('id', 'in', self.invoice_ids.ids)]
         elif self.invoice_count == 1:
-            action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
+            action['view_mode'] = 'form'
             action['res_id'] = self.invoice_ids.id
         else:
             action = {'type': 'ir.actions.act_window_close'}
         return action
-
-    # === LIFECYCLE HOOKS === #
-
-    def _post_activate(self):
-        """Hook called after a subscription transitions to 'active' state.
-        Override in integration modules to trigger deployment actions.
-        """
-
-    def _post_close(self):
-        """Hook called after a subscription transitions to 'closed' state.
-        Override in integration modules to trigger teardown actions.
-        """
-
-    def _post_archived(self):
-        """Hook called after a subscription is archived (active=False).
-        Override in integration modules to trigger final cleanup actions.
-        """
-
-    def _post_plan_change(self, old_plan, new_plan):
-        """Hook called after an in-place plan change.
-        Override in integration modules to update configuration without redeploying.
-
-        :param old_plan: solt.recurring.plan - the previous plan
-        :param new_plan: solt.recurring.plan - the new plan
-        """
-
-    def _post_upsell(self, new_lines):
-        """Hook called after upsell lines are added to the subscription.
-        Override in integration modules to deploy new resources.
-
-        :param new_lines: solt.subscription.line recordset - the newly added lines
-        """
-
-    # === PRORATION HELPERS === #
-
-    @staticmethod
-    def _compute_period_days(plan):
-        """Compute the approximate billing period in days for proration calculations.
-
-        :param plan: solt.recurring.plan record
-        :return: int number of days in the billing period
-        """
-        billing_unit = plan.billing_period_unit
-        billing_value = plan.billing_period_value
-        if billing_unit == 'day':
-            return billing_value
-        elif billing_unit == 'week':
-            return billing_value * 7
-        elif billing_unit == 'month':
-            return billing_value * 30
-        elif billing_unit == 'year':
-            return billing_value * 365
-        return billing_value
-
-    def _compute_proration_factor(self, plan=None):
-        """Compute the proration factor (fraction of the current period remaining).
-
-        :param plan: solt.recurring.plan (defaults to self.plan_id)
-        :return: float between 0.0 and 1.0
-        """
-        self.ensure_one()
-        if plan is None:
-            plan = self.plan_id
-        today = fields.Date.today()
-        next_invoice = self.next_invoice_date or today
-        days_remaining = (next_invoice - today).days
-        if days_remaining <= 0:
-            return 0.0
-        period_days = self._compute_period_days(plan)
-        if period_days <= 0:
-            return 0.0
-        return days_remaining / period_days
-
-    def _create_proration_move(self, proration_line_data, move_type='out_invoice'):
-        """Create a proration invoice or credit note from a list of line data dicts.
-
-        :param proration_line_data: list of dicts with keys product_id, description, quantity,
-               price_unit, and optionally tax_ids
-        :param move_type: 'out_invoice' for upgrade, 'out_refund' for downgrade
-        :return: account.move record (posted) or empty recordset if no lines
-        """
-        self.ensure_one()
-        if not proration_line_data:
-            return self.env['account.move']
-
-        today = fields.Date.today()
-        invoice_vals = self._prepare_invoice()
-        invoice_vals.update({
-            'invoice_date': today,
-            'move_type': move_type,
-            'invoice_line_ids': [],
-        })
-
-        for line_data in proration_line_data:
-            product = self.env['product.product'].browse(line_data['product_id'])
-            accounts = product.product_tmpl_id.get_product_accounts(fiscal_pos=self.fiscal_position_id)
-            income_account = accounts.get('income')
-
-            line_vals = {
-                'product_id': line_data['product_id'],
-                'name': line_data['description'],
-                'quantity': line_data['quantity'],
-                'price_unit': abs(line_data['price_unit']),
-                'subscription_id': self.id,
-            }
-            if income_account:
-                line_vals['account_id'] = income_account.id
-            if line_data.get('tax_ids'):
-                line_vals['tax_ids'] = [Command.set(line_data['tax_ids'])]
-
-            invoice_vals['invoice_line_ids'].append(Command.create(line_vals))
-
-        if not invoice_vals['invoice_line_ids']:
-            return self.env['account.move']
-
-        proration_move = self.env['account.move'].sudo().create(invoice_vals)
-        proration_move.action_post()
-        return proration_move
-
-    def _create_unused_period_credit_note(self):
-        """Generate a credit note for the unused portion of the current billing period.
-
-        :return: account.move (posted credit note) or empty recordset
-        """
-        self.ensure_one()
-        proration_factor = self._compute_proration_factor()
-        if proration_factor <= 0:
-            return self.env['account.move']
-
-        credit_line_data = []
-        for line in self.subscription_line_ids:
-            prorated_amount = line.price_unit * proration_factor
-            if prorated_amount > 0:
-                credit_line_data.append({
-                    'product_id': line.product_id.id,
-                    'description': _('%s - Unused period credit', line.product_id.name),
-                    'quantity': line.product_uom_qty,
-                    'price_unit': prorated_amount,
-                    'tax_ids': line.tax_ids.ids,
-                })
-
-        return self._create_proration_move(credit_line_data, move_type='out_refund')
-
-    # === PLAN CHANGE IN-PLACE === #
-
-    def _change_plan_inplace(self, new_plan):
-        """Change the subscription plan in-place without creating a new subscription.
-
-        Updates plan_id, recalculates line prices, generates a proration invoice or credit
-        note for the prorated difference, adjusts next_invoice_date, and calls _post_plan_change.
-
-        :param new_plan: solt.recurring.plan record to switch to
-        :return: account.move (proration document) or empty recordset
-        """
-        self.ensure_one()
-        old_plan = self.plan_id
-        today = fields.Date.today()
-
-        old_line_prices = {line.id: line.price_subtotal for line in self.subscription_line_ids}
-        old_proration_factor = self._compute_proration_factor(old_plan)
-
-        self.plan_id = new_plan
-        for line in self.subscription_line_ids:
-            line._recalculate_price_for_plan(new_plan, old_plan)
-
-        new_proration_factor = self._compute_proration_factor(new_plan)
-
-        proration_line_data = []
-        total_difference = 0.0
-        for line in self.subscription_line_ids:
-            old_prorated = old_line_prices.get(line.id, 0.0) * old_proration_factor
-            new_prorated = line.price_subtotal * new_proration_factor
-            difference = new_prorated - old_prorated
-            if difference != 0:
-                total_difference += difference
-                proration_line_data.append({
-                    'product_id': line.product_id.id,
-                    'description': _('%s - Plan change adjustment (%s → %s)', line.product_id.name, old_plan.name, new_plan.name),
-                    'quantity': line.product_uom_qty,
-                    'price_unit': difference / line.product_uom_qty if line.product_uom_qty else difference,
-                    'tax_ids': line.tax_ids.ids,
-                })
-
-        proration_move = self.env['account.move']
-        if total_difference > 0:
-            proration_move = self._create_proration_move(proration_line_data, move_type='out_invoice')
-            self.message_post(body=_("Plan upgraded from %s to %s. Proration invoice: %s", old_plan.name, new_plan.name, proration_move._get_html_link()))
-        elif total_difference < 0:
-            proration_move = self._create_proration_move(proration_line_data, move_type='out_refund')
-            self.message_post(body=_("Plan downgraded from %s to %s. Credit note: %s", old_plan.name, new_plan.name, proration_move._get_html_link()))
-        else:
-            self.message_post(body=_("Plan changed from %s to %s (same price, no proration).", old_plan.name, new_plan.name))
-
-        self.next_invoice_date = today + new_plan.billing_period
-        self._post_plan_change(old_plan, new_plan)
-        return proration_move
-
-    # === UPSELL === #
-
-    def _upsell_add_lines(self, wizard_lines):
-        """Add new product lines to this active subscription with proration.
-
-        Creates subscription lines from the wizard lines, generates a prorated
-        invoice for the remaining period, and calls _post_upsell hook.
-
-        :param wizard_lines: solt.subscription.renew.wizard.line recordset
-        :return: account.move (proration invoice) or empty recordset
-        """
-        self.ensure_one()
-        if self.state != 'active':
-            raise UserError(_("Upsell is only available for active subscriptions."))
-
-        proration_factor = self._compute_proration_factor()
-        new_lines = self.env['solt.subscription.line']
-        proration_line_data = []
-
-        for wizard_line in wizard_lines:
-            if wizard_line.price_unit:
-                resolved_price = wizard_line.price_unit
-            else:
-                resolved_price = self.env['solt.subscription.line']._get_price_from_pricing(
-                    wizard_line.product_id, self.plan_id, self.pricelist_id,
-                    self.currency_id, self.company_id,
-                )
-            product_taxes = wizard_line.product_id.taxes_id.filtered(lambda tax: tax.company_id == self.company_id)
-            subscription_line = self.env['solt.subscription.line'].create({
-                'subscription_id': self.id,
-                'product_id': wizard_line.product_id.id,
-                'name': wizard_line.name or wizard_line.product_id.get_product_multiline_description_sale(),
-                'product_uom_qty': wizard_line.product_uom_qty,
-                'price_unit': resolved_price,
-                'product_uom_id': wizard_line.product_id.uom_id.id,
-                'tax_ids': [Command.set(product_taxes.ids)],
-            })
-            new_lines |= subscription_line
-
-            if proration_factor > 0:
-                proration_line_data.append({
-                    'product_id': wizard_line.product_id.id,
-                    'description': _('%s - Prorated for remaining period', wizard_line.product_id.name),
-                    'quantity': wizard_line.product_uom_qty,
-                    'price_unit': resolved_price * proration_factor,
-                    'tax_ids': product_taxes.ids,
-                })
-
-        proration_move = self.env['account.move']
-        if proration_line_data:
-            proration_move = self._create_proration_move(proration_line_data)
-            self.message_post(body=_("Upsell: %d product(s) added. Proration invoice: %s", len(new_lines), proration_move._get_html_link()))
-        else:
-            self.message_post(body=_("Upsell: %d product(s) added (no proration, billing starts next period).", len(new_lines)))
-
-        self._post_upsell(new_lines)
-        return proration_move
-
-    # === SERVICE CHANGE === #
-
-    def _prepare_service_change_data(self, new_subscription):
-        """Prepare data for a service change, classifying products kept, added, and removed.
-
-        :param new_subscription: solt.subscription - the new subscription being created
-        :return: dict with old_subscription, new_subscription, keep_products, create_products, destroy_products
-        """
-        old_products = self.subscription_line_ids.mapped('product_id')
-        new_products = new_subscription.subscription_line_ids.mapped('product_id')
-        return {
-            'old_subscription': self,
-            'new_subscription': new_subscription,
-            'keep_products': old_products & new_products,
-            'create_products': new_products - old_products,
-            'destroy_products': old_products - new_products,
-        }
-
-    def _execute_service_change(self, service_change_data):
-        """Execute the service change resource transfer.
-
-        Override in integration modules to handle resource management based on
-        keep_products, create_products, and destroy_products classifications.
-
-        :param service_change_data: dict returned by _prepare_service_change_data
-        """
 
     # === INVOICING METHODS === #
     def _update_next_invoice_date(self):
@@ -856,7 +937,7 @@ class SoltSaleSubscription(models.Model):
         search_domain = [
             ('is_batch', '=', False),
             ('is_invoice_cron', '=', False),
-            ('state', '=', 'progress'),
+            ('state', '=', 'active'),
             ('payment_exception', '=', False),
             ('pending_transaction', '=', False),
             ('company_id.active', '=', True),
@@ -875,7 +956,7 @@ class SoltSaleSubscription(models.Model):
         need_cron_trigger = False
         limit = False
         if self:
-            domain = [('id', 'in', self.ids), ('state', 'in', SUBSCRIPTION_ACTIVE_STATE), ('company_id.active', '=', True)]
+            domain = [('id', 'in', self.ids), ('state', '=', 'active'), ('company_id.active', '=', True)]
             batch_size = False
         else:
             domain = self._recurring_invoice_domain()
@@ -942,9 +1023,10 @@ class SoltSaleSubscription(models.Model):
         :rtype: `account.move` recordset
         :raises: UserError if one of the orders has no invoiceable lines.
         """
-        if not self.env['account.move'].has_access('create'):
+        if not self.env['account.move'].check_access_rights('create', False):
             try:
-                self.check_access('write')
+                self.check_access_rights('write')
+                self.check_access_rule('write')
             except AccessError:
                 return self.env['account.move']
 
@@ -960,7 +1042,7 @@ class SoltSaleSubscription(models.Model):
             invoice_vals['invoice_line_ids'] += invoice_line_vals
             invoice_vals_list.append(invoice_vals)
 
-        if not invoice_vals_list and self.env.context.get('raise_if_nothing_to_invoice', True):
+        if not invoice_vals_list and self._context.get('raise_if_nothing_to_invoice', True):
             raise UserError(_("You are trying to invoice recurring orders that are past their end date. Please change their end date or renew them before creating new invoices."))
 
         if len(invoice_vals_list) < len(self):
@@ -988,44 +1070,106 @@ class SoltSaleSubscription(models.Model):
         self.ensure_one()
         if not mail_ctx:
             mail_ctx = {}
-        return {**self.env.context, **mail_ctx, **{'total_amount': self.recurring_total, 'currency_name': self.currency_id.name, 'responsible_email': self.user_id.email, 'code': self.name}}
+        return {**self._context, **mail_ctx, **{'total_amount': self.recurring_total, 'currency_name': self.currency_id.name, 'responsible_email': self.user_id.email, 'code': self.name}}
 
     def _process_auto_invoice(self, invoice):
         """Hook for extension, to support different invoice states"""
         invoice.action_post()
         return
 
+    # === PROGRESSIVE PAYMENT RETRY === #
+
+    def _get_payment_retry_days(self):
+        """Return the progressive retry schedule: days after next_invoice_date to retry token payment.
+
+        Schedule:
+        - Days 1, 2, 3: daily retries (3 consecutive days)
+        - Day 7: retry after one week
+        - Day 15: final retry (subscription closed if this fails)
+
+        Override to customize the retry schedule.
+        """
+        return PAYMENT_RETRY_DAYS
+
+    def _should_attempt_token_payment(self):
+        """Check if today is a valid day to retry automatic token payment.
+
+        For subscriptions that are overdue (next_invoice_date < today), only
+        attempt payment on days specified by the progressive retry schedule.
+        On non-retry days, the subscription is skipped to avoid unnecessary
+        payment provider calls.
+        """
+        self.ensure_one()
+        if not self.payment_token_id or not self.next_invoice_date:
+            return True
+        today = fields.Date.today()
+        days_overdue = (today - self.next_invoice_date).days
+        if days_overdue <= 0:
+            return True  # Normal invoice day — always attempt
+        return days_overdue in self._get_payment_retry_days()
+
     def _handle_subscription_payment_failure(self, invoice, transaction):
-        current_date = fields.Date.today()
+        """Handle failed automatic payment with progressive retry logic.
+
+        Retry schedule (days after next_invoice_date):
+        - Days 1, 2, 3: daily retries
+        - Day 7: weekly retry
+        - Day 15: final retry — close if fails
+
+        On each retry day a reminder email is sent. On the final retry day,
+        if payment still fails, the subscription is closed and a closure
+        email is sent.
+        """
+        today = fields.Date.today()
         reminder_mail_template = self.env.ref('solt_recurring_payment.email_payment_reminder', raise_if_not_found=False)
         close_mail_template = self.env.ref('solt_recurring_payment.email_payment_close', raise_if_not_found=False)
+        retry_days = self._get_payment_retry_days()
+        max_retry_day = max(retry_days)
         invoice.unlink()
+
         for order in self:
-            auto_close_days = order.plan_id.auto_close_limit or 15
-            date_close = order.next_invoice_date + relativedelta(days=auto_close_days)
-            close_contract = current_date >= date_close
+            days_overdue = (today - order.next_invoice_date).days if order.next_invoice_date else 0
             email_context = order._get_subscription_mail_payment_context()
-            _logger.info('Failed to create recurring invoice for contract %s', order.name)
-            if close_contract:
-                close_mail_template.with_context(**email_context).send_mail(order.id)
-                _logger.debug("Sending Contract Closure Mail to %s for contract %s and closing contract", order.partner_id.email, order.id)
-                msg_body = _("Automatic payment failed after multiple attempts. Contract closed automatically.")
-                order.message_post(body=msg_body)
-                subscription_values = {'payment_exception': False}
-                # close the contract as needed
-                order.set_close(close_reason_id=order.env.ref('solt_recurring_payment.close_reason_auto_close_limit').id)
+            error_msg = transaction.state_message if transaction else _('No valid Payment Method')
+            _logger.info('Payment failed for subscription %s (day %d overdue)', order.name, days_overdue)
+
+            if days_overdue >= max_retry_day:
+                # Final retry exhausted — close subscription
+                if close_mail_template:
+                    email_context.update({'auto_close_limit': max_retry_day})
+                    close_mail_template.with_context(**email_context).send_mail(order.id)
+                _logger.debug("Closing subscription %s after %d days of failed payments", order.name, days_overdue)
+                order.message_post(body=_(
+                    "Automatic payment failed after all retries (day %(days)d/%(max)d). Subscription closed automatically.",
+                    days=days_overdue, max=max_retry_day,
+                ))
+                order.write({'payment_exception': False})
+                close_reason = order.env.ref('solt_recurring_payment.solt_close_reason_auto_close_limit', raise_if_not_found=False)
+                order.set_close(close_reason_id=close_reason.id if close_reason else False)
             else:
-                msg_body = _('Automatic payment failed. No email sent this time. Error: %s', transaction and transaction.state_message or _('No valid Payment Method'))
-                if (fields.Date.today() - order.next_invoice_date).days in [2, 7, 14]:
-                    email_context.update({'date_close': date_close, 'payment_token': order.payment_token_id.display_name})
+                # Calculate next retry day
+                next_retry = next((d for d in sorted(retry_days) if d > days_overdue), max_retry_day)
+
+                # Send reminder email on retry days
+                if days_overdue in retry_days and reminder_mail_template:
+                    date_close = order.next_invoice_date + relativedelta(days=max_retry_day)
+                    email_context.update({
+                        'date_close': date_close,
+                        'payment_token': order.payment_token_id.display_name,
+                    })
                     reminder_mail_template.with_context(**email_context).send_mail(order.id)
-                    _logger.debug("Sending Payment Failure Mail to %s for contract %s and setting contract to pending", order.partner_id.email, order.id)
-                    msg_body = _('Automatic payment failed. Email sent to customer. Error: %s', transaction and transaction.state_message or _('No Payment Method'))
-                order.message_post(body=msg_body)
-                # payment failed (not catched in exception) but we should not retry directly.
-                # flag with is_batch to avoid processing it again in another batch
-                subscription_values = {'payment_exception': False, 'is_batch': True}
-            order.write(subscription_values)
+                    _logger.debug("Payment reminder sent to %s for subscription %s", order.partner_id.email, order.name)
+                    order.message_post(body=_(
+                        'Automatic payment failed (day %(days)d). Email sent. Next retry: day %(next)d. Error: %(error)s',
+                        days=days_overdue, next=next_retry, error=error_msg,
+                    ))
+                else:
+                    order.message_post(body=_(
+                        'Automatic payment failed (day %(days)d). Next retry: day %(next)d. Error: %(error)s',
+                        days=days_overdue, next=next_retry, error=error_msg,
+                    ))
+                # Flag to avoid reprocessing in the same batch run
+                order.write({'payment_exception': False, 'is_batch': True})
 
     def _handle_automatic_invoices(self, invoice, auto_commit):
         """This method handle the subscription with or without payment token"""
@@ -1037,14 +1181,6 @@ class SoltSaleSubscription(models.Model):
         if not payment_token or len(payment_token) > 1:
             self._process_auto_invoice(invoice)
             return invoice
-
-        if not payment_token.partner_id.country_id:
-            msg_body = _('Automatic payment failed. No country specified on payment_token\'s partner')
-            for order in self:
-                order.message_post(body=msg_body)
-            invoice.unlink()
-            self._subscription_commit_cursor(auto_commit)
-            return
 
         try:
             # execute payment
@@ -1111,7 +1247,7 @@ class SoltSaleSubscription(models.Model):
                 # Close old subscription (state closed)
                 subscription_sudo.set_close(
                     close_reason_id=self.env.ref(
-                        'solt_recurring_payment.close_reason_plan_change',
+                        'solt_recurring_payment.solt_close_reason_plan_change',
                         raise_if_not_found=False
                     ).id or False
                 )
@@ -1165,84 +1301,127 @@ class SoltSaleSubscription(models.Model):
                 invoice.message_subscribe(invoice.line_ids.subscription_id.user_id.partner_id.ids)
 
     def _create_recurring_invoice(self, batch_size=30):
+        """Create recurring invoices for due subscriptions and handle payments.
+
+        Simplified flow:
+        1. Get subscriptions due for invoicing (batched)
+        2. Close subscriptions past their end_date
+        3. For each subscription: create invoice and handle payment
+           - Token subscriptions: check progressive retry schedule before attempting
+           - Non-token subscriptions: create and post invoice normally
+        4. Send invoice notification emails
+        5. Trigger next batch or reset flags
+        """
         auto_commit = not bool(config['test_enable'] or config['test_file'])
         all_subscriptions, need_cron_trigger = self._recurring_invoice_get_subscriptions(batch_size=batch_size)
         if not all_subscriptions:
             return self.env['account.move']
 
-        # We mark current batch as having been seen by the cron
+        # Mark current batch and close ending subscriptions
         for subscriptions in all_subscriptions:
             subscriptions.is_invoice_cron = True
-            # Don't spam sale with assigned emails.
             subscriptions = subscriptions.with_context(mail_auto_subscribe_no_notify=True)
-            # Close ending subscriptions
             auto_close_subscription = subscriptions.filtered_domain([('end_date', '!=', False)])
             closed_contract = auto_close_subscription._subscription_auto_close()
             subscriptions -= closed_contract
 
         account_moves = self.env['account.move']
         move_to_send_ids = []
+
         for subscriptions in all_subscriptions:
             if len(subscriptions) == 1:
-                subscriptions = subscriptions[0]  # Trick to not prefetch other subscriptions is all_subscription is recordset, as the cache is currently invalidated at each iteration
-
-            # We check that the subscriptions should not be processed or that it has not already been set to "in exception" by previous crons
-            # We only invoice contract in sale state. Locked contracts are invoiced in advance. They are frozen.
+                subscriptions = subscriptions[0]
             subscriptions = subscriptions.filtered(lambda s: s.state == 'active' and not s.payment_exception)
             if not subscriptions:
                 continue
+
             for subscription in subscriptions:
-                try:
-                    self._subscription_commit_cursor(auto_commit)  # To avoid a rollback in case something is wrong, we create the invoices one by one
-                    draft_invoices = subscription.invoice_ids.filtered(lambda am: am.state == 'draft')
-                    if subscription.payment_token_id and draft_invoices:
-                        draft_invoices.button_cancel()
-                    elif draft_invoices:
-                        # Skip subscription if no payment_token, and it has a draft invoice
-                        continue
-                    try:
-                        with self.env.protecting([subscription._fields['recurring_total']], subscription):
-                            invoice = subscription.with_context(recurring_automatic=True)._create_invoices(final=True)
-                    except Exception as e:
-                        # We only raise the error in test, if the transaction is broken we should raise the exception
-                        if not auto_commit and isinstance(e, TransactionRollbackError):
-                            raise
-                        # we suppose that the payment is run only once a day
-                        self._subscription_rollback_cursor(auto_commit)
-                        email_context = subscription._get_subscription_mail_payment_context()
-                        error_message = _("Error during renewal of contract %s (Payment not recorded)", subscription.name)
-                        _logger.exception(error_message)
-                        body = self._get_traceback_body(e, error_message)
-                        mail = self.env['mail.mail'].sudo().create({'body_html': body, 'subject': error_message, 'email_to': email_context['responsible_email'], 'auto_delete': True})
-                        mail.send()
-                        continue
-                    self._subscription_commit_cursor(auto_commit)
-                    # Handle automatic payment or invoice posting
-                    with self.env.protecting([subscription._fields['recurring_total']], subscription):
-                        existing_invoices = subscription.with_context(recurring_automatic=True)._handle_automatic_invoices(invoice, auto_commit) or self.env['account.move']
-                    account_moves |= existing_invoices
-                    if all(inv.state != 'draft' for inv in existing_invoices):
-                        # when the invoice is not confirmed, we keep it and keep the payment_exception flag
-                        # Failed payment that delete the invoice will also be handled here and the flag will be removed
-                        subscription.with_context(mail_notrack=True).payment_exception = False
-                    if not subscription.payment_token_id:  # _get_auto_invoice_grouping_keys groups by token too
-                        move_to_send_ids += existing_invoices.ids
-                    self._subscription_commit_cursor(auto_commit)
-                except Exception:
-                    name_list = subscription.mapped('name')
-                    _logger.exception("Error during renewal of contract %s", "; ".join(name_list))
-                    self._subscription_rollback_cursor(auto_commit)
+                result = self._process_single_subscription(subscription, auto_commit)
+                if result:
+                    account_moves |= result
+                    if not subscription.payment_token_id:
+                        move_to_send_ids += result.ids
+                self._subscription_commit_cursor(auto_commit)
+
         self._subscription_commit_cursor(auto_commit)
         self._process_invoices_to_send(self.env['account.move'].browse(move_to_send_ids))
         self._subscription_commit_cursor(auto_commit)
-        # There is still some subscription to process. Then, make sure the CRON will be triggered again asap.
+
         if need_cron_trigger:
             self._subscription_launch_cron_parallel(batch_size)
         else:
             failing_subscriptions = self.search(['|', ('is_batch', '=', True), ('is_invoice_cron', '=', True)])
             failing_subscriptions.write({'is_batch': False, 'is_invoice_cron': False})
             self._subscription_commit_cursor(auto_commit)
+
         return account_moves
+
+    def _process_single_subscription(self, subscription, auto_commit):
+        """Process a single subscription: create invoice and handle payment.
+
+        For token subscriptions that are overdue, only attempts payment on
+        progressive retry days (1, 2, 3, 7, 15 days after next_invoice_date).
+
+        :param subscription: single solt.subscription record
+        :param auto_commit: bool, True for real cron execution
+        :returns: account.move recordset or None
+        """
+        try:
+            self._subscription_commit_cursor(auto_commit)
+
+            # Handle existing draft invoices
+            draft_invoices = subscription.invoice_ids.filtered(lambda am: am.state == 'draft')
+            if subscription.payment_token_id and draft_invoices:
+                draft_invoices.button_cancel()
+            elif draft_invoices:
+                return None  # Has draft invoice but no token — skip
+
+            # For overdue token subscriptions, check progressive retry schedule
+            if subscription.payment_token_id and not subscription._should_attempt_token_payment():
+                return None  # Not a retry day — skip
+
+            # Create invoice
+            try:
+                with self.env.protecting([subscription._fields['recurring_total']], subscription):
+                    invoice = subscription.with_context(recurring_automatic=True)._create_invoices(final=True)
+            except Exception as e:
+                if not auto_commit and isinstance(e, TransactionRollbackError):
+                    raise
+                self._subscription_rollback_cursor(auto_commit)
+                self._send_invoice_error_mail(subscription, e)
+                return None
+
+            self._subscription_commit_cursor(auto_commit)
+
+            # Handle automatic payment or invoice posting
+            with self.env.protecting([subscription._fields['recurring_total']], subscription):
+                result = subscription.with_context(
+                    recurring_automatic=True
+                )._handle_automatic_invoices(invoice, auto_commit) or self.env['account.move']
+
+            if all(inv.state != 'draft' for inv in result):
+                subscription.with_context(mail_notrack=True).payment_exception = False
+
+            return result
+
+        except Exception:
+            _logger.exception("Error during renewal of subscription %s", subscription.name)
+            self._subscription_rollback_cursor(auto_commit)
+            return None
+
+    def _send_invoice_error_mail(self, subscription, exception):
+        """Send error notification email when invoice creation fails."""
+        email_context = subscription._get_subscription_mail_payment_context()
+        error_message = _("Error during renewal of contract %s (Payment not recorded)", subscription.name)
+        _logger.exception(error_message)
+        body = self._get_traceback_body(exception, error_message)
+        mail = self.env['mail.mail'].sudo().create({
+            'body_html': body,
+            'subject': error_message,
+            'email_to': email_context.get('responsible_email'),
+            'auto_delete': True,
+        })
+        mail.send()
 
     def _do_payment(self, payment_token, invoice, auto_commit=False):
         values = [
@@ -1271,6 +1450,7 @@ class SoltSaleSubscription(models.Model):
             self.env.cr.commit()
         else:
             self.env.flush_all()
+            self.env.cr.flush()
 
     def _subscription_rollback_cursor(self, auto_commit):
         if auto_commit:
@@ -1294,7 +1474,286 @@ class SoltSaleSubscription(models.Model):
 
     @api.model
     def _cron_invoice_subscriptions(self):
+        """Unified cron: creates invoices, handles progressive payment retries, and closes expired subscriptions.
+
+        This single cron replaces the previous separate crons for invoicing and expiration.
+
+        Flow:
+        1. Flush models for consistent SQL queries
+        2. Close subscriptions past their end_date
+        3. Close subscriptions with exhausted token payment retries (>15 days overdue)
+        4. Handle non-token subscriptions: progressive notifications + close unpaid at day 15
+        5. Create invoices for due subscriptions and process payments
+           (token subscriptions respect the progressive retry schedule)
+        """
+        self._flush_invoicing_models()
+        auto_commit = not bool(config['test_enable'] or config['test_file'])
+
+        # Step 1: Close ended subscriptions
+        self._close_ended_subscriptions(auto_commit)
+
+        # Step 2: Close subscriptions with exhausted token payment retries
+        self._close_exhausted_retry_subscriptions(auto_commit)
+
+        # Step 3: Handle non-token overdue subscriptions (notifications + closure)
+        self._handle_no_token_overdue_subscriptions(auto_commit)
+
+        # Step 4: Invoice and process payments for due subscriptions
         return self._create_recurring_invoice()
+
+    def _flush_invoicing_models(self):
+        """Flush relevant models before SQL-based queries."""
+        self.env['solt.subscription'].flush_model(
+            fnames=['subscription_line_ids', 'plan_id', 'state', 'next_invoice_date']
+        )
+        self.env['account.move'].flush_model(fnames=['payment_state', 'line_ids'])
+        self.env['solt.recurring.plan'].flush_model(fnames=['auto_close_limit'])
+
+    def _close_ended_subscriptions(self, auto_commit):
+        """Close active subscriptions whose end_date has passed."""
+        today = fields.Date.today()
+        subs_to_close = self.search([
+            ('state', '=', 'active'),
+            ('end_date', '!=', False),
+            ('end_date', '<', today),
+        ])
+        if subs_to_close:
+            subs_to_close.set_close()
+            self._subscription_commit_cursor(auto_commit)
+            _logger.info(
+                "Closed %d ended subscriptions: %s",
+                len(subs_to_close), ', '.join(subs_to_close.mapped('name')),
+            )
+        return subs_to_close
+
+    def _close_exhausted_retry_subscriptions(self, auto_commit):
+        """Close subscriptions with tokens where all progressive payment retries are exhausted.
+
+        If a subscription has a payment token and next_invoice_date is overdue by more
+        than the maximum retry day (15 days by default), it is automatically closed.
+        """
+        today = fields.Date.today()
+        max_retry_day = max(self._get_payment_retry_days())
+        cutoff_date = today - relativedelta(days=max_retry_day)
+
+        subs = self.search([
+            ('state', '=', 'active'),
+            ('payment_token_id', '!=', False),
+            ('next_invoice_date', '<=', cutoff_date),
+        ])
+        if not subs:
+            return self.env['solt.subscription']
+
+        close_reason = self.env.ref(
+            'solt_recurring_payment.solt_close_reason_auto_close_limit', raise_if_not_found=False
+        )
+        close_mail = self.env.ref(
+            'solt_recurring_payment.email_payment_close', raise_if_not_found=False
+        )
+
+        for sub in subs:
+            if close_mail:
+                email_context = sub._get_subscription_mail_payment_context()
+                email_context['auto_close_limit'] = max_retry_day
+                close_mail.with_context(**email_context).send_mail(sub.id)
+            sub.message_post(body=_(
+                "All automatic payment retries exhausted (%(max)d days). Subscription closed.",
+                max=max_retry_day,
+            ))
+
+        subs.set_close(close_reason_id=close_reason.id if close_reason else False)
+        self._subscription_commit_cursor(auto_commit)
+        _logger.info("Closed %d subscriptions with exhausted payment retries", len(subs))
+        return subs
+
+    def _handle_no_token_overdue_subscriptions(self, auto_commit):
+        """Progressive notification and closure for subscriptions WITHOUT payment tokens.
+
+        Applies the same progressive schedule as token subscriptions but without
+        attempting payment (since there is no token).
+
+        For non-token subscriptions with posted but unpaid invoices:
+        - Days 1, 2, 3: send payment reminder email
+        - Day 7: send payment reminder email
+        - Day 15: close subscription
+
+        Also handles expired subscriptions (overdue with no invoice generated).
+        """
+        today = fields.Date.today()
+        retry_days = self._get_payment_retry_days()
+        max_retry_day = max(retry_days)
+
+        reminder_mail = self.env.ref(
+            'solt_recurring_payment.email_payment_reminder', raise_if_not_found=False
+        )
+        close_mail = self.env.ref(
+            'solt_recurring_payment.email_payment_close', raise_if_not_found=False
+        )
+        close_reason_unpaid = self.env.ref(
+            'solt_recurring_payment.solt_close_reason_unpaid', raise_if_not_found=False
+        )
+        close_reason_expired = self.env.ref(
+            'solt_recurring_payment.solt_close_reason_auto_close_limit', raise_if_not_found=False
+        )
+
+        closed = self.env['solt.subscription']
+
+        # --- 1. Handle posted unpaid invoices (non-token subs) ---
+        self.env.cr.execute("""
+            SELECT DISTINCT ON (sub.id)
+                   sub.id AS sub_id,
+                   am.id AS move_id,
+                   COALESCE(aml_due.dm, am.invoice_date) AS due_date
+              FROM solt_subscription sub
+              JOIN account_move_line aml ON aml.subscription_id = sub.id
+              JOIN account_move am ON am.id = aml.move_id
+         LEFT JOIN LATERAL (
+                   SELECT MAX(aml2.date_maturity) AS dm
+                     FROM account_move_line aml2
+                    WHERE aml2.move_id = am.id
+                   ) aml_due ON TRUE
+             WHERE sub.state = 'active'
+               AND sub.payment_token_id IS NULL
+               AND am.payment_state = 'not_paid'
+               AND am.move_type IN ('out_invoice', 'in_invoice')
+               AND am.state = 'posted'
+          ORDER BY sub.id, COALESCE(aml_due.dm, am.invoice_date) ASC
+        """)
+        unpaid_data = self.env.cr.dictfetchall()
+        processed_sub_ids = set()
+
+        for row in unpaid_data:
+            due_date = row['due_date']
+            if not due_date:
+                continue
+            if hasattr(due_date, 'date'):
+                due_date = due_date.date()
+            days_overdue = (today - due_date).days
+            if days_overdue <= 0:
+                continue
+
+            sub = self.browse(row['sub_id'])
+            if not sub.exists() or sub.state != 'active':
+                continue
+            processed_sub_ids.add(row['sub_id'])
+            am = self.env['account.move'].browse(row['move_id'])
+            email_context = sub._get_subscription_mail_payment_context()
+
+            if days_overdue >= max_retry_day:
+                # Day 15+: close subscription
+                if close_mail:
+                    email_context['auto_close_limit'] = max_retry_day
+                    close_mail.with_context(**email_context).send_mail(sub.id)
+                sub.message_post(body=_(
+                    "Invoice %(invoice)s unpaid for %(days)d days. Subscription closed.",
+                    invoice=am._get_html_link(), days=days_overdue,
+                ))
+                sub.set_close(close_reason_id=close_reason_unpaid.id if close_reason_unpaid else False)
+                closed |= sub
+            elif days_overdue in retry_days:
+                # Notification day: send reminder
+                if reminder_mail:
+                    date_close = due_date + relativedelta(days=max_retry_day)
+                    email_context.update({'date_close': date_close})
+                    reminder_mail.with_context(**email_context).send_mail(sub.id)
+                sub.message_post(body=_(
+                    "Invoice %(invoice)s unpaid (day %(days)d). Reminder sent. "
+                    "Subscription will close on day %(max)d if not paid.",
+                    invoice=am._get_html_link(), days=days_overdue, max=max_retry_day,
+                ))
+
+        # --- 2. Handle expired subs without token (no invoice at all, overdue > max_retry_day) ---
+        cutoff = today - relativedelta(days=max_retry_day)
+        expired_subs = self.search([
+            ('state', '=', 'active'),
+            ('payment_token_id', '=', False),
+            ('next_invoice_date', '!=', False),
+            ('next_invoice_date', '<=', cutoff),
+            ('id', 'not in', list(closed.ids) + list(processed_sub_ids)),
+        ])
+        if expired_subs:
+            for sub in expired_subs:
+                days = (today - sub.next_invoice_date).days if sub.next_invoice_date else 0
+                if close_mail:
+                    ctx = sub._get_subscription_mail_payment_context()
+                    ctx['auto_close_limit'] = max_retry_day
+                    close_mail.with_context(**ctx).send_mail(sub.id)
+                sub.message_post(body=_(
+                    "No payment received for %(days)d days. Subscription closed.",
+                    days=days,
+                ))
+            expired_subs.set_close(
+                close_reason_id=close_reason_expired.id if close_reason_expired else False
+            )
+            closed |= expired_subs
+
+        # --- 3. Notify non-token subs that are overdue but haven't reached max_retry_day ---
+        # These are subs with no invoice created yet and next_invoice_date is past
+        already_handled = list(closed.ids) + list(processed_sub_ids)
+        for check_day in retry_days:
+            if check_day >= max_retry_day:
+                continue
+            check_date = today - relativedelta(days=check_day)
+            overdue_subs = self.search([
+                ('state', '=', 'active'),
+                ('payment_token_id', '=', False),
+                ('next_invoice_date', '=', check_date),
+                ('id', 'not in', already_handled),
+            ])
+            # Only notify subs that truly have no unpaid invoice (those are handled in section 1)
+            overdue_subs = overdue_subs.filtered(
+                lambda s: not s.invoice_ids.filtered(
+                    lambda am: am.state == 'posted' and am.payment_state == 'not_paid'
+                )
+            )
+            for sub in overdue_subs:
+                next_check = next((d for d in sorted(retry_days) if d > check_day), max_retry_day)
+                if reminder_mail:
+                    ctx = sub._get_subscription_mail_payment_context()
+                    date_close = sub.next_invoice_date + relativedelta(days=max_retry_day)
+                    ctx.update({'date_close': date_close})
+                    reminder_mail.with_context(**ctx).send_mail(sub.id)
+                sub.message_post(body=_(
+                    "Subscription overdue (day %(days)d). Reminder sent. "
+                    "Next check: day %(next)d. Closes on day %(max)d if no payment.",
+                    days=check_day, next=next_check, max=max_retry_day,
+                ))
+
+        if closed:
+            self._subscription_commit_cursor(auto_commit)
+            _logger.info("Closed %d overdue subscriptions (no token)", len(closed))
+        return closed
+
+    @api.model
+    def _cron_auto_archive_subscriptions(self):
+        """Archive closed subscriptions after the configured delay.
+
+        For each closed subscription, checks if the number of days since
+        close_date exceeds the plan's auto_archive_delay. If so, archives
+        the subscription (active=False) and calls the _post_archived hook.
+        """
+        today = fields.Date.today()
+        closed_subscriptions = self.search([
+            ('state', '=', 'closed'),
+            ('active', '=', True),
+            ('close_date', '!=', False),
+        ])
+        subscriptions_to_archive = self.env['solt.subscription']
+        for subscription in closed_subscriptions:
+            archive_delay_days = subscription.plan_id.auto_archive_delay or 15
+            archive_deadline = subscription.close_date + relativedelta(days=archive_delay_days)
+            if today >= archive_deadline:
+                subscriptions_to_archive |= subscription
+
+        if subscriptions_to_archive:
+            subscriptions_to_archive.write({'active': False})
+            subscriptions_to_archive._post_archived()
+            _logger.info(
+                "Auto-archived %d closed subscriptions: %s",
+                len(subscriptions_to_archive),
+                ', '.join(subscriptions_to_archive.mapped('name')),
+            )
+        return subscriptions_to_archive
 
     def _get_unpaid_subscriptions(self):
         # TODO FLDA SEE THAT O_O
@@ -1321,7 +1780,7 @@ class SoltSaleSubscription(models.Model):
                                                   JOIN account_move am ON am.id = aml.move_id
                                                   JOIN solt_recurring_plan ssp ON ssp.id = sub.plan_id
                                                   LEFT JOIN LATERAL ( SELECT MAX(date_maturity) AS dm FROM account_move_line aml WHERE aml.move_id = am.id) AS aml2 ON TRUE
-                                         WHERE sub.state = 'progress'
+                                         WHERE sub.state = 'active'
                                            AND am.payment_state = 'not_paid'
                                            AND am.move_type = 'out_invoice'
                                            AND am.state = 'posted'
@@ -1356,78 +1815,13 @@ class SoltSaleSubscription(models.Model):
                    sub.id                                                                          AS so_id
             FROM solt_subscription sub
                      LEFT JOIN solt_recurring_plan ssp ON ssp.id = sub.plan_id
-            WHERE state = 'progress'
+            WHERE state = 'active'
               AND (sub.next_invoice_date + INTERVAL '1 day' * COALESCE(ssp.auto_close_limit, 15)) < %s
             """,
             [today.strftime('%Y-%m-%d')],
         )
         return self.env.cr.dictfetchall()
 
-    def _cron_check_expiration(self):
-        # Flush models according to following SQL requests
-        self.env['solt.subscription'].flush_model(fnames=['subscription_line_ids', 'plan_id', 'state', 'state', 'next_invoice_date'])
-        self.env['account.move'].flush_model(fnames=['payment_state', 'line_ids'])
-        self.env['account.move.line'].flush_model(fnames=['move_id', 'sale_line_ids'])
-        self.env['solt.recurring.plan'].flush_model(fnames=['auto_close_limit'])
-        today = fields.Date.today()
-        # set to close if date is passed or if renewed sale order passed
-        domain_close = [('end_date', '<', today), ('state', 'in', SUBSCRIPTION_ACTIVE_STATE)]
-        subscriptions_close = self.search(domain_close)
-        unpaid_results = self._handle_unpaid_subscriptions()
-        unpaid_ids = unpaid_results.keys()
-        expired_result = self._get_expired_subscriptions()
-        expired_ids = [r['so_id'] for r in expired_result]
-        subscriptions_close |= self.env['solt.subscription'].browse(unpaid_ids) | self.env['solt.subscription'].browse(expired_ids)
-        auto_commit = not bool(config['test_enable'] or config['test_file'])
-        expired_close_reason = self.env.ref('solt_recurring_payment.close_reason_auto_close_limit')
-        unpaid_close_reason = self.env.ref('solt_recurring_payment.close_reason_unpaid')
-        for batched_to_close in split_every(30, subscriptions_close.ids, self.env['solt.subscription'].browse):
-            unpaid_so = self.env['solt.subscription']
-            expired_so = self.env['solt.subscription']
-            for so in batched_to_close:
-                if so.id in unpaid_ids:
-                    unpaid_so |= so
-                    account_move = self.env['account.move'].browse(unpaid_results[so.id])
-                    so.message_post(body=_("The last invoice (%s) of this subscription is unpaid after the due date.", account_move._get_html_link()), partner_ids=so.team_user_id.partner_id.ids)
-                elif so.id in expired_ids:
-                    expired_so |= so
-
-            unpaid_so.set_close(close_reason_id=unpaid_close_reason.id)
-            expired_so.set_close(close_reason_id=expired_close_reason.id)
-            (batched_to_close - unpaid_so - expired_so).set_close()
-            if auto_commit:
-                self.env.cr.commit()
-        return {'closed': subscriptions_close.ids}
-
-    @api.model
-    def _cron_auto_archive_subscriptions(self):
-        """Archive closed subscriptions after the configured delay has passed.
-
-        For each closed subscription, checks whether the number of days since
-        close_date exceeds the plan's auto_archive_delay. If so, archives the
-        subscription (active=False) and calls the _post_archived hook.
-        """
-        today = fields.Date.today()
-        closed_subscriptions = self.search([
-            ('state', '=', 'closed'),
-            ('active', '=', True),
-            ('close_date', '!=', False),
-        ])
-        subscriptions_to_archive = self.env['solt.subscription']
-        for subscription in closed_subscriptions:
-            archive_delay_days = subscription.plan_id.auto_archive_delay or 15
-            archive_deadline = subscription.close_date + relativedelta(days=archive_delay_days)
-            if today >= archive_deadline:
-                subscriptions_to_archive |= subscription
-
-        if subscriptions_to_archive:
-            subscriptions_to_archive.write({'active': False})
-            _logger.info(
-                "Auto-archived %d closed subscriptions: %s",
-                len(subscriptions_to_archive),
-                ', '.join(subscriptions_to_archive.mapped('name')),
-            )
-        return subscriptions_to_archive
 
     def _assign_token(self, tx):
         """Callback method to assign a token after the validation of a transaction.

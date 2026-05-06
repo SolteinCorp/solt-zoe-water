@@ -35,6 +35,10 @@ class ProductTemplate(models.Model):
 
         Returns:
             product.template: The newly created product template record.
+
+        Raises:
+            UserError: If user doesn't have sales application access when copying
+                      a product with subscription pricing.
         """
         copied_tmpl = super().copy(default)
         if not self.sudo().product_subscription_pricing_ids:

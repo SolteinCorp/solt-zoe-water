@@ -23,22 +23,15 @@ class SoltSaleRecurringPricing(models.Model):
 
     @api.constrains('plan_id', 'pricelist_id', 'product_template_id', 'product_variant_ids')
     def _unique_pricing_constraint(self):
-        for pricing in self:
-            domain = [
-                ('id', '!=', pricing.id),
-                ('product_template_id', '=', pricing.product_template_id.id),
-                ('plan_id', '=', pricing.plan_id.id),
-                ('pricelist_id', '=', pricing.pricelist_id.id),
-            ]
-            duplicates = self.search(domain)
-            for duplicate in duplicates:
-                # If both have no variants, they conflict
-                if not pricing.product_variant_ids and not duplicate.product_variant_ids:
-                    raise UserError(_("There are multiple pricings for an unique product, plan and pricelist."))
-                # If both have variants and they overlap, they conflict
-                if pricing.product_variant_ids and duplicate.product_variant_ids:
-                    if pricing.product_variant_ids & duplicate.product_variant_ids:
-                        raise UserError(_("There are multiple pricings for an unique product, plan and pricelist."))
+        pricings_per_group = self.read_group(
+            ['|', ('product_template_id', 'in', self.product_template_id.ids), ('product_variant_ids', 'in', self.product_variant_ids.ids)],
+            ['product_variant_ids:array_agg'],
+            ['product_template_id', 'plan_id', 'pricelist_id'], lazy=False)
+        for pricings in pricings_per_group:
+            if pricings['__count'] < 2:
+                continue
+            if len(set(pricings['product_variant_ids'])) != len(pricings['product_variant_ids']):
+                raise UserError(_("There are multiple pricings for an unique product, plan and pricelist."))
 
     @api.constrains('pricelist_id')
     def _unique_company_contraint(self):

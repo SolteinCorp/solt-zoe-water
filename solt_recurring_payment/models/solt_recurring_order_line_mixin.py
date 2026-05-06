@@ -28,10 +28,10 @@ class RecurringOrderLineMixin(models.AbstractModel):
         string='Subscription Plan',
         help="Plan for this recurring product line.",
     )
-    start_recurring_date = fields.Date(
-        string='Subscription Start Date',
-        help="Start date for this subscription line. If not set, uses the order date.",
-        copy=False,
+    free_periods = fields.Integer(
+        string='Free Periods',
+        default=0,
+        help="Number of free recurring periods before the first invoice is generated.",
     )
     required_recurring_quantity = fields.Integer(
         'Required Recurring Quantity',
@@ -78,15 +78,14 @@ class RecurringOrderLineMixin(models.AbstractModel):
         for line in self:
             line.recurring_ok = bool(line.product_id and line.product_id.recurring_ok)
 
-    @api.constrains('start_recurring_date')
-    def _check_start_recurring_date(self):
-        """Ensure start_recurring_date is not before order date."""
+    @api.constrains('free_periods')
+    def _check_free_periods(self):
+        """Ensure free_periods is not negative."""
         for line in self:
-            if line.start_recurring_date and line.order_id.date_order and line.start_recurring_date < line.order_id.date_order.date():
+            if line.free_periods < 0:
                 raise ValidationError(_(
-                    "The subscription start date (%s) cannot be before the order date (%s).",
-                    line.start_recurring_date,
-                    line.order_id.date_order.date()
+                    "The number of free periods cannot be negative for product '%s'.",
+                    line.product_id.display_name,
                 ))
 
     # === COMPUTE METHODS === #
@@ -120,44 +119,6 @@ class RecurringOrderLineMixin(models.AbstractModel):
             else:
                 line.subscription_period_total = 0.0
 
-    # === ONCHANGE METHODS === #
-    @api.onchange('plan_id')
-    def _onchange_plan_id(self):
-        """When changing plan, update price accordingly."""
-        if self.product_id and self.recurring_ok and self.plan_id:
-            self._set_price_from_plan()
-
-    def _set_price_from_plan(self):
-        """Set price_unit based on the selected plan and pricelist."""
-        if not self.product_id or not self.plan_id:
-            return
-        pricelist = self._get_pricelist_for_plan()
-        if not pricelist:
-            return
-
-        pricing = self.env['solt.recurring.pricing']._get_first_suitable_recurring_pricing(
-            self.product_id,
-            self.plan_id,
-            pricelist
-        )
-        if pricing:
-            self.required_recurring_quantity = pricing.required_recurring_quantity
-            self.start_recurring_date = self.order_id.date_order.date() + pricing.plan_id.billing_period
-            self.price_unit = pricing.currency_id._convert(
-                pricing.price,
-                self.currency_id,
-                self.company_id,
-                fields.Date.today(),
-            )
-
-    def _get_pricelist_for_plan(self):
-        """Get the pricelist for this line. Override in subclasses if needed."""
-        if hasattr(self.order_id, 'pricelist_id'):
-            return self.order_id.pricelist_id
-        elif hasattr(self.order_id, 'partner_id'):
-            return self.order_id.partner_id.property_product_pricelist
-        return None
-
     # === SUBSCRIPTION CREATION === #
     def _prepare_subscription_line_values(self):
         """Prepare values to create a subscription line from this order line."""
@@ -167,7 +128,7 @@ class RecurringOrderLineMixin(models.AbstractModel):
             'product_id': self.product_id.id,
             'name': self.name,
             'product_uom_qty': self._get_product_qty(),
-            'product_uom_id': self.product_uom.id,
+            'product_uom': self.product_uom.id,
             'price_unit': self.price_unit,
             'tax_ids': [(6, 0, self._get_tax_ids().ids)],
             'analytic_distribution': self._get_analytic_distribution(),
@@ -180,9 +141,3 @@ class RecurringOrderLineMixin(models.AbstractModel):
     def _get_tax_ids(self):
         """Get tax ids. Override in subclasses."""
         return self.tax_id
-
-    def _get_subscription_grouping_key(self):
-        """Return the key used to group lines into subscriptions."""
-        self.ensure_one()
-        start_recurring_date = self.start_recurring_date or self.order_id.date_order.date()
-        return self.plan_id.id, start_recurring_date
