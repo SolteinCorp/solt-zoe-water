@@ -2,7 +2,7 @@
 from dateutil.relativedelta import relativedelta
 from odoo import Command, _, _lt, api, fields, models
 from odoo.exceptions import ValidationError
-from odoo.tools import get_timedelta
+from odoo.tools.date_utils import get_timedelta
 
 
 class SoltSaleRecurringPlan(models.Model):

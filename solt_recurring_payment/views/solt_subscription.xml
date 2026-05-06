@@ -94,7 +94,7 @@
                                     <field name="name" optional="hide"/>
                                     <field name="product_uom_qty"/>
                                     <field name="company_id" column_invisible="True"/>
-                                    <field name="product_uom" groups="uom.group_uom"/>
+                                    <field name="product_uom_id" groups="uom.group_uom"/>
                                     <field name="price_unit"/>
                                     <field name="discount" optional="show"/>
                                     <field name="tax_ids" widget="many2many_tags" optional="hide"/>
@@ -102,7 +102,7 @@
                                     <field name="price_total" optional="show"/>
                                     <field name="recurring_monthly" optional="hide"/>
                                     <field name="product_uom_category_id" column_invisible="True"/>
-                                    <field name="product_uom" column_invisible="True"/>
+                                    <field name="product_uom_id" column_invisible="True"/>
                                     <field name="subscription_type" column_invisible="True"/>
                                     <field name="currency_id" column_invisible="True"/>
                                     <field name="product_domain" column_invisible="True"/>

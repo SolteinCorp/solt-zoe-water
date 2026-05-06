@@ -131,7 +131,6 @@ class RecurringOrderLineMixin(models.AbstractModel):
             'product_uom': self.product_uom.id,
             'price_unit': self.price_unit,
             'tax_ids': [(6, 0, self._get_tax_ids().ids)],
-            'analytic_distribution': self._get_analytic_distribution(),
         }
 
     def _get_product_qty(self):

@@ -1023,10 +1023,9 @@ class SoltSaleSubscription(models.Model):
         :rtype: `account.move` recordset
         :raises: UserError if one of the orders has no invoiceable lines.
         """
-        if not self.env['account.move'].check_access_rights('create', False):
+        if not self.env['account.move'].has_access('create'):
             try:
-                self.check_access_rights('write')
-                self.check_access_rule('write')
+                self.check_access('write')
             except AccessError:
                 return self.env['account.move']
 
@@ -1042,7 +1041,7 @@ class SoltSaleSubscription(models.Model):
             invoice_vals['invoice_line_ids'] += invoice_line_vals
             invoice_vals_list.append(invoice_vals)
 
-        if not invoice_vals_list and self._context.get('raise_if_nothing_to_invoice', True):
+        if not invoice_vals_list and self.env.context.get('raise_if_nothing_to_invoice', True):
             raise UserError(_("You are trying to invoice recurring orders that are past their end date. Please change their end date or renew them before creating new invoices."))
 
         if len(invoice_vals_list) < len(self):
@@ -1070,7 +1069,7 @@ class SoltSaleSubscription(models.Model):
         self.ensure_one()
         if not mail_ctx:
             mail_ctx = {}
-        return {**self._context, **mail_ctx, **{'total_amount': self.recurring_total, 'currency_name': self.currency_id.name, 'responsible_email': self.user_id.email, 'code': self.name}}
+        return {**self.env.context, **mail_ctx, **{'total_amount': self.recurring_total, 'currency_name': self.currency_id.name, 'responsible_email': self.user_id.email, 'code': self.name}}
 
     def _process_auto_invoice(self, invoice):
         """Hook for extension, to support different invoice states"""

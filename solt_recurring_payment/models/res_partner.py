@@ -84,5 +84,5 @@ class ResPartner(models.Model):
             action['res_id'] = subscription_ids[0]['id']
             action['views'] = [(False, 'form')]
         else:
-            action['views'] = [(False, 'tree'), (False, 'form')]
+            action['views'] = [(False, 'list'), (False, 'form')]
         return action

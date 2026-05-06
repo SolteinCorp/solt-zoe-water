@@ -84,7 +84,7 @@ class SoltSaleSubscriptionLine(models.Model):
         default=1.0,
         help='Quantity of the product to invoice.',
     )
-    product_uom = fields.Many2one(
+    product_uom_id = fields.Many2one(
         'uom.uom',
         string='Unit of Measure',
         required=True,
@@ -372,13 +372,12 @@ class SoltSaleSubscriptionLine(models.Model):
         return {
             'name': description,
             'product_id': self.product_id.id,
-            'product_uom_id': self.product_uom.id,
+            'product_uom_id': self.product_uom_id.id,
             'quantity': self.product_uom_qty,
             'price_unit': price_unit,
             'discount': discount,
             'tax_ids': [Command.set(self.tax_ids.ids)],
             'subscription_id': subscription.id,
-            'analytic_distribution': self._get_analytic_distribution(),
         }
 
     @api.model
