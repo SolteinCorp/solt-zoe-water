@@ -18,7 +18,7 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_invoice_tree"/>
         <field name="arch" type="xml">
-            <field name="state" position="before">
+            <field name="status_in_payment" position="before">
                 <field name="is_recurring_document" string="Recurring" optional="show"/>
             </field>
         </field>
