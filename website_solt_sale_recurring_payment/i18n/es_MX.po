@@ -58,8 +58,8 @@ msgstr "Fecha de la siguiente factura:"
 #. module: website_solt_sale_recurring_payment
 #. odoo-python
 #: code:addons/website_solt_sale_recurring_payment/models/product_template.py:0
-msgid "No subscription"
-msgstr "Sin suscripción"
+msgid "Single purchase"
+msgstr "Compra única"
 
 #. module: website_solt_sale_recurring_payment
 #. odoo-javascript

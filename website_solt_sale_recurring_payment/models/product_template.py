@@ -151,7 +151,7 @@ class ProductTemplate(models.Model):
         # Build "Sin suscripción / Pago único" as the default first option (plan_id=0)
         no_sub_price = combination_info["price"]
         no_sub_formatted = format_amount(self.env, amount=no_sub_price, currency=currency)
-        no_sub_label = _("No subscription")
+        no_sub_label = _("Single purchase")
         no_sub_entry = {
             "plan_id": 0,
             "price": f"{no_sub_label}: {no_sub_formatted}",
