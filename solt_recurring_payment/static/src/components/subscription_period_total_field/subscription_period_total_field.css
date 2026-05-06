@@ -1,0 +1,27 @@
+/* Subscription Period Total Widget Styles */
+.o_subscription_period_total {
+    text-align: right;
+    -webkit-box-pack: end;
+    justify-content: flex-end;
+    width: 100%;
+
+    .o_form_label:after {
+        content: ":";
+    }
+
+    .o_form_label {
+        padding-right: 20px;
+        margin-right: 0;
+        min-width: 0;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 0 !important;
+        vertical-align: top;
+    }
+    .bold {
+        white-space: nowrap !important;
+        font-weight: bold !important;
+    }
+}

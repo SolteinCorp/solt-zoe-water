@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- SALE ORDER FORM - Add subscription fields to lines -->
+    <record id="sale_order_form_subscription" model="ir.ui.view">
+        <field name="name">sale.order.form.subscription</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_subscriptions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-refresh"
+                        invisible="subscription_count == 0">
+                    <field name="subscription_count" widget="statinfo" string="Subscriptions"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="is_subscription" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="after">
+                <field name="recurring_ok" column_invisible="True"/>
+                <field name="available_plan_ids_domain" column_invisible="True"/>
+                <field name="plan_id"
+                       domain="available_plan_ids_domain"
+                       optional="show"
+                       options="{'no_create': True}"/>
+                <field name="start_recurring_date"
+                       optional="hide"/>
+                <field name="required_recurring_quantity"
+                       string="Periodos"
+                       optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_subtotal']" position="after">
+                <field name="subscription_period_total"
+                       optional="hide"
+                       readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_subtotal']" position="attributes">
+                <attribute name="decoration-info">recurring_ok</attribute>
+            </xpath>
+
+            <!-- Add subscription breakdown section after tax_totals -->
+            <xpath expr="//field[@name='tax_totals']" position="before">
+                <field invisible="not is_subscription" name="subscription_period_total"
+                       widget="subscription-period-total-field" nolabel="1" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='tax_totals']" position="attributes">
+                <attribute name="invisible">is_subscription</attribute>
+            </xpath>
+            <xpath expr="//field[@name='note']/.." position="attributes">
+                <attribute name="colspan">3</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- SALE ORDER LIST VIEW - Add subscription info -->
+    <record id="view_order_tree_subscription" model="ir.ui.view">
+        <field name="name">sale.order.list.subscription</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="amount_total" position="after">
+                <field name="recurring_monthly" optional="hide"/>
+                <field name="subscription_count" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- SALE ORDER SEARCH - Add subscription filters -->
+    <record id="view_sales_order_filter_subscription" model="ir.ui.view">
+        <field name="name">sale.order.search.subscription</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <filter name="my_sale_orders_filter" position="after">
+                <separator/>
+                <filter string="Has Subscriptions"
+                        name="has_subscriptions"
+                        domain="[('is_subscription', '=', True)]"/>
+            </filter>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="solt_sale_order_action">
+        <field name="name">Sales Orders</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,kanban,form,calendar,pivot,graph,activity</field>
+        <field name="domain">[('is_subscription', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first sales order
+            </p>
+        </field>
+    </record>
+</odoo>

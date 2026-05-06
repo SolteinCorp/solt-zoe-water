@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_solt_sale_order"
+              action="solt_sale_order_action"
+              parent="solt_recurring_payment.menu_solt_recurring"
+              groups="sales_team.group_sale_salesman"
+              sequence="15"/>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sale_order_portal_content_inherit_subscriptions"
+              inherit_id="sale_management.sale_order_portal_content_inherit_sale_management">
+        <xpath expr="//th[@id='product_name_header']" position="after">
+            <th t-if="sale_order.is_subscription" class="text-end" id="product_plan_header">Plan</th>
+            <th t-if="sale_order.is_subscription" class="text-end" id="product_start_recurring_date_header">Start Date</th>
+        </xpath>
+        <xpath expr="//div[@id='total']/div" position="attributes">
+            <attribute name="t-attf-class">#{'col-8 col-md-6' if sale_order.is_subscription else 'col-7 col-md-5'} ms-auto</attribute>
+        </xpath>
+        <xpath expr="//td[@id='product_name']" position="after">
+            <td t-if="sale_order.is_subscription" class="text-end" id="product_plan_td">
+                <div t-if="line.plan_id and line.required_recurring_quantity">
+                    <span t-field="line.required_recurring_quantity"/> <span t-field="line.plan_id.billing_period_unit"/>
+                </div>
+                <span t-if="line.plan_id and not line.required_recurring_quantity" t-field="line.plan_id"/>
+            </td>
+            <td t-if="sale_order.is_subscription" class="text-end" id="product_start_recurring_date_td">
+                <span t-field="line.start_recurring_date"/>
+            </td>
+        </xpath>
+    </template>
+</odoo>

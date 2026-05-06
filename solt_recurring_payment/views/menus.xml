@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- MENU ITEMS moved from solt_subscription.xml -->
+
+    <menuitem id="menu_solt_subscription_root"
+              name="Subscriptions"
+              groups="solt_recurring_payment.group_subscription_user"
+              web_icon="solt_recurring_payment,static/src/img/subscription.svg"
+              sequence="30">
+
+        <menuitem id="menu_solt_recurring" name="Subscriptions" sequence="5">
+            <menuitem id="menu_solt_subscription"
+                      action="solt_subscription_action"
+                      sequence="1"/>
+        </menuitem>
+
+        <menuitem id="product_menu_catalog"
+                  name="Products"
+                  groups="solt_recurring_payment.group_subscription_user"
+                  sequence="30">
+            <menuitem id="menu_solt_recurring_product"
+                      action="product_action_subscription"
+                      sequence="10"/>
+            <menuitem action="product.product_pricelist_action2" id="menu_solt_recurring_pricelist" sequence="50"
+                      groups="product.group_product_pricelist"/>
+        </menuitem>
+
+        <menuitem id="menu_solt_subscription_config"
+                  name="Configuration" groups="solt_recurring_payment.group_subscription_manager"
+                  sequence="100">
+            <menuitem id="menu_solt_recurring_plan" action="solt_recurring_plan_action" sequence="10"/>
+            <menuitem id="menu_solt_recurring_close_reason_action"
+                      action="solt_subscription_close_reason_action" sequence="20"/>
+            <menuitem id="subscription_menu_config_activity_type"
+                      action="mail_activity_type_action_config_subscription"
+                      sequence="100"
+                      groups="solt_recurring_payment.group_subscription_manager"/>
+            <menuitem id="mail_activity_plan_menu_config_subscription"
+                      action="mail_activity_plan_action_subscription"
+                      sequence="110"
+                      groups="solt_recurring_payment.group_subscription_manager"/>
+        </menuitem>
+
+    </menuitem>
+
+</odoo>

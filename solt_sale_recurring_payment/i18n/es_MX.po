@@ -1,0 +1,304 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* solt_sale_recurring_payment
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0-20260105\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-28 18:26+0000\n"
+"PO-Revision-Date: 2026-01-28 18:26+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_payment_transaction__subscription_action
+msgid "Action of the payment transaction for subscription renewal purposes"
+msgstr "Acción de la transacción de pago para fines de renovación de suscripción"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields.selection,name:solt_sale_recurring_payment.selection__payment_transaction__subscription_action__assign_token
+msgid "Assign Token"
+msgstr "Asignar token"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields.selection,name:solt_sale_recurring_payment.selection__payment_transaction__renewal_state__authorized
+msgid "Authorized"
+msgstr "Autorizado"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__available_plan_ids_domain
+msgid "Available Plans Domain"
+msgstr "Dominio de planes disponibles"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order__subscription_count
+msgid "Count of subscriptions."
+msgstr "Cantidad de suscripciones."
+
+#. module: solt_sale_recurring_payment
+#: model_terms:ir.actions.act_window,help:solt_sale_recurring_payment.solt_sale_order_action
+msgid "Create your first sales order"
+msgstr "Crea tu primera orden de venta"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__available_plan_ids_domain
+msgid ""
+"Domain used to filter available subscription plans for this product line."
+msgstr ""
+"Dominio utilizado para filtrar los planes de suscripción disponibles para esta línea de producto."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields.selection,name:solt_sale_recurring_payment.selection__payment_transaction__renewal_state__draft
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order__is_subscription
+#: model_terms:ir.ui.view,arch_db:solt_sale_recurring_payment.view_sales_order_filter_subscription
+msgid "Has Subscriptions"
+msgstr "Tiene suscripciones"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order__is_subscription
+msgid "Indicates if this order has recurring product lines."
+msgstr "Indica si este pedido tiene líneas de productos recurrentes."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__recurring_invoice
+msgid "Indicates if this product line is a recurring (subscription) product."
+msgstr "Indica si esta línea de producto es un producto recurrente (suscripción)."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__required_recurring_quantity
+msgid ""
+"Minimum quantity of recurring periods that must be purchased with this "
+"pricing."
+msgstr ""
+"Mínima cantidad de períodos recurrentes que deben comprarse con este precio."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order__recurring_monthly
+msgid "Monthly Recurring"
+msgstr "Recurrente mensual"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__recurring_monthly
+msgid "Monthly Recurring Revenue"
+msgstr "Ingresos recurrentes mensuales"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model,name:solt_sale_recurring_payment.model_payment_method
+msgid "Payment Method"
+msgstr "Método de pago"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model,name:solt_sale_recurring_payment.model_payment_provider
+msgid "Payment Provider"
+msgstr "Proveedor de pago"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model,name:solt_sale_recurring_payment.model_payment_transaction
+msgid "Payment Transaction"
+msgstr "Transacción de pago"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields.selection,name:solt_sale_recurring_payment.selection__payment_transaction__renewal_state__pending
+msgid "Pending"
+msgstr "Pendiente"
+
+#. module: solt_sale_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_sale_recurring_payment.sale_order_form_subscription
+msgid "Periodos"
+msgstr "Períodos"
+
+#. module: solt_sale_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_sale_recurring_payment.report_saleorder_document_inherit_sale_management
+#: model_terms:ir.ui.view,arch_db:solt_sale_recurring_payment.sale_order_portal_content_inherit_subscriptions
+msgid "Plan"
+msgstr ""
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__plan_id
+msgid "Plan for this recurring product line."
+msgstr "Plan para esta línea de producto recurrente."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__recurring_invoice
+msgid "Recurring Invoice"
+msgstr "Factura recurrente"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order__recurring_total
+msgid "Recurring Total"
+msgstr "Total recurrente"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order__recurring_monthly
+msgid "Recurring monthly for this order."
+msgstr "Recurrente mensual para este pedido."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order__recurring_total
+msgid "Recurring total for this order."
+msgstr "Total recurrente para este pedido."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields.selection,name:solt_sale_recurring_payment.selection__payment_transaction__renewal_state__cancel
+msgid "Refused"
+msgstr "Rechazado"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_payment_transaction__renewal_state
+msgid "Renewal State"
+msgstr "Estado de renovación"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__required_recurring_quantity
+msgid "Required Recurring Quantity"
+msgstr "Cantidad recurrente requerida"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order__subscription_period_total
+msgid "Resumen de Suscripciones"
+msgstr "Resumen de suscripciones"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model,name:solt_sale_recurring_payment.model_sale_order
+msgid "Sales Order"
+msgstr "Orden de venta"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model,name:solt_sale_recurring_payment.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Línea de la orden de venta"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.actions.act_window,name:solt_sale_recurring_payment.solt_sale_order_action
+#: model:ir.ui.menu,name:solt_sale_recurring_payment.menu_solt_sale_order
+msgid "Sales Orders"
+msgstr "Órdenes de venta"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields.selection,name:solt_sale_recurring_payment.selection__payment_transaction__subscription_action__automatic_send_mail
+msgid "Send Mail (automatic payment)"
+msgstr "Enviar correo (pago automático)"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields.selection,name:solt_sale_recurring_payment.selection__payment_transaction__subscription_action__manual_send_mail
+msgid "Send Mail (manual payment)"
+msgstr "Enviar correo (pago manual)"
+
+#. module: solt_sale_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_sale_recurring_payment.report_saleorder_document_inherit_sale_management
+#: model_terms:ir.ui.view,arch_db:solt_sale_recurring_payment.sale_order_portal_content_inherit_subscriptions
+msgid "Start Date"
+msgstr "Fecha de inicio"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__start_recurring_date
+msgid ""
+"Start date for this subscription line. If not set, uses the order date."
+msgstr ""
+"Fecha de inicio para esta línea de suscripción. Si no se establece, se utiliza la fecha del pedido."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_payment_transaction__renewal_state
+msgid "State of the payment transaction for subscription renewal purposes"
+msgstr "Estado de la transacción de pago para fines de renovación de suscripción"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__subscription_id
+msgid "Subscription"
+msgstr "Suscripción"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_payment_transaction__subscription_action
+msgid "Subscription Action"
+msgstr "Acción de suscripción"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order__subscription_count
+msgid "Subscription Count"
+msgstr "Cantidad de suscripciones"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__subscription_line_ids
+msgid "Subscription Line"
+msgstr "Línea de suscripción"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__plan_id
+msgid "Subscription Plan"
+msgstr "Plan de suscripción"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__start_recurring_date
+msgid "Subscription Start Date"
+msgstr "Fecha de inicio de la suscripción"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_payment_transaction__subscription_ids
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order__subscription_ids
+#: model_terms:ir.ui.view,arch_db:solt_sale_recurring_payment.sale_order_form_subscription
+msgid "Subscriptions"
+msgstr "Suscripciones"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order__subscription_ids
+msgid "Subscriptions created from this sale order."
+msgstr "Suscripciones creadas a partir de esta orden de venta."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_payment_transaction__subscription_ids
+msgid ""
+"Subscriptions related to this payment transaction via sale orders or "
+"invoices"
+msgstr ""
+"Suscripciones relacionadas con esta transacción de pago a través de órdenes de venta o facturas"
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order__subscription_period_total
+msgid ""
+"Summary of subscription totals grouped by plan (for quotation display only)."
+" Contains plan information and period totals."
+msgstr ""
+"Resumen de totales de suscripción agrupados por plan (solo para visualización de"
+" cotizaciones). Contiene información del plan y totales de período."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__recurring_monthly
+msgid ""
+"The monthly recurring revenue (MRR) for this line, computed based on the "
+"selected subscription plan and price."
+msgstr ""
+"Los ingresos recurrentes mensuales (MRR) para esta línea, calculados en base al"
+" plan de suscripción y precio seleccionados."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__subscription_id
+msgid "The subscription created from this line."
+msgstr "La suscripción creada a partir de esta línea."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__subscription_line_ids
+msgid "The subscription line created from this line."
+msgstr "La línea de suscripción creada a partir de esta línea."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,help:solt_sale_recurring_payment.field_sale_order_line__subscription_period_total
+msgid ""
+"Total amount for the entire subscription period (price_subtotal × "
+"required_recurring_quantity). This is informational only for quotations."
+msgstr ""
+"Importe total para todo el período de suscripción (price_subtotal × "
+"required_recurring_quantity). Esto es solo informativo para cotizaciones."
+
+#. module: solt_sale_recurring_payment
+#: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__subscription_period_total
+msgid "Total del Periodo"
+msgstr "Total del período"

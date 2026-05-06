@@ -1,0 +1,3574 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* solt_recurring_payment
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0-20260105\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-31 04:45+0000\n"
+"PO-Revision-Date: 2026-01-31 04:45+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__percentage_satisfaction
+msgid "% Satisfaction"
+msgstr "% Satisfacción"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "%s - Plan change adjustment (%s days)"
+msgstr "%s - Ajuste por cambio de plan (%s días)"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid "%s days"
+msgstr "%s días"
+
+#. module: solt_recurring_payment
+#: model:mail.template,body_html:solt_recurring_payment.mail_template_subscription_rating
+msgid ""
+"<div style=\"background:#F0F0F0;color:#515166;padding:10px 0px;font-family:Arial,Helvetica,sans-serif;font-size:14px;\">\n"
+"                <t t-set=\"access_token\" t-value=\"object._rating_get_access_token()\"></t>\n"
+"                <table style=\"width:600px;margin:5px auto;\">\n"
+"                    <tbody>\n"
+"                        <tr><td t-if=\"not object.company_id.uses_default_logo\">\n"
+"                            <a href=\"/\"><img t-attf-src=\"/logo.png?company={{ object.company_id.id }}\" style=\"vertical-align:baseline;max-width:100px;\"></a>\n"
+"                        </td><td style=\"text-align:right;vertical-align:middle;\">\n"
+"                            Satisfaction Survey\n"
+"                        </td></tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                <table style=\"width:600px;margin:0px auto;background:white;border:1px solid #e1e1e1;\">\n"
+"                    <tbody>\n"
+"                        <tr><td style=\"padding:15px 20px 10px 20px;\">\n"
+"                            <p>Hello,</p>\n"
+"                            <p>Please take a moment to rate our services related to your subscription \"<strong t-out=\"object.name or ''\">Office Cleaning Service\"</strong>\"\n"
+"                                assigned to <strong t-out=\"object._rating_get_operator().name or ''\">Mitchell\n"
+"                                    Admin</strong>.</p>\n"
+"                            <p>We appreciate your feedback. It helps us to improve continuously.</p>\n"
+"                        </td></tr>\n"
+"                        <tr><td style=\"padding:10px 20px\">\n"
+"                            <table summary=\"o_mail_notification\" style=\"width:100%;border-top:1px solid #e1e1e1;\">\n"
+"                                <tr>\n"
+"                                    <td style=\"text-align:center;\">\n"
+"                                        <h2 style=\"font-weight:300;font-size:18px;\">\n"
+"                                            Tell us how you feel about our services:\n"
+"                                        </h2>\n"
+"                                        <div style=\"text-color: #888888\">(click on one of these smileys)</div>\n"
+"                                    </td>\n"
+"                                </tr>\n"
+"                                <tr>\n"
+"                                    <td style=\"padding:10px 10px;\">\n"
+"                                        <table style=\"width:100%;text-align:center;\">\n"
+"                                            <tr>\n"
+"                                                <td>\n"
+"                                                    <a t-attf-href=\"/rate/{{ access_token }}/5\">\n"
+"                                                        <img alt=\"Satisfied\" src=\"/rating/static/src/img/rating_5.png\" title=\"Satisfied\">\n"
+"                                                    </a>\n"
+"                                                </td>\n"
+"                                                <td>\n"
+"                                                    <a t-attf-href=\"/rate/{{ access_token }}/3\">\n"
+"                                                        <img alt=\"Okay\" src=\"/rating/static/src/img/rating_3.png\" title=\"Okay\">\n"
+"                                                    </a>\n"
+"                                                </td>\n"
+"                                                <td>\n"
+"                                                    <a t-attf-href=\"/rate/{{ access_token }}/1\">\n"
+"                                                        <img alt=\"Dissatisfied\" src=\"/rating/static/src/img/rating_1.png\" title=\"Dissatisfied\">\n"
+"                                                    </a>\n"
+"                                                </td>\n"
+"                                            </tr>\n"
+"                                        </table>\n"
+"                                    </td>\n"
+"                                </tr>\n"
+"                            </table>\n"
+"                        </td></tr>\n"
+"                        <tr><td style=\"padding:15px 20px 10px 20px;\" t-out=\"object.user_id.signature or ''\">--<br>\n"
+"                            Mitchell Admin</td></tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                <table style=\"width:600px;margin:auto;text-align:center;font-size:12px;\">\n"
+"                    <tbody>\n"
+"                        <tr><td style=\"padding-top:10px;color:#afafaf;\">\n"
+"                            <p>Email automatically sent by <a target=\"_blank\" href=\"https://www.odoo.com/app/subscriptions\" style=\"color:#875A7B;text-decoration:none;\">Odoo\n"
+"                                Subscription</a> for <a t-att-href=\"object.company_id.website\" style=\"color:#875A7B;text-decoration:none;\" t-out=\"object.company_id.name or ''\">YourCompany</a></p>\n"
+"                        </td></tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div style=\"background:#F0F0F0;color:#515166;padding:10px 0px;font-family:Arial,Helvetica,sans-serif;font-size:14px;\">\n"
+"                    <t t-set=\"access_token\" t-value=\"object._rating_get_access_token()\"></t>\n"
+"                    <table style=\"width:600px;margin:5px auto;\">\n"
+"                        <tbody>\n"
+"                            <tr><td t-if=\"not object.company_id.uses_default_logo\">\n"
+"                                <a href=\"/\"><img t-attf-src=\"/logo.png?company={{ object.company_id.id }}\" style=\"vertical-align:baseline;max-width:100px;\"></a>\n"
+"                            </td><td style=\"text-align:right;vertical-align:middle;\">\n"
+"                                Encuesta de satisfacción\n"
+"                            </td></tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <table style=\"width:600px;margin:0px auto;background:white;border:1px solid #e1e1e1;\">\n"
+"                        <tbody>\n"
+"                            <tr><td style=\"padding:15px 20px 10px 20px;\">\n"
+"                                <p>Hola,</p>\n"
+"                                <p>Por favor, dedique un momento a valorar nuestros servicios relacionados con su suscripción \"<strong t-out=\"object.name or ''\">Servicio de limpieza de oficinas\"</strong>\"\n"
+"                                    asignado a <strong t-out=\"object._rating_get_operator().name or ''\">Mitchell\n"
+"                                        Admin</strong>.</p>\n"
+"                                <p>Agradecemos sus comentarios. Nos ayudan a mejorar continuamente.</p>\n"
+"                            </td></tr>\n"
+"                            <tr><td style=\"padding:10px 20px\">\n"
+"                                <table summary=\"o_mail_notification\" style=\"width:100%;border-top:1px solid #e1e1e1;\">\n"
+"                                    <tr>\n"
+"                                        <td style=\"text-align:center;\">\n"
+"                                            <h2 style=\"font-weight:300;font-size:18px;\">\n"
+"                                                Cuéntenos qué opina sobre nuestros servicios:\n"
+"                                            </h2>\n"
+"                                            <div style=\"text-color: #888888\">(Haga clic en uno de estos emoticonos.)</div>\n"
+"                                        </td>\n"
+"                                    </tr>\n"
+"                                    <tr>\n"
+"                                        <td style=\"padding:10px 10px;\">\n"
+"                                            <table style=\"width:100%;text-align:center;\">\n"
+"                                                <tr>\n"
+"                                                    <td>\n"
+"                                                        <a t-attf-href=\"/rate/{{ access_token }}/5\">\n"
+"                                                            <img alt=\"Satisfecho\" src=\"/rating/static/src/img/rating_5.png\" title=\"Satisfecho\">\n"
+"                                                        </a>\n"
+"                                                    </td>\n"
+"                                                    <td>\n"
+"                                                        <a t-attf-href=\"/rate/{{ access_token }}/3\">\n"
+"                                                            <img alt=\"Okay\" src=\"/rating/static/src/img/rating_3.png\" title=\"De acuerdo.\">\n"
+"                                                        </a>\n"
+"                                                    </td>\n"
+"                                                    <td>\n"
+"                                                        <a t-attf-href=\"/rate/{{ access_token }}/1\">\n"
+"                                                            <img alt=\"Insatisfecho\" src=\"/rating/static/src/img/rating_1.png\" title=\"Insatisfecho\">\n"
+"                                                        </a>\n"
+"                                                    </td>\n"
+"                                                </tr>\n"
+"                                            </table>\n"
+"                                        </td>\n"
+"                                    </tr>\n"
+"                                </table>\n"
+"                            </td></tr>\n"
+"                            <tr><td style=\"padding:15px 20px 10px 20px;\" t-out=\"object.user_id.signature or ''\">--<br>\n"
+"                                Mitchell Admin</td></tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <table style=\"width:600px;margin:auto;text-align:center;font-size:12px;\">\n"
+"                        <tbody>\n"
+"                            <tr><td style=\"padding-top:10px;color:#afafaf;\">\n"
+"                                <p>Correo electrónico enviado automáticamente por <a target=\"_blank\" href=\"https://www.odoo.com/app/subscriptions\" style=\"color:#875A7B;text-decoration:none;\">Odoo\n"
+"                                    Suscripción</a> para <a t-att-href=\"object.company_id.website\" style=\"color:#875A7B;text-decoration:none;\" t-out=\"object.company_id.name or ''\">YourCompany</a></p>\n"
+"                            </td></tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                </div>\n"
+"            "
+
+#. module: solt_recurring_payment
+#: model:mail.template,body_html:solt_recurring_payment.mail_template_subscription_alert
+msgid ""
+"<div style=\"background:#F0F0F0;color:#515166;padding:10px 0px;font-family:Arial,Helvetica,sans-serif;font-size:14px;\">\n"
+"                <table style=\"width:600px;margin:5px auto;\">\n"
+"                    <tbody>\n"
+"                        <tr><td t-if=\"not object.company_id.uses_default_logo\">\n"
+"                            <a href=\"/\"><img t-attf-src=\"/logo.png?company={{ object.company_id.id }}\" style=\"vertical-align:baseline;max-width:100px;\"></a>\n"
+"                        </td><td style=\"text-align:right;vertical-align:middle;\">\n"
+"                            Subscription Renewal\n"
+"                        </td></tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                <table style=\"width:600px;margin:0px auto;background:white;border:1px solid #e1e1e1;\">\n"
+"                    <tbody>\n"
+"                        <tr><td style=\"padding:15px 20px 10px 20px;\">\n"
+"                            <p>Dear <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,</p>\n"
+"                            <p>Your subscription <strong t-out=\"object.name or ''\">Office Cleaning Service\"</strong> needs\n"
+"                                your attention.</p>\n"
+"                            <p>We invite you to renew it by clicking on the following link.</p>\n"
+"                            <p>Kind regards.</p>\n"
+"                        </td></tr>\n"
+"                        <tr><td style=\"padding:15px 20px 10px 20px;\" t-out=\"object.user_id.signature or ''\">--<br>\n"
+"                            Mitchell Admin</td></tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div style=\"background:#F0F0F0;color:#515166;padding:10px 0px;font-family:Arial,Helvetica,sans-serif;font-size:14px;\">\n"
+"                    <table style=\"width:600px;margin:5px auto;\">\n"
+"                        <tbody>\n"
+"                            <tr><td t-if=\"not object.company_id.uses_default_logo\">\n"
+"                                <a href=\"/\"><img t-attf-src=\"/logo.png?company={{ object.company_id.id }}\" style=\"vertical-align:baseline;max-width:100px;\"></a>\n"
+"                            </td><td style=\"text-align:right;vertical-align:middle;\">\n"
+"                                Renovación de suscripción\n"
+"                            </td></tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <table style=\"width:600px;margin:0px auto;background:white;border:1px solid #e1e1e1;\">\n"
+"                        <tbody>\n"
+"                            <tr><td style=\"padding:15px 20px 10px 20px;\">\n"
+"                                <p>Estimado <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,</p>\n"
+"                                <p>Tu suscripción <strong t-out=\"object.name or ''\">Servicio de limpieza de oficinas\"</strong> necesita\n"
+"                                    su atención.</p>\n"
+"                                <p>Le invitamos a renovarla haciendo clic en el siguiente enlace.</p>\n"
+"                                <p>Atentamente.</p>\n"
+"                            </td></tr>\n"
+"                            <tr><td style=\"padding:15px 20px 10px 20px;\" t-out=\"object.user_id.signature or ''\">--<br>\n"
+"                                Mitchell Admin</td></tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                </div>\n"
+"            "
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_kanban
+msgid "<span class=\"text-muted\">/month</span>"
+msgstr "<span class=\"text-muted\">/mes</span>"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid ""
+"<strong>Warning:</strong> the survey can only be shown if all information is"
+" set. Please complete:"
+msgstr ""
+"<strong>Aviso:</strong> la encuesta solo se puede mostrar si se ha "
+"establecido toda la información. Por favor, complete:"
+
+#. module: solt_recurring_payment
+#: model:mail.template,body_html:solt_recurring_payment.email_payment_success
+msgid ""
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-top: 16px; background-color: #F1F1F1; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;\"><tr><td align=\"center\">\n"
+"                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"padding: 16px; background-color: white; color: #454748; border-collapse:separate;\">\n"
+"                    <tbody>\n"
+"                        <!-- HEADER -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"middle\">\n"
+"                                        <t t-set=\"company\" t-value=\"object.company_id or object.invoice_user_id.company_id or user.company_id\"></t>\n"
+"                                        <span style=\"font-size: 10px;\">Your Subscription</span><br>\n"
+"                                        <span style=\"font-size: 20px; font-weight: bold;\" t-out=\"ctx.get('code', ctx.get('subscription_name')) or 'Document'\">\n"
+"                                            Document</span>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td valign=\"middle\" align=\"right\" t-if=\"not company.uses_default_logo\">\n"
+"                                        <img t-attf-src=\"/logo.png?company={{ company.id }}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" t-att-alt=\"company.name\">\n"
+"                                    </td></tr>\n"
+"                                    <tr><td colspan=\"2\" style=\"text-align:center;\">\n"
+"                                        <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin:16px 0px 16px 0px;\">\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <!-- CONTENT -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"                                        Dear <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,<br><br>\n"
+"                                        Your Subscription (<t t-out=\"ctx.get('subscription_name') or ''\">CODE</t>\n"
+"                                        <t t-if=\"ctx.get('code')\">\n"
+"                                            , Reference: <t t-out=\"ctx.get('code')\"></t>\n"
+"                                        </t>) has just been renewed\n"
+"                                        <t t-if=\"ctx.get('total_amount') and ctx.get('payment_token')\">\n"
+"                                            via a payment of <t t-out=\"ctx.get('total_amount') or ''\">100</t> <t t-out=\"ctx.get('currency_name') or ''\">$</t> charged on <t t-out=\"ctx.get('payment_token') or ''\">PAYMENT_TOKEN</t>.\n"
+"                                        </t>\n"
+"                                        <br><br>\n"
+"                                        You will find your invoice attached.\n"
+"                                        <t t-if=\"ctx.get('next_date')\">\n"
+"                                            Your next invoice will be on <t t-out=\"format_date(ctx.get('next_date')) or ''\">05/05/2021</t>.\n"
+"                                        </t>\n"
+"                                        <br><br>\n"
+"                                        If you have any questions, do not hesitate to contact us.\n"
+"                                        <br><br>\n"
+"                                        Thank you for choosing <t t-out=\"company.name or ''\">YourCompany</t>!\n"
+"                                        <div t-if=\"user.signature\">\n"
+"                                            <br><br>\n"
+"                                            <t t-out=\"user.signature or ''\">--<br>Mitchell Admin</t>\n"
+"                                        </div>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td style=\"text-align:center;\">\n"
+"                                        <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;\">\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <!-- FOOTER -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; font-size: 11px; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"middle\" align=\"left\">\n"
+"                                        <t t-out=\"company.name or ''\">YourCompany</t>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td valign=\"middle\" align=\"left\" style=\"opacity: 0.7;\">\n"
+"                                        <t t-if=\"company.phone\">\n"
+"                                            <t t-out=\"company.phone or ''\">+1 650-123-4567</t> |\n"
+"                                        </t>\n"
+"                                        <t t-if=\"company.email\">\n"
+"                                            <a t-attf-href=\"'mailto:%s' % {{ company.email }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.email or ''\">info@yourcompany.com</a> |\n"
+"                                        </t>\n"
+"                                        <t t-if=\"company.website\">\n"
+"                                            <a t-attf-href=\"'%s' % {{ company.website }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.website or ''\">http://www.example.com</a>\n"
+"                                        </t>\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"            </td></tr>\n"
+"                <!-- POWERED BY -->\n"
+"                <tr><td align=\"center\" style=\"min-width: 590px;\">\n"
+"                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;\">\n"
+"                        <tr><td style=\"text-align: center; font-size: 13px;\">\n"
+"                            Powered by <a target=\"_blank\" href=\"https://www.odoo.com?utm_source=db&amp;utm_medium=mail\" style=\"color: #875A7B;\">Odoo</a>\n"
+"                        </td></tr>\n"
+"                    </table>\n"
+"                </td></tr>\n"
+"            </table>\n"
+"        "
+msgstr ""
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-top: 16px; background-color: #F1F1F1; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;\"><tr><td align=\"center\">\n"
+"                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"padding: 16px; background-color: white; color: #454748; border-collapse:separate;\">\n"
+"                        <tbody>\n"
+"                            <!-- HEADER -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"middle\">\n"
+"                                            <t t-set=\"company\" t-value=\"object.company_id or object.invoice_user_id.company_id or user.company_id\"></t>\n"
+"                                            <span style=\"font-size: 10px;\">Tu suscripción</span><br>\n"
+"                                            <span style=\"font-size: 20px; font-weight: bold;\" t-out=\"ctx.get('code', ctx.get('subscription_name')) or 'Documento'\">\n"
+"                                                Documento</span>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td valign=\"middle\" align=\"right\" t-if=\"not company.uses_default_logo\">\n"
+"                                            <img t-attf-src=\"/logo.png?company={{ company.id }}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" t-att-alt=\"company.name\">\n"
+"                                        </td></tr>\n"
+"                                        <tr><td colspan=\"2\" style=\"text-align:center;\">\n"
+"                                            <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin:16px 0px 16px 0px;\">\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <!-- CONTENT -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"                                            Estimado <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,<br><br>\n"
+"                                            Tu suscripción (<t t-out=\"ctx.get('subscription_name') or ''\">CÓDIGO</t>\n"
+"                                            <t t-if=\"ctx.get('code')\">\n"
+"                                                , Referencia: <t t-out=\"ctx.get('code')\"></t>\n"
+"                                            </t>) acaba de renovarse\n"
+"                                            <t t-if=\"ctx.get('total_amount') and ctx.get('payment_token')\">\n"
+"                                                mediante un pago de <t t-out=\"ctx.get('total_amount') or ''\">100</t> <t t-out=\"ctx.get('currency_name') or ''\">$</t> cargado en <t t-out=\"ctx.get('payment_token') or ''\">PAYMENT_TOKEN</t>.\n"
+"                                            </t>\n"
+"                                            <br><br>\n"
+"                                            Adjuntamos su factura.\n"
+"                                            <t t-if=\"ctx.get('next_date')\">\n"
+"                                                Su próxima factura será el <t t-out=\"format_date(ctx.get('next_date')) or ''\">05/05/2021</t>.\n"
+"                                            </t>\n"
+"                                            <br><br>\n"
+"                                            Si tiene alguna pregunta, no dude en ponerse en contacto con nosotros.\n"
+"                                            <br><br>\n"
+"                                            Gracias por elegir <t t-out=\"company.name or ''\">YourCompany</t>!\n"
+"                                            <div t-if=\"user.signature\">\n"
+"                                                <br><br>\n"
+"                                                <t t-out=\"user.signature or ''\">--<br>Mitchell Admin</t>\n"
+"                                            </div>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td style=\"text-align:center;\">\n"
+"                                            <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;\">\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <!-- FOOTER -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; font-size: 11px; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"middle\" align=\"left\">\n"
+"                                            <t t-out=\"company.name or ''\">YourCompany</t>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td valign=\"middle\" align=\"left\" style=\"opacity: 0.7;\">\n"
+"                                            <t t-if=\"company.phone\">\n"
+"                                                <t t-out=\"company.phone or ''\">+1 650-123-4567</t> |\n"
+"                                            </t>\n"
+"                                            <t t-if=\"company.email\">\n"
+"                                                <a t-attf-href=\"'mailto:%s' % {{ company.email }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.email or ''\">info@yourcompany.com</a> |\n"
+"                                            </t>\n"
+"                                            <t t-if=\"company.website\">\n"
+"                                                <a t-attf-href=\"'%s' % {{ company.website }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.website or ''\">http://www.example.com</a>\n"
+"                                            </t>\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                </td></tr>\n"
+"                    <!-- POWERED BY -->\n"
+"                    <tr><td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;\">\n"
+"                            <tr><td style=\"text-align: center; font-size: 13px;\">\n"
+"                                Desarrollado por <a target=\"_blank\" href=\"https://www.odoo.com?utm_source=db&amp;utm_medium=mail\" style=\"color: #875A7B;\">Odoo</a>\n"
+"                            </td></tr>\n"
+"                        </table>\n"
+"                    </td></tr>\n"
+"                </table>\n"
+"            "
+
+#. module: solt_recurring_payment
+#: model:mail.template,body_html:solt_recurring_payment.email_payment_close
+msgid ""
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-top: 16px; background-color: #F1F1F1; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;\"><tr><td align=\"center\">\n"
+"                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"padding: 16px; background-color: white; color: #454748; border-collapse:separate;\">\n"
+"                    <tbody>\n"
+"                        <!-- HEADER -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"middle\">\n"
+"                                        <t t-set=\"company\" t-value=\"object.company_id or object.user_id.company_id or user.company_id\"></t>\n"
+"                                        <span style=\"font-size: 10px;\">Your Subscription</span><br>\n"
+"                                        <span style=\"font-size: 20px; font-weight: bold;\" t-out=\"object.name or ''\">\n"
+"                                            Office Cleaning Service</span>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td valign=\"middle\" align=\"right\" t-if=\"not company.uses_default_logo\">\n"
+"                                        <img t-attf-src=\"/logo.png?company={{ company.id }}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" t-att-alt=\"company.name\">\n"
+"                                    </td></tr>\n"
+"                                    <tr><td colspan=\"2\" style=\"text-align:center;\">\n"
+"                                        <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin:16px 0px 16px 0px;\">\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <!-- CONTENT -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"                                        Hello <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,<br><br>\n"
+"                                        <t t-if=\"ctx.get('payment_token') and ctx.get('total_amount')\">\n"
+"                                            Our final attempt to process a payment for your subscription using your\n"
+"                                            payment method\n"
+"                                            <t t-out=\"ctx.get('payment_token') or ''\">TOKEN</t>\n"
+"                                            for <t t-out=\"ctx['total_amount'] or ''\">100</t> <t t-out=\"ctx.get('currency') or ''\">$</t> failed.\n"
+"                                            <t t-if=\"ctx.get('error')\">\n"
+"                                                Your bank or credit institution gave the following details about the\n"
+"                                                issue: <pre t-out=\"ctx['error'] or ''\"></pre>.\n"
+"                                            </t>\n"
+"                                        </t>\n"
+"                                        <t t-else=\"\">\n"
+"                                            Our final attempt to process a payment for your subscription failed\n"
+"                                            because we have no payment method recorded for you.\n"
+"                                        </t>\n"
+"                                        <br><br>\n"
+"                                        As your payment should have been made <strong><t t-out=\"ctx.get('auto_close_limit') or ''\">5</t> days ago</strong>, your\n"
+"                                        subscription has been terminated.\n"
+"                                        Should you wish to resolve this issue, do not hesitate to contact\n"
+"                                        us.<br><br>\n"
+"                                        Thank you for choosing <t t-out=\"company.name or ''\">YourCompany</t>!\n"
+"                                        <div t-if=\"user.signature\">\n"
+"                                            <br><br>\n"
+"                                            <t t-out=\"user.signature or ''\">--<br>Mitchell Admin</t>\n"
+"                                        </div>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td style=\"text-align:center;\">\n"
+"                                        <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;\">\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <!-- FOOTER -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; font-size: 11px; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"middle\" align=\"left\">\n"
+"                                        <t t-out=\"company.name or ''\">YourCompany</t>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td valign=\"middle\" align=\"left\" style=\"opacity: 0.7;\">\n"
+"                                        <t t-if=\"company.phone\">\n"
+"                                            <t t-out=\"company.phone or ''\">+1 650-123-4567</t> |\n"
+"                                        </t>\n"
+"                                        <t t-if=\"company.email\">\n"
+"                                            <a t-attf-href=\"'mailto:%s' % {{ company.email }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.email or ''\">info@yourcompany.com</a> |\n"
+"                                        </t>\n"
+"                                        <t t-if=\"company.website\">\n"
+"                                            <a t-attf-href=\"'%s' % {{ company.website }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.website or ''\">http://www.example.com</a>\n"
+"                                        </t>\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"            </td></tr>\n"
+"                <!-- POWERED BY -->\n"
+"                <tr><td align=\"center\" style=\"min-width: 590px;\">\n"
+"                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;\">\n"
+"                        <tr><td style=\"text-align: center; font-size: 13px;\">\n"
+"                            Powered by <a target=\"_blank\" href=\"https://www.odoo.com?utm_source=db&amp;utm_medium=mail\" style=\"color: #875A7B;\">Odoo</a>\n"
+"                        </td></tr>\n"
+"                    </table>\n"
+"                </td></tr>\n"
+"            </table>\n"
+"        "
+msgstr ""
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-top: 16px; background-color: #F1F1F1; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;\"><tr><td align=\"center\">\n"
+"                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"padding: 16px; background-color: white; color: #454748; border-collapse:separate;\">\n"
+"                        <tbody>\n"
+"                            <!-- HEADER -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"middle\">\n"
+"                                            <t t-set=\"company\" t-value=\"object.company_id or object.user_id.company_id or user.company_id\"></t>\n"
+"                                            <span style=\"font-size: 10px;\">Tu suscripción</span><br>\n"
+"                                            <span style=\"font-size: 20px; font-weight: bold;\" t-out=\"object.name or ''\">\n"
+"                                                Servicio de limpieza de oficinas</span>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td valign=\"middle\" align=\"right\" t-if=\"not company.uses_default_logo\">\n"
+"                                            <img t-attf-src=\"/logo.png?company={{ company.id }}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" t-att-alt=\"company.name\">\n"
+"                                        </td></tr>\n"
+"                                        <tr><td colspan=\"2\" style=\"text-align:center;\">\n"
+"                                            <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin:16px 0px 16px 0px;\">\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <!-- CONTENT -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"                                            Hola <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,<br><br>\n"
+"                                            <t t-if=\"ctx.get('payment_token') and ctx.get('total_amount')\">\n"
+"                                                Nuestro último intento de procesar un pago por tu suscripción utilizando tu\n"
+"                                                método de pago\n"
+"                                                <t t-out=\"ctx.get('payment_token') or ''\">TOKEN</t>\n"
+"                                                para <t t-out=\"ctx['total_amount'] or ''\">100</t> <t t-out=\"ctx.get('currency') or ''\">$</t> falló.\n"
+"                                                <t t-if=\"ctx.get('error')\">\n"
+"                                                    Su banco o entidad de crédito proporcionó los siguientes datos sobre el\n"
+"                                                    problema: <pre t-out=\"ctx['error'] or ''\"></pre>.\n"
+"                                                </t>\n"
+"                                            </t>\n"
+"                                            <t t-else=\"\">\n"
+"                                                Nuestro último intento de procesar el pago de tu suscripción ha fallado.\n"
+"                                                porque no tenemos ningún método de pago registrado para usted.\n"
+"                                            </t>\n"
+"                                            <br><br>\n"
+"                                            Como su pago ya debería haberse realizado <strong><t t-out=\"ctx.get('auto_close_limit') or ''\">5</t> días atrás</strong>, tu\n"
+"                                            suscripción ha sido cancelada.\n"
+"                                            Si desea resolver este problema, no dude en ponerse en contacto con\n"
+"                                            nosotros.<br><br>\n"
+"                                            Gracias por elegir <t t-out=\"company.name or ''\">YourCompany</t>!\n"
+"                                            <div t-if=\"user.signature\">\n"
+"                                                <br><br>\n"
+"                                                <t t-out=\"user.signature or ''\">--<br>Mitchell Admin</t>\n"
+"                                            </div>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td style=\"text-align:center;\">\n"
+"                                            <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;\">\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <!-- FOOTER -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; font-size: 11px; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"middle\" align=\"left\">\n"
+"                                            <t t-out=\"company.name or ''\">YourCompany</t>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td valign=\"middle\" align=\"left\" style=\"opacity: 0.7;\">\n"
+"                                            <t t-if=\"company.phone\">\n"
+"                                                <t t-out=\"company.phone or ''\">+1 650-123-4567</t> |\n"
+"                                            </t>\n"
+"                                            <t t-if=\"company.email\">\n"
+"                                                <a t-attf-href=\"'mailto:%s' % {{ company.email }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.email or ''\">info@yourcompany.com</a> |\n"
+"                                            </t>\n"
+"                                            <t t-if=\"company.website\">\n"
+"                                                <a t-attf-href=\"'%s' % {{ company.website }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.website or ''\">http://www.example.com</a>\n"
+"                                            </t>\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                </td></tr>\n"
+"                    <!-- POWERED BY -->\n"
+"                    <tr><td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;\">\n"
+"                            <tr><td style=\"text-align: center; font-size: 13px;\">\n"
+"                                Desarrollado por <a target=\"_blank\" href=\"https://www.odoo.com?utm_source=db&amp;utm_medium=mail\" style=\"color: #875A7B;\">Odoo</a>\n"
+"                            </td></tr>\n"
+"                        </table>\n"
+"                    </td></tr>\n"
+"                </table>\n"
+"            "
+
+#. module: solt_recurring_payment
+#: model:mail.template,body_html:solt_recurring_payment.email_payment_reminder
+msgid ""
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-top: 16px; background-color: #F1F1F1; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;\"><tr><td align=\"center\">\n"
+"                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"padding: 16px; background-color: white; color: #454748; border-collapse:separate;\">\n"
+"                    <tbody>\n"
+"                        <!-- HEADER -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"middle\">\n"
+"                                        <t t-set=\"company\" t-value=\"object.company_id or object.user_id.company_id or user.company_id\"></t>\n"
+"                                        <span style=\"font-size: 10px;\">Your Subscription</span><br>\n"
+"                                        <span style=\"font-size: 20px; font-weight: bold;\" t-out=\"object.name or ''\">\n"
+"                                            Office Cleaning Service</span>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td valign=\"middle\" align=\"right\" t-if=\"not company.uses_default_logo\">\n"
+"                                        <img t-attf-src=\"/logo.png?company={{ company.id }}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" t-att-alt=\"company.name\">\n"
+"                                    </td></tr>\n"
+"                                    <tr><td colspan=\"2\" style=\"text-align:center;\">\n"
+"                                        <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin:16px 0px 16px 0px;\">\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <!-- CONTENT -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"                                        Hello <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,<br><br>\n"
+"                                        <t t-if=\"ctx.get('payment_token') and ctx.get('total_amount')\">\n"
+"                                            We were unable to process a payment for your subscription using your\n"
+"                                            payment method\n"
+"                                            <t t-out=\"ctx['payment_token'] or ''\">TOKEN</t>\n"
+"                                            for <t t-out=\"ctx['total_amount'] or ''\">10</t> <t t-out=\"ctx.get('currency_name') or ''\">$</t>.\n"
+"                                            <t t-if=\"ctx.get('error')\">\n"
+"                                                Your bank or credit institution gave the following details about the\n"
+"                                                issue: <pre t-out=\"ctx['error'] or ''\"></pre>.\n"
+"                                            </t>\n"
+"                                        </t>\n"
+"                                        <t t-else=\"\">\n"
+"                                            We were unable to process a payment for your subscription because we\n"
+"                                            have no payment method recorded for you.\n"
+"                                        </t>\n"
+"                                        <br><br>\n"
+"                                        Your subscription <t t-out=\"ctx.get('code') or ''\">CODE</t> is still valid\n"
+"                                        but will be <strong>suspended</strong>\n"
+"                                        on <t t-out=\"format_date(ctx.get('date_close')) or ''\">05/05/2021</t> unless\n"
+"                                        the payment succeeds in the mean time (we will retry once every day).\n"
+"                                        Please double-check that you have sufficient funds.<br><br>\n"
+"                                        If you have any questions, do not hesitate to contact us.<br><br>\n"
+"                                        Thank you for choosing <t t-out=\"company.name or ''\">YourCompany</t>!\n"
+"                                        <div>\n"
+"                                            <t t-if=\"user.signature\">\n"
+"                                                <br><br>\n"
+"                                                <t t-out=\"user.signature or ''\">--<br>Mitchell Admin</t>\n"
+"                                            </t>\n"
+"                                        </div>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td style=\"text-align:center;\">\n"
+"                                        <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;\">\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <!-- FOOTER -->\n"
+"                        <tr>\n"
+"                            <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; font-size: 11px; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                    <tr><td valign=\"middle\" align=\"left\">\n"
+"                                        <t t-out=\"company.name or ''\">YourCompany</t>\n"
+"                                    </td></tr>\n"
+"                                    <tr><td valign=\"middle\" align=\"left\" style=\"opacity: 0.7;\">\n"
+"                                        <t t-if=\"company.phone\">\n"
+"                                            <t t-out=\"company.phone or ''\">+1 650-123-4567</t> |\n"
+"                                        </t>\n"
+"                                        <t t-if=\"company.email\">\n"
+"                                            <a t-attf-href=\"'mailto:%s' % {{ company.email }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.email or ''\">info@yourcompany.com</a> |\n"
+"                                        </t>\n"
+"                                        <t t-if=\"company.website\">\n"
+"                                            <a t-attf-href=\"'%s' % {{ company.website }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.website or ''\">http://www.example.com</a>\n"
+"                                        </t>\n"
+"                                    </td></tr>\n"
+"                                </table>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"            </td></tr>\n"
+"                <!-- POWERED BY -->\n"
+"                <tr><td align=\"center\" style=\"min-width: 590px;\">\n"
+"                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;\">\n"
+"                        <tr><td style=\"text-align: center; font-size: 13px;\">\n"
+"                            Powered by <a target=\"_blank\" href=\"https://www.odoo.com?utm_source=db&amp;utm_medium=mail\" style=\"color: #875A7B;\">Odoo</a>\n"
+"                        </td></tr>\n"
+"                    </table>\n"
+"                </td></tr>\n"
+"            </table>\n"
+"        "
+msgstr ""
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-top: 16px; background-color: #F1F1F1; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;\"><tr><td align=\"center\">\n"
+"                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"padding: 16px; background-color: white; color: #454748; border-collapse:separate;\">\n"
+"                        <tbody>\n"
+"                            <!-- HEADER -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"middle\">\n"
+"                                            <t t-set=\"company\" t-value=\"object.company_id or object.user_id.company_id or user.company_id\"></t>\n"
+"                                            <span style=\"font-size: 10px;\">Tu suscripción</span><br>\n"
+"                                            <span style=\"font-size: 20px; font-weight: bold;\" t-out=\"object.name or ''\">\n"
+"                                                Servicio de limpieza de oficinas</span>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td valign=\"middle\" align=\"right\" t-if=\"not company.uses_default_logo\">\n"
+"                                            <img t-attf-src=\"/logo.png?company={{ company.id }}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" t-att-alt=\"company.name\">\n"
+"                                        </td></tr>\n"
+"                                        <tr><td colspan=\"2\" style=\"text-align:center;\">\n"
+"                                            <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin:16px 0px 16px 0px;\">\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <!-- CONTENT -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"                                            Hola <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,<br><br>\n"
+"                                            <t t-if=\"ctx.get('payment_token') and ctx.get('total_amount')\">\n"
+"                                                No hemos podido procesar el pago de su suscripción utilizando su\n"
+"                                                método de pago\n"
+"                                                <t t-out=\"ctx['payment_token'] or ''\">TOKEN</t>\n"
+"                                                para <t t-out=\"ctx['total_amount'] or ''\">10</t> <t t-out=\"ctx.get('currency_name') or ''\">$</t>.\n"
+"                                                <t t-if=\"ctx.get('error')\">\n"
+"                                                    Su banco o entidad de crédito proporcionó los siguientes datos sobre el\n"
+"                                                    problema: <pre t-out=\"ctx['error'] or ''\"></pre>.\n"
+"                                                </t>\n"
+"                                            </t>\n"
+"                                            <t t-else=\"\">\n"
+"                                                No hemos podido procesar el pago de su suscripción porque\n"
+"                                                no tenemos ningún método de pago registrado para usted.\n"
+"                                            </t>\n"
+"                                            <br><br>\n"
+"                                            Tu suscripción <t t-out=\"ctx.get('code') or ''\">CODE</t> sigue siendo válido\n"
+"                                            pero será <strong>suspendido</strong>\n"
+"                                            en <t t-out=\"format_date(ctx.get('date_close')) or ''\">05/05/2021</t> a menos que\n"
+"                                            el pago se realiza correctamente mientras tanto (lo volveremos a intentar una vez al día).\n"
+"                                            Por favor, comprueba que dispones de fondos suficientes.<br><br>\n"
+"                                            Si tiene alguna pregunta, no dude en ponerse en contacto con nosotros.<br><br>\n"
+"                                            Gracias por elegir <t t-out=\"company.name or ''\">YourCompany</t>!\n"
+"                                            <div>\n"
+"                                                <t t-if=\"user.signature\">\n"
+"                                                    <br><br>\n"
+"                                                    <t t-out=\"user.signature or ''\">--<br>Mitchell Admin</t>\n"
+"                                                </t>\n"
+"                                            </div>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td style=\"text-align:center;\">\n"
+"                                            <hr width=\"100%\" style=\"background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;\">\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <!-- FOOTER -->\n"
+"                            <tr>\n"
+"                                <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; font-size: 11px; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                                        <tr><td valign=\"middle\" align=\"left\">\n"
+"                                            <t t-out=\"company.name or ''\">YourCompany</t>\n"
+"                                        </td></tr>\n"
+"                                        <tr><td valign=\"middle\" align=\"left\" style=\"opacity: 0.7;\">\n"
+"                                            <t t-if=\"company.phone\">\n"
+"                                                <t t-out=\"company.phone or ''\">+1 650-123-4567</t> |\n"
+"                                            </t>\n"
+"                                            <t t-if=\"company.email\">\n"
+"                                                <a t-attf-href=\"'mailto:%s' % {{ company.email }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.email or ''\">info@yourcompany.com</a> |\n"
+"                                            </t>\n"
+"                                            <t t-if=\"company.website\">\n"
+"                                                <a t-attf-href=\"'%s' % {{ company.website }}\" style=\"text-decoration:none; color: #454748;\" t-out=\"company.website or ''\">http://www.example.com</a>\n"
+"                                            </t>\n"
+"                                        </td></tr>\n"
+"                                    </table>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                </td></tr>\n"
+"                    <!-- POWERED BY -->\n"
+"                    <tr><td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;\">\n"
+"                            <tr><td style=\"text-align: center; font-size: 13px;\">\n"
+"                                Desarrollado por <a target=\"_blank\" href=\"https://www.odoo.com?utm_source=db&amp;utm_medium=mail\" style=\"color: #875A7B;\">Odoo</a>\n"
+"                            </td></tr>\n"
+"                        </table>\n"
+"                    </td></tr>\n"
+"                </table>\n"
+"            "
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__access_warning
+msgid "Access warning"
+msgstr "Advertencia de acceso"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__action_type
+msgid "Action"
+msgstr "Acción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_needaction
+msgid "Action Needed"
+msgstr "Acción necesaria"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Activated from plan change. Previous subscription closed: %s"
+msgstr "Activado por cambio de plan. Suscripción anterior cerrada: %s"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__active
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__state__active
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Active"
+msgstr "Activo"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_ids
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Actividad Excepción Decoración"
+
+#. module: solt_recurring_payment
+#: model:ir.actions.act_window,name:solt_recurring_payment.mail_activity_plan_action_subscription
+#: model:ir.ui.menu,name:solt_recurring_payment.mail_activity_plan_menu_config_subscription
+msgid "Activity Plans"
+msgstr "Planes de actividad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_state
+msgid "Activity State"
+msgstr "Estado de la actividad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Icono del tipo de actividad"
+
+#. module: solt_recurring_payment
+#: model:ir.actions.act_window,name:solt_recurring_payment.mail_activity_type_action_config_subscription
+#: model:ir.ui.menu,name:solt_recurring_payment.subscription_menu_config_activity_type
+msgid "Activity Types"
+msgstr "Tipos de actividad"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.actions.act_window,help:solt_recurring_payment.mail_activity_plan_action_subscription
+msgid "Add a new plan"
+msgstr "Añadir un nuevo plan"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.product_pricelist_view
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.product_template_view_form_recurring
+msgid "Add a price rule"
+msgstr "Añadir una regla de precios"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__closing_note
+msgid "Additional Notes"
+msgstr "Notas adicionales"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__related_plan_ids
+msgid ""
+"Allow your customers to switch from this plan to another on quotation (new "
+"subscription or renewal)"
+msgstr ""
+"Permitir a sus clientes cambiar de este plan a otro en la cotización (nueva "
+"suscripción o renovación)"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__distribution_analytic_account_ids
+msgid "Analytic Accounts"
+msgstr "Cuentas analíticas"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__analytic_distribution
+msgid "Analytic Distribution"
+msgstr "Distribución analítica"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__analytic_distribution_search
+msgid "Analytic Distribution Search"
+msgstr "Búsqueda de distribución analítica"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__analytic_precision
+msgid "Analytic Precision"
+msgstr "Precisión analítica"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__distribution_analytic_account_ids
+msgid "Analytic accounts linked through the distribution"
+msgstr "Cuentas analíticas vinculadas a través de la distribución"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_attachment_count
+msgid "Attachment Count"
+msgstr "Cantidad de archivos adjuntos"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__auto_close_limit
+msgid "Automatic Closing"
+msgstr "Cierre automático"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__auto_close_limit_display
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__auto_close_limit_display
+msgid "Automatic Closing After"
+msgstr "Cierre automático tras"
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_auto_close_limit
+msgid "Automatic Renewal Failed"
+msgstr "Fallo de renovación automática"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Automatic payment failed after multiple attempts. Contract closed "
+"automatically."
+msgstr ""
+"El pago automático ha fallado tras varios intentos. El contrato se ha "
+"cerrado  automáticamente."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Automatic payment failed. Check the corresponding invoice %s. We can't "
+"automatically process negative payment"
+msgstr ""
+"El pago automático ha fallado. Comprueba la factura correspondiente %s. No "
+"podemos procesar automáticamente un pago negativo."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Automatic payment failed. Email sent to customer. Error: %s"
+msgstr ""
+"El pago automático ha fallado. Se ha enviado un correo electrónico al "
+"cliente. Error: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Automatic payment failed. No country specified on payment_token's partner"
+msgstr ""
+"El pago automático ha fallado. No se ha especificado ningún país en el "
+"payment_token del socio."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Automatic payment failed. No email sent this time. Error: %s"
+msgstr ""
+"El pago automático ha fallado. No se ha enviado ningún correo electrónico "
+"esta vez. Error: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Automatic payment succeeded. Payment reference: %(ref)s. Amount: %(amount)s."
+" Contract set to: In Progress, Next Invoice: %(inv)s. Email sent to "
+"customer."
+msgstr ""
+"Pago automático realizado correctamente. Referencia del pago: %(ref)s. "
+"Importe: %(amount)s. Contrato establecido en: En curso, próxima factura: "
+"%(inv)s. Correo electrónico enviado a cliente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__available_plan_ids_domain
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__available_plan_ids
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__available_plan_ids_domain
+msgid "Available Plans Domain"
+msgstr "Dominio de Planes disponibles"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_avg
+msgid "Average Rating"
+msgstr "Calificación promedio"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__billing_period_display
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__name
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__billing_period_display
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__name
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+msgid "Billing Period"
+msgstr "Período de facturación"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__billing_period_display_sentence
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__billing_period_display_sentence
+msgid "Billing Period Display"
+msgstr "Visualización del período de facturación"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__retention_button_link
+msgid "Button Link"
+msgstr "Botón de enlace"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__retention_button_text
+msgid "Button Text"
+msgstr "Texto del botón"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.product_template_search_view_inherit_sale_subscription
+msgid "Can be Recurring"
+msgstr "Puede ser recurrente"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_wizard_view_form
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_uom_category_id
+msgid "Category of UOM"
+msgstr "Categoría de UM"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_renew_wizard__action_type__change_plan
+msgid "Change Plan"
+msgstr "Cambiar plan"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Check reopened subscription"
+msgstr "Comprueba la suscripción reabierta"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__user_closable
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__user_closable
+msgid "Closable"
+msgstr "Se puede cerrar"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__close_reason_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__close_reason_id
+msgid "Close Reason"
+msgstr "Motivo de cierre"
+
+#. module: solt_recurring_payment
+#: model:ir.actions.act_window,name:solt_recurring_payment.solt_subscription_close_reason_action
+#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_recurring_close_reason_action
+msgid "Close Reasons"
+msgstr "Motivos de cierre"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#: model:ir.actions.act_window,name:solt_recurring_payment.solt_subscription_close_wizard_action
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_wizard_view_form
+#, python-format
+msgid "Close Subscription"
+msgstr "Cerrar suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__state__closed
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Closed"
+msgstr "Cerrado"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_close_wizard.py:0
+#, python-format
+msgid "Closing note: %s"
+msgstr "Nota de cierre: %s"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__commercial_partner_id
+msgid "Commercial Partner"
+msgstr "Entidad comercial"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__company_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__company_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__company_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__company_id
+msgid "Company associated with the selected recurring plan."
+msgstr "Empresa asociada al plan recurrente seleccionado."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__company_id
+msgid "Company related to the subscription."
+msgstr "Empresa relacionada con la suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_subscription_config
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__subscription_count
+msgid "Count of subscriptions."
+msgstr "Cantidad de suscripciones."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.actions.act_window,help:solt_recurring_payment.product_action_subscription
+msgid "Create a new product"
+msgstr "Crear un nuevo producto"
+
+#. module: solt_recurring_payment
+#: model:ir.actions.server,name:solt_recurring_payment.force_invoice_subscription
+msgid "Create invoice"
+msgstr "Crear factura"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.actions.act_window,help:solt_recurring_payment.solt_subscription_action
+msgid "Create your first subscription!"
+msgstr "¡Crea tu primera suscripción!"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__create_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__create_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__create_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__create_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__create_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__create_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__create_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__create_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__create_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__create_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__create_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__create_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__currency_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__currency_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__currency_id
+msgid "Currency in which the recurring price is set."
+msgstr "Moneda en la que se establece el precio recurrente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__currency_id
+msgid "Currency used for this subscription line."
+msgstr "Moneda utilizada para esta línea de suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__currency_id
+msgid "Currency used for this subscription."
+msgstr "Moneda utilizada para esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__current_plan_id
+msgid "Current Plan"
+msgstr "Plan actual"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__state
+msgid "Current status of the subscription: Draft, Active, or Closed."
+msgstr "Estado actual de la suscripción: Borrador, Activa o Cerrada."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_product__product_subscription_pricing_ids
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_template__product_subscription_pricing_ids
+msgid "Custom Subscription Pricings"
+msgstr "Precios de suscripción personalizados"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_product__product_subscription_pricing_ids
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_template__product_subscription_pricing_ids
+msgid ""
+"Custom subscription pricing rules for this product. Only users with sales "
+"access can manage these rules."
+msgstr ""
+"Reglas de precios de suscripción personalizadas para este producto. Solo los"
+" usuarios con acceso a ventas pueden gestionar estas reglas."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__partner_id
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+msgid "Customer Portal Options"
+msgstr "Opciones del portal del cliente"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__access_url
+msgid "Customer Portal URL"
+msgstr "URL del portal del cliente"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__user_closable
+msgid "Customer can close their subscriptions."
+msgstr "El cliente puede cerrar su suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__user_extend
+msgid "Customer can create a renewal quotation for their subscription."
+msgstr ""
+"El cliente puede crear un presupuesto de renovación para su suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__percentage_satisfaction
+msgid "Customer satisfaction percentage based on received ratings."
+msgstr ""
+"Porcentaje de satisfacción del cliente basado en las valoraciones recibidas."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__description
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__name
+msgid "Description"
+msgstr "Descripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__name
+msgid "Description of the subscription line."
+msgstr "Descripción de la línea de suscripción."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Description..."
+msgstr "Descripción..."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__sequence
+msgid "Determines the display order of the reasons."
+msgstr "Determina el orden de visualización de los motivos."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__discount
+msgid "Discount (%)"
+msgstr "Descuento (%)"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__discount
+msgid "Discount applied to the unit price (in percentage)."
+msgstr "Descuento aplicado al precio unitario (en porcentaje)."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__display_late
+msgid "Display Late"
+msgstr "Mostrar tarde"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__display_name
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__display_name
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__display_name
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__display_name
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__display_name
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__display_name
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__analytic_distribution
+msgid "Distribution of the amount among analytic accounts"
+msgstr "Distribución del importe entre cuentas analíticas"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__available_plan_ids_domain
+msgid "Domain filter for available plans that can be selected"
+msgstr "Filtro de dominio para planes disponibles que se pueden seleccionar"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__available_plan_ids_domain
+msgid ""
+"Domain used to filter available subscription plans for this product line."
+msgstr ""
+"Dominio utilizado para filtrar los planes de suscripción disponibles para "
+"esta línea de producto."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Downgrade credit note: %s"
+msgstr "Nota de crédito por rebaja de calificación: %s"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__state__draft
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__billing_period_value
+msgid "Duration"
+msgstr "Duración"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__invoice_mail_template_id
+msgid ""
+"Email template used to send invoicing email automatically.\n"
+"Leave it empty if you don't want to send email automatically."
+msgstr ""
+"Plantilla de correo electrónico utilizada para enviar correos de facturación automáticamente.\n"
+"Déjelo vacío si no desea enviar correos automáticamente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__empty_retention_message
+msgid "Empty Retention Message"
+msgstr "Mensaje de retención vacío"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__end_date
+msgid "End Date"
+msgstr "Fecha de finalización"
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_end_of_contract
+msgid "End of Contract"
+msgstr ""
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Error during renewal of contract %s %s %s"
+msgstr "Error durante la renovación del contrato %s %s %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Error during renewal of contract %s (Payment not recorded)"
+msgstr "Error durante la renovación del contrato %s (Pago no registrado)"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__extend_months
+msgid "Extend by (months)"
+msgstr "Extender por (meses)"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__user_extend
+msgid "Extendable"
+msgstr "Renovar"
+
+#. module: solt_recurring_payment
+#. odoo-javascript
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.subscription_period_total
+#, python-format
+msgid "Final offer"
+msgstr "Oferta final"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__fiscal_position_id
+msgid "Fiscal Position"
+msgstr "Situación fiscal"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__fiscal_position_id
+msgid ""
+"Fiscal positions are used to adapt taxes and accounts for particular "
+"customers or sales orders/invoices.The default value comes from the "
+"customer."
+msgstr ""
+"Las posiciones fiscales se utilizan para adaptar los impuestos y las cuentas"
+" a determinados clientes u órdenes de venta/facturas. El valor "
+"predeterminado proviene del cliente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Socios)"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Icono de fuente impresionante, por ejemplo fa-tasks"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__free_periods
+msgid "Free Periods"
+msgstr "Período gratuito"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__sequence
+msgid "Gives the sequence order when displaying a list of subscription lines."
+msgstr ""
+"Establece el orden de secuencia al mostrar una lista de líneas de "
+"suscripción."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__has_message
+msgid "Has Message"
+msgstr "Tiene mensaje"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_mixin__is_subscription
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.account_invoice_groupby_inherit
+msgid "Has Subscriptions"
+msgstr "Recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.module.category,description:solt_recurring_payment.module_category_subscription_management
+msgid "Helps you handle subscriptions and recurring invoicing."
+msgstr "Le ayuda a gestionar las suscripciones y la facturación recurrente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_exception_icon
+msgid "Icon"
+msgstr "Icono"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icono para indicar una actividad de excepción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, los nuevos mensajes requieren su atención."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__message_has_error
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__visible_in_portal
+msgid "If enabled, this reason will be visible to customers in the portal."
+msgstr ""
+"Si se habilita, este motivo será visible para los clientes en el portal."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__payment_token_id
+msgid "If set, automatic payments will use this token."
+msgstr "Si se establece, los pagos automáticos utilizarán este token."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_product__recurring_invoice
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_template__recurring_invoice
+msgid ""
+"If set, confirming a sale order with this product will create a subscription"
+msgstr ""
+"Si se configura, la confirmación de un pedido de venta con este producto "
+"creará una suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__journal_id
+msgid ""
+"If set, the SO will invoice in this journal; otherwise the sales journal "
+"with the lowest sequence is used."
+msgstr ""
+"Si se configura, el SO facturará en este diario; de lo contrario, se "
+"utilizará el diario de ventas  con la secuencia más baja."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__empty_retention_message
+msgid "Indicates if the retention message is empty."
+msgstr "Indica si el mensaje de retención está vacío."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__display_late
+msgid "Indicates if the subscription is late for its next invoice."
+msgstr "Indica si la suscripción está atrasada para su próxima factura."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__user_closable
+msgid ""
+"Indicates if the user is allowed to close the subscription according to the "
+"plan settings."
+msgstr ""
+"Indica si el usuario puede cancelar la suscripción según la configuración "
+"del plan."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__user_extend
+msgid ""
+"Indicates if the user is allowed to extend the subscription according to the"
+" plan settings."
+msgstr ""
+"Indica si el usuario puede ampliar la suscripción según la configuración del"
+" plan."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__is_subscription
+msgid "Indicates if this order has recurring product lines."
+msgstr "Indica si este pedido tiene líneas de productos recurrentes."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__recurring_invoice
+msgid "Indicates if this product line is a recurring (subscription) product."
+msgstr ""
+"Indica si esta línea de producto es un producto recurrente (suscripción)."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__payment_exception
+msgid "Indicates that the last automatic payment failed."
+msgstr "Indica que el último pago automático falló."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__pending_transaction
+msgid "Indicates that there is a pending payment transaction."
+msgstr "Indica que hay una transacción de pago pendiente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__active
+msgid ""
+"Indicates whether the recurring plan is active. Inactive plans are not "
+"available for new subscriptions."
+msgstr ""
+"Indica si el plan recurrente está activo. Los planes inactivos no están "
+"disponibles para nuevas suscripciones."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__internal_note
+msgid "Internal Notes"
+msgstr "Notas internas"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__internal_note
+msgid "Internal notes for the subscription, visible only to staff users."
+msgstr ""
+"Notas internas para la suscripción, visibles solo para los usuarios del "
+"personal."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Internal notes..."
+msgstr "Notas internas..."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__invoice_count
+msgid "Invoice Count"
+msgstr "Cuenta de facturas"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__invoice_mail_template_id
+msgid "Invoice Email Template"
+msgstr "Plantilla de correo"
+
+#. module: solt_recurring_payment
+#: model:mail.template,subject:solt_recurring_payment.email_payment_success
+msgid ""
+"Invoice for subscription {{ ctx.get('code', ctx.get('subscription_name')) }}"
+msgstr ""
+"Factura por suscripción {{ ctx.get('code', ctx.get('subscription_name')) }}"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__invoice_line_ids
+msgid "Invoice lines related to this subscription."
+msgstr "Líneas de factura relacionadas con esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__invoice_ids
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Invoices"
+msgstr "Facturas"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__invoice_line_ids
+msgid "Invoices Lines"
+msgstr "Líneas de factura"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__invoice_ids
+msgid "Invoices generated for this subscription."
+msgstr "Facturas generadas para esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__journal_id
+msgid "Invoicing Journal"
+msgstr "Diario de facturación"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__is_batch
+msgid "Is Batch"
+msgstr "¿Es por lotes?"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_is_follower
+msgid "Is Follower"
+msgstr "Es seguidor"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__is_protected
+msgid "Is Protected"
+msgstr "Está protegido"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__is_invoice_cron
+msgid "Is a Subscription invoiced in cron"
+msgstr "¿Es una suscripción facturada en cron?"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_account_move_line
+msgid "Journal Item"
+msgstr "Apunte contable"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "KPIs"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__write_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__write_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__write_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__write_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__write_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__write_uid
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__write_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__write_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__write_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__write_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__write_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__write_date
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Last Year"
+msgstr "Año pasado"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__available_plan_ids
+msgid ""
+"List of recurring plans available for the current subscription lines and "
+"products. Used to restrict selectable plans based on product compatibility."
+msgstr ""
+"Lista de planes recurrentes disponibles para las líneas de suscripción "
+"actuales y los productos . Se utiliza para restringir los planes "
+"seleccionables en función de la compatibilidad del producto."
+
+#. module: solt_recurring_payment
+#: model:res.groups,comment:solt_recurring_payment.group_subscription_manager
+msgid "Manager can manage subscriptions, plans and pricing"
+msgstr "El administrador puede gestionar suscripciones, planes y precios"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"Manual payment succeeded. Payment reference: %(ref)s. Amount: %(amount)s. "
+"Contract set to: In Progress, Next Invoice: %(inv)s. Email sent to customer."
+msgstr ""
+"Pago manual realizado correctamente. Referencia del pago: %(ref)s. Importe: "
+"%(amount)s. Contrato establecido en: En curso, próxima factura: %(inv)s. "
+"Correo electrónico enviado al cliente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de entrega del mensaje"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__retention_message
+msgid "Message to display when customer tries to close subscription."
+msgstr "Mensaje para mostrar cuando el cliente intenta cerrar la suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__required_recurring_quantity
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__required_recurring_quantity
+msgid ""
+"Minimum quantity of recurring periods that must be purchased with this "
+"pricing."
+msgstr ""
+"Cantidad mínima de períodos recurrentes que se deben comprar con este "
+"precio."
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_missing_features
+msgid "Missing Features"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:solt.recurring.plan,name:solt_recurring_payment.solt_subscription_plan_monthly
+msgid "Monthly"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_mixin__recurring_monthly
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__recurring_monthly
+msgid "Monthly Recurring"
+msgstr "Recurrente mensual"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__recurring_monthly
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__recurring_monthly
+msgid "Monthly Recurring Revenue"
+msgstr "Ingreso mensual recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__recurring_monthly
+msgid "Monthly recurring amount for this line, normalized to a monthly value."
+msgstr ""
+"Importe mensual recurrente para esta línea, normalizado a un valor mensual."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__recurring_monthly
+msgid ""
+"Monthly recurring revenue (MRR) calculated from the subscription lines. Only"
+" set when the subscription is active."
+msgstr ""
+"Ingresos recurrentes mensuales (MRR) calculados a partir de las líneas de "
+"suscripción. Solo se establece cuando la suscripción está activa."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_recurring_plan__billing_period_unit__month
+msgid "Months"
+msgstr "Meses"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Fecha límite de mi actividad"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "My Subscriptions"
+msgstr "Mis suscripciones"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "New"
+msgstr "Nuevo"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__new_plan_id
+msgid "New Plan"
+msgstr "Nuevo plan"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Próximo evento del calendario de actividades"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Fecha límite de la próxima actividad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_summary
+msgid "Next Activity Summary"
+msgstr "Resumen de la próxima actividad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_type_id
+msgid "Next Activity Type"
+msgstr "Tipo de próxima actividad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__next_invoice_date
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Next Invoice Date"
+msgstr "Fecha de la próxima factura"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "No Payment Method"
+msgstr "Sin método de pago"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "No valid Payment Method"
+msgstr "Método de pago no válido"
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_not_using
+msgid "Not Using the Service"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Notes"
+msgstr "Notas"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__active_subs_count
+msgid "Number of active subscriptions for this plan."
+msgstr "Número de suscripciones activas para este plan."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__free_periods
+msgid "Number of free recurring periods offered with this pricing."
+msgstr "Número de períodos recurrentes gratuitos ofrecidos con este precio."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__invoice_count
+msgid "Number of invoices generated for this subscription."
+msgstr "Número de facturas generadas para esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren acción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__extend_months
+msgid "Number of months to extend the subscription by"
+msgstr "Número de meses para prolongar la suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__billing_period_value
+msgid "Number of periods between each billing cycle"
+msgstr "Número de períodos entre cada ciclo de facturación"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_res_partner__subscription_count
+#: model:ir.model.fields,help:solt_recurring_payment.field_res_users__subscription_count
+msgid ""
+"Number of recurring subscriptions (active or closed) linked to this partner "
+"and its children."
+msgstr ""
+"Número de suscripciones recurrentes (activas o cerradas) vinculadas a este "
+"socio  y sus hijos."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_bank_statement_line__subscription_count
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_move__subscription_count
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_payment__subscription_count
+msgid "Number of subscriptions associated with this invoice"
+msgstr "Número de suscripciones asociadas a esta factura"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Only active subscriptions can be closed."
+msgstr "Solo las suscripciones activas pueden cerrarse."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Only churned subscriptions can be reopened."
+msgstr "Solo las suscripciones canceladas pueden reabrirse."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__related_plan_ids
+msgid "Optional Plans"
+msgstr "Planes opcionales"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_wizard__closing_note
+msgid "Optional notes to add regarding the closure of this subscription"
+msgstr ""
+"Notas opcionales que se pueden añadir sobre el cierre de esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__origin_id
+msgid "Origin Document"
+msgstr "Documento de origen"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__origin_line_id
+msgid "Origin Line"
+msgstr "Línea de origen"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__origin_subscription_id
+msgid "Origin Subscription"
+msgstr "Suscripción de origen"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Other Info"
+msgstr "Otra información"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/res_partner.py:0
+#, python-format
+msgid "Partner Subscription"
+msgstr "Suscripción de contacto"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Payment"
+msgstr "Pago"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__payment_exception
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Payment Exception"
+msgstr "Excepción de pago"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__payment_term_id
+msgid "Payment Terms"
+msgstr "Condiciones de pago"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_payment_token
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__payment_token_id
+msgid "Payment Token"
+msgstr "Token de pago"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Payment not recorded"
+msgstr "Pago no registrado"
+
+#. module: solt_recurring_payment
+#: model:mail.template,subject:solt_recurring_payment.email_payment_reminder
+msgid ""
+"Payment reminder for subscription {{ object.client_order_ref or object.name "
+"}}"
+msgstr ""
+"Recordatorio de pago de suscripción {{ object.client_order_ref or "
+"object.name }}"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__pending_transaction
+msgid "Pending Transaction"
+msgstr "Transacción pendiente"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Plan"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_plan_change
+msgid "Plan Change"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+msgid "Plan Name"
+msgstr "Nombre del plan"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Plan can only be changed for active subscriptions. Current state: %s"
+msgstr ""
+"El plan solo se puede cambiar para suscripciones activas. Estado actual: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Plan change completed. Previous subscription closed: %s"
+msgstr "Cambio de plan completado. Suscripción anterior cerrada: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Plan change payment successful. New subscription activated: %s"
+msgstr ""
+"Pago por cambio de plan realizado correctamente. Nueva suscripción activada:"
+" %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Plan change requested to %s. New subscription: %s. Invoice to pay: %s"
+msgstr ""
+"Se ha solicitado un cambio en el plan a %s. Nueva suscripción: %s. Factura a"
+" pagar: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Plan changed to %s. New subscription: %s"
+msgstr "El plan ha cambiado a %s. Nueva suscripción: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Plan downgraded to %s. New subscription active: %s"
+msgstr "Plan rebajado a %s. Nueva suscripción activa: %s"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__plan_id
+msgid "Plan for this recurring product line."
+msgstr "Plan para esta línea de producto recurrente."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Please enter a positive number of months."
+msgstr "Por favor, introduzca un número positivo de meses."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Please select a new plan."
+msgstr "Por favor, seleccione un nuevo plan."
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_bad_support
+msgid "Poor Customer Support"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__access_url
+msgid "Portal Access URL"
+msgstr "URL de acceso al portal"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid "Portal: retention step"
+msgstr "Portal: paso de retención"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_product_pricelist
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__pricelist_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__pricelist_id
+msgid "Pricelist"
+msgstr "Lista de precios"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__pricelist_id
+msgid "Pricelist used to compute product prices for this subscription."
+msgstr ""
+"Lista de precios utilizada para calcular los precios de los productos de "
+"esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_recurring_pricelist
+msgid "Pricelists"
+msgstr "Listas de precios"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+msgid "Pricing"
+msgstr "Precios"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_recurring_pricing
+msgid "Pricing rule of recurring payment products"
+msgstr "Regla de precios de productos de pago recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_product_template
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_id
+msgid "Product"
+msgstr "Producto"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_template_id
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_product_product
+msgid "Product Variant"
+msgstr "Variante del producto"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__product_variant_ids
+msgid "Product Variants"
+msgstr "Variantes del producto"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__product_template_id
+msgid "Product template related to the selected product."
+msgstr "Plantilla de producto relacionada con el producto seleccionado."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__product_id
+msgid "Product to be invoiced recurrently."
+msgstr "Producto que se facturará de forma recurrente."
+
+#. module: solt_recurring_payment
+#: model:ir.actions.act_window,name:solt_recurring_payment.product_action_subscription
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__product_template_id
+#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_recurring_product
+#: model:ir.ui.menu,name:solt_recurring_payment.product_menu_catalog
+msgid "Products"
+msgstr "Productos"
+
+#. module: solt_recurring_payment
+#. odoo-javascript
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.subscription_period_total
+#, python-format
+msgid "Products/Services"
+msgstr "Productos/Servicios"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__is_protected
+msgid "Protected reasons cannot be deleted."
+msgstr "Las razones protegidas no pueden ser eliminadas."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__description
+msgid "Public description of the subscription, visible to the customer."
+msgstr "Descripción pública de la suscripción, visible para el cliente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__type__purchase
+msgid "Purchase"
+msgstr "Compra"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__origin_id__purchase_order
+msgid "Purchase Order"
+msgstr "Orden de compra"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_line__origin_line_id__purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Línea de orden de compra"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_uom_qty
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__product_uom_qty
+msgid "Quantity of the product to invoice."
+msgstr "Cantidad del producto a facturar."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_avg_text
+msgid "Rating Avg Text"
+msgstr "Calificación promedio de texto"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_last_feedback
+msgid "Rating Last Feedback"
+msgstr "Último comentario de calificación"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_last_image
+msgid "Rating Last Image"
+msgstr "Imagen de la última calificación"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_last_value
+msgid "Rating Last Value"
+msgstr "Último valor de calificación"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_percentage_satisfaction
+msgid "Rating Satisfaction"
+msgstr "Calificación de satisfacción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_last_text
+msgid "Rating Text"
+msgstr "Texto de calificación"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_count
+msgid "Rating count"
+msgstr "Recuento de calificaciones"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__rating_ids
+msgid "Ratings"
+msgstr "Calificaciones"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__name
+msgid "Reason"
+msgstr "Razón"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.product_template_view_form_recurring
+msgid "Recurring"
+msgstr "Recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__recurring_invoice
+msgid "Recurring Invoice"
+msgstr "Factura recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_recurring_order_line_mixin
+msgid "Recurring Line Order Mixin"
+msgstr "Mixin de línea de pedido recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_recurring_order_mixin
+msgid "Recurring Order Mixin"
+msgstr "Mixin de pedido recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_recurring_plan
+msgid "Recurring Payment Plan"
+msgstr "Plan de pago recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__plan_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__plan_id
+msgid "Recurring Plan"
+msgstr "Plan recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__price
+msgid "Recurring Price"
+msgstr "Precio recurrente"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.product_pricelist_view
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.product_template_view_form_recurring
+msgid "Recurring Prices"
+msgstr "Precios recurrentes"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_pricelist__product_subscription_pricing_ids
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__product_subscription_pricing_ids
+msgid "Recurring Pricing"
+msgstr "Precios recurrentes"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_mixin__recurring_total
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__recurring_total
+msgid "Recurring Total"
+msgstr "Total recurrente"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__recurring_monthly
+msgid "Recurring monthly for this order."
+msgstr "Recurrente mensual para este pedido."
+
+#. module: solt_recurring_payment
+#: model:ir.actions.server,name:solt_recurring_payment.ir_cron_recurring_payment_expiration_ir_actions_server
+msgid "Recurring payment: Check Expiration"
+msgstr "Pago recurrente: Verificar caducidad"
+
+#. module: solt_recurring_payment
+#: model:ir.actions.server,name:solt_recurring_payment.ir_cron_recurring_payment_invoice_ir_actions_server
+msgid "Recurring payment: Generate Recurring Invoices"
+msgstr "Pago recurrente: Generar facturas recurrentes"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid ""
+"Recurring period must be a positive number. Please ensure the input is a "
+"valid positive numeric value."
+msgstr ""
+"El periodo recurrente debe ser un número positivo. Asegúrese de haber "
+"proporcionado un valor numérico positivo válido."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__product_subscription_pricing_ids
+msgid "Recurring pricing related to this plan."
+msgstr "Precios recurrentes relacionados con este plan."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__recurring_total
+msgid "Recurring total for this order."
+msgstr "Total recurrente para este pedido."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__name
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_move_line__subscription_id
+msgid "Reference to the related subscription for this invoice line."
+msgstr "Referencia a la suscripción relacionada con esta línea de factura."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+msgid "Related Plans"
+msgstr "Planes relacionados"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__user_extend
+msgid "Renew"
+msgstr "Renovar"
+
+#. module: solt_recurring_payment
+#: model:ir.actions.act_window,name:solt_recurring_payment.solt_subscription_renew_wizard_action
+msgid "Renew / Change Plan"
+msgstr "Renovar / Venta adicional"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_renew_wizard_view_form
+msgid "Renew / Change Plan Subscription"
+msgstr "Renovar/Cambiar la suscripción al plan"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Renew / Upsell"
+msgstr "Renovar / Venta adicional"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_renew_wizard__action_type__renew
+#, python-format
+msgid "Renew Subscription"
+msgstr "Renovar suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__renewed_subscription_ids
+msgid "Renewed Subscription"
+msgstr "Suscripción renovada"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Reopen"
+msgstr "Reabrir"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__required_recurring_quantity
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_pricing__required_recurring_quantity
+msgid "Required Recurring Quantity"
+msgstr "Cantidad recurrente requerida"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__activity_user_id
+msgid "Responsible User"
+msgstr "Usuario responsable"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_mixin__subscription_period_total
+msgid "Resumen de Suscripciones"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__retention_message
+msgid "Retention Message"
+msgstr "Mensaje de retención"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de entrega de SMS"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__type__sale
+msgid "Sale"
+msgstr "Venta"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__origin_id__sale_order
+msgid "Sale Order"
+msgstr "Orden de venta"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_line__origin_line_id__sale_order_line
+msgid "Sale Order Line"
+msgstr "Línea de orden de venta"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__user_id
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Salesperson"
+msgstr "Vendedor"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Search Subscriptions"
+msgstr "Buscar suscripciones"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__access_token
+msgid "Security Token"
+msgstr "Token de seguridad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__product_variant_ids
+msgid ""
+"Select Variants of the Product for which this rule applies. Leave empty if "
+"this rule applies for any variant of this template."
+msgstr ""
+"Seleccione las variantes del producto para las que se aplica esta regla. "
+"Déjelo vacío si esta regla se aplica a cualquier variante de esta plantilla."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__product_template_id
+msgid "Select products on which this pricing will be applied."
+msgstr "Seleccione los productos en los que se aplicará este precio."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__new_plan_id
+msgid "Select the new plan to switch to"
+msgstr "Seleccione el nuevo plan al que desea cambiarse."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__pricelist_id
+msgid "Select the pricelist for which this pricing rule is valid."
+msgstr ""
+"Seleccione la lista de precios para la que es válida esta regla de precios."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_wizard__close_reason_id
+msgid "Select the reason for closing this subscription"
+msgstr "Seleccione el motivo por el que desea cancelar esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__plan_id
+msgid "Select the recurring plan to which this pricing rule applies."
+msgstr "Seleccione el plan recurrente al que se aplica esta regla de precios."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__action_type
+msgid ""
+"Select whether to renew the current subscription or change to a different "
+"plan"
+msgstr ""
+"Seleccione si desea renovar la suscripción actual o cambiar a un plan "
+"diferente."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+msgid "Self-Service"
+msgstr "Autoservicio"
+
+#. module: solt_recurring_payment
+#: model:mail.template,description:solt_recurring_payment.email_payment_success
+msgid ""
+"Sent automatically with subscription invoice when payment is successful"
+msgstr ""
+"Se envía automáticamente con la factura de suscripción cuando el pago se "
+"realiza correctamente."
+
+#. module: solt_recurring_payment
+#: model:mail.template,description:solt_recurring_payment.email_payment_close
+msgid ""
+"Sent to customer to indicate that subscription is automatically terminated"
+msgstr ""
+"Enviado al cliente para indicar que la suscripción se cancela "
+"automáticamente."
+
+#. module: solt_recurring_payment
+#: model:mail.template,description:solt_recurring_payment.email_payment_reminder
+msgid ""
+"Sent to customer when payment failed but subscription is not yet cancelled"
+msgstr ""
+"Enviado al cliente cuando el pago ha fallado pero la suscripción aún no se "
+"ha cancelado."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__sequence
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: solt_recurring_payment
+#: model:mail.template,description:solt_recurring_payment.mail_template_subscription_rating
+msgid ""
+"Set on subscription's stage (e.g. Closed, Upsell) to ask a rating to customers\n"
+"        "
+msgstr ""
+"Establecer en la etapa de suscripción (por ejemplo, Cerrada, Venta adicional) para solicitar una valoración a los clientes.\n"
+"            "
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__start_date
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Start Date"
+msgstr "Fecha de inicio"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__start_recurring_date
+msgid ""
+"Start date for this subscription line. If not set, uses the order date."
+msgstr ""
+"Fecha de inicio de esta línea de suscripción. Si no se establece, se utiliza"
+" la fecha del pedido."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__state
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Status"
+msgstr "Estado"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Estado basado en actividades\n"
+"Atrasado: La fecha de vencimiento ya pasó\n"
+"Hoy: La fecha de la actividad es hoy\n"
+"Planificado: Actividades futuras."
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_subscription
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_move_line__subscription_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__subscription_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__subscription_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__subscription_id
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_renew_wizard__subscription_id
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Subscription"
+msgstr "Suscripción"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "Subscription %s has been reopened. The end date has been removed"
+msgstr ""
+"La suscripción %s se ha reabierto. Se ha eliminado la fecha de finalización."
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_subscription_close_reason
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid "Subscription Close Reason"
+msgstr "Razón de cierre de suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_subscription_close_wizard
+msgid "Subscription Close Wizard"
+msgstr "Asistente de cierre de suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_bank_statement_line__subscription_count
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_move__subscription_count
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_payment__subscription_count
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_mixin__subscription_count
+msgid "Subscription Count"
+msgstr "Número de suscripciones"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_subscription_line
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__subscription_line_ids
+msgid "Subscription Line"
+msgstr "Línea de suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__subscription_line_ids
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Subscription Lines"
+msgstr "Líneas de suscripción"
+
+#. module: solt_recurring_payment
+#: model:res.groups,name:solt_recurring_payment.group_subscription_manager
+msgid "Subscription Manager"
+msgstr "Administrador de suscripciones"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__plan_id
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+msgid "Subscription Plan"
+msgstr "Plan de suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.actions.act_window,name:solt_recurring_payment.solt_recurring_plan_action
+#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_recurring_plan
+msgid "Subscription Plans"
+msgstr "Planes de suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_product__recurring_invoice
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_product_template__recurring_invoice
+msgid "Subscription Product"
+msgstr "Producto de suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model,name:solt_recurring_payment.model_solt_subscription_renew_wizard
+msgid "Subscription Renew/Change Plan Wizard"
+msgstr "Asistente de renovación/venta adicional de suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__start_recurring_date
+msgid "Subscription Start Date"
+msgstr "Fecha de inicio de suscripción"
+
+#. module: solt_recurring_payment
+#: model:mail.message.subtype,name:solt_recurring_payment.subtype_subscription_state_change
+msgid "Subscription State Change"
+msgstr "Cambio de estado de suscripción"
+
+#. module: solt_recurring_payment
+#: model:res.groups,name:solt_recurring_payment.group_subscription_user
+msgid "Subscription User"
+msgstr "Usuario de suscripción"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Subscription extended by %d months. New end date: %s"
+msgstr "Suscripción extendida por %d meses. Nueva fecha de finalización: %s"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_product_pricelist__product_subscription_pricing_ids
+msgid "Subscription pricing rules associated with this pricelist"
+msgstr "Reglas de precios de suscripción asociadas a esta lista de precios"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid ""
+"Subscription renewed and reopened. Extended by %d months. New end date: %s"
+msgstr ""
+"Suscripción renovada y reabierta. Ampliada por %d meses. Nueva fecha de "
+"finalización: %s"
+
+#. module: solt_recurring_payment
+#: model:mail.message.subtype,description:solt_recurring_payment.subtype_subscription_state_change
+msgid "Subscription state has changed"
+msgstr "El estado de la suscripción ha cambiado"
+
+#. module: solt_recurring_payment
+#: model:mail.template,name:solt_recurring_payment.mail_template_subscription_alert
+msgid "Subscription: Default Email Alert"
+msgstr "Suscripción: Alerta por correo electrónico predeterminada"
+
+#. module: solt_recurring_payment
+#: model:mail.template,name:solt_recurring_payment.email_payment_close
+msgid "Subscription: Payment Failure"
+msgstr "Suscripción: Fallo en el pago"
+
+#. module: solt_recurring_payment
+#: model:mail.template,name:solt_recurring_payment.email_payment_reminder
+msgid "Subscription: Payment Reminder"
+msgstr "Suscripción: Recordatorio de pago"
+
+#. module: solt_recurring_payment
+#: model:mail.template,name:solt_recurring_payment.email_payment_success
+msgid "Subscription: Payment Success And Invoice"
+msgstr "Suscripción: pago realizado correctamente y factura"
+
+#. module: solt_recurring_payment
+#: model:mail.template,name:solt_recurring_payment.mail_template_subscription_rating
+msgid "Subscription: Rating Request"
+msgstr "Suscripción: Solicitud de calificación"
+
+#. module: solt_recurring_payment
+#. odoo-javascript
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: model:ir.actions.act_window,name:solt_recurring_payment.solt_subscription_action
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_bank_statement_line__subscription_ids
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_move__subscription_ids
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_account_payment__subscription_ids
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_res_partner__subscription_count
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_res_users__subscription_count
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_mixin__subscription_ids
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__active_subs_count
+#: model:ir.module.category,name:solt_recurring_payment.module_category_subscription_management
+#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_recurring
+#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_subscription
+#: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_subscription_root
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.account_invoice_form
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.res_partner_view_inherit_solt_recurring
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_recurring_plan_view_form
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.subscription_period_total
+#, python-format
+msgid "Subscriptions"
+msgstr "Suscripciones"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.actions.act_window,help:solt_recurring_payment.solt_subscription_action
+msgid ""
+"Subscriptions allow you to manage recurring revenue from your customers."
+msgstr ""
+"Las suscripciones le permiten gestionar los ingresos recurrentes de sus "
+"clientes."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__subscription_ids
+msgid "Subscriptions created from this sale order."
+msgstr "Suscripciones creadas a partir de este pedido de venta."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_bank_statement_line__subscription_ids
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_move__subscription_ids
+#: model:ir.model.fields,help:solt_recurring_payment.field_account_payment__subscription_ids
+msgid "Subscriptions linked to this invoice through invoice lines"
+msgstr "Suscripciones vinculadas a esta factura a través de líneas de factura"
+
+#. module: solt_recurring_payment
+#. odoo-javascript
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__price_subtotal
+#, python-format
+msgid "Subtotal"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__price_subtotal
+msgid "Subtotal amount without taxes."
+msgstr "Importe subtotal sin impuestos."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.subscription_period_total
+msgid "Subtotal:"
+msgstr "Subtotal:"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_mixin__subscription_period_total
+msgid ""
+"Summary of subscription totals grouped by plan (for quotation display only)."
+" Contains plan information and period totals."
+msgstr ""
+"Resumen de totales de suscripción agrupados por plan (solo para "
+"visualización de cotizaciones). Contiene información del plan y totales del "
+"período."
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_competitor
+msgid "Switched to Competitor"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__price_tax
+msgid "Tax Amount"
+msgstr "Importe del impuesto"
+
+#. module: solt_recurring_payment
+#. odoo-javascript
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__amount_tax
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__tax_ids
+#, python-format
+msgid "Taxes"
+msgstr "Impuestos"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__tax_ids
+msgid "Taxes applied to this subscription line."
+msgstr "Impuestos aplicados a esta línea de suscripción."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.subscription_period_total
+msgid "Taxes:"
+msgstr "Impuestos:"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
+msgid "Technical State"
+msgstr "Estado técnico"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__is_invoice_cron
+msgid ""
+"Technical flag: True if this subscription is being invoiced by a scheduled "
+"cron job."
+msgstr ""
+"Indicador técnico: Verdadero si esta suscripción se factura mediante una "
+"tarea programada cron."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__is_batch
+msgid ""
+"Technical flag: True if this subscription is part of a batch of invoices "
+"processed together."
+msgstr ""
+"Indicador técnico: Verdadero si esta suscripción forma parte de un lote de "
+"facturas procesadas conjuntamente."
+
+#. module: solt_recurring_payment
+#: model:mail.template,description:solt_recurring_payment.mail_template_subscription_alert
+msgid ""
+"Template to be used on customized alerts for subscriptions requiring attention\n"
+"        "
+msgstr ""
+"Plantilla que se utilizará en alertas personalizadas para suscripciones que requieren atención.\n"
+"            "
+
+#. module: solt_recurring_payment
+#: model:mail.template,subject:solt_recurring_payment.email_payment_close
+msgid ""
+"Termination of subscription {{ object.client_order_ref or object.name }}"
+msgstr ""
+"Cancelación de la suscripción {{ object.client_order_ref or object.name }}"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__retention_button_text
+msgid "Text for the button shown with the retention message."
+msgstr "Texto del botón que aparece con el mensaje de retención."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__commercial_partner_id
+msgid "The commercial entity related to the customer."
+msgstr "La entidad comercial relacionada con el cliente."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_pricing.py:0
+#, python-format
+msgid "The company of the plan is different from the company of the pricelist"
+msgstr "La empresa del plan es diferente a la empresa de la lista de precios"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__company_id
+msgid "The company this subscription belongs to."
+msgstr "La empresa a la que pertenece esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__company_id
+msgid "The company to which this recurring plan belongs."
+msgstr "La empresa a la que pertenece este plan recurrente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__current_plan_id
+msgid ""
+"The current recurring plan associated with this subscription (read-only)."
+msgstr "El plan recurrente actual asociado a esta suscripción (solo lectura)."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__partner_id
+msgid "The customer associated with this subscription."
+msgstr "El cliente asociado a esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__start_date
+msgid "The date when the subscription becomes active."
+msgstr "Fecha en que comienza la suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__end_date
+msgid ""
+"The date when the subscription will be closed. Leave empty for ongoing "
+"subscriptions."
+msgstr ""
+"La fecha en la que se cerrará la suscripción. Déjelo en blanco para las "
+"suscripciones continuas."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_order_mixin.py:0
+#, python-format
+msgid ""
+"The following products require a subscription plan:\n"
+"%s"
+msgstr ""
+"Los siguientes productos requieren un plan de suscripción:\n"
+"%s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/account_move.py:0
+#, python-format
+msgid "The following refund %s has been made on this subscription."
+msgstr "El siguiente reembolso %s se ha realizado en esta suscripción."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"The last invoice (%s) of this subscription is unpaid after the due date."
+msgstr ""
+"La última factura (%s) de esta suscripción está pendiente de pago después de"
+" la fecha de vencimiento."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_order_line_mixin.py:0
+#, python-format
+msgid ""
+"The line with product '%s' is a subscription product and requires a plan."
+msgstr ""
+"La línea con el producto '%s' es un producto de suscripción y requiere un "
+"plan."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__subscription_line_ids
+msgid ""
+"The lines that define the products and services included in this "
+"subscription."
+msgstr ""
+"Las líneas que definen los productos y servicios incluidos en esta "
+"suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__recurring_monthly
+msgid ""
+"The monthly recurring revenue (MRR) for this line, computed based on the "
+"selected subscription plan and price."
+msgstr ""
+"Los ingresos recurrentes mensuales (MRR) para esta línea, calculados en base"
+" al plan de suscripción y precio seleccionados."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__name
+msgid "The name of the reason for closing a subscription."
+msgstr "El nombre del motivo por el que se cancela una suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__name
+msgid "The name of the recurring payment plan, e.g., 'Monthly', 'Annual'."
+msgstr ""
+"El nombre del plan de pago recurrente, por ejemplo, 'Mensual', 'Anual'."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "The new plan must be different from the current plan."
+msgstr "El nuevo plan debe ser diferente del plan actual."
+
+#. module: solt_recurring_payment
+#: model:ir.model.constraint,message:solt_recurring_payment.constraint_solt_subscription_check_start_date_lower_next_invoice_date
+msgid "The next invoice date should be after the start date."
+msgstr "La próxima fecha de factura debe ser posterior a la fecha de inicio."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__origin_id
+msgid "The original document from which this subscription was created."
+msgstr "El documento original a partir del cual se creó esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__origin_line_id
+msgid "The original line from which this subscription line was created."
+msgstr ""
+"La línea original a partir de la cual se creó esta línea de suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__payment_term_id
+msgid ""
+"The payment terms that apply to this subscription. Determines the due date "
+"for invoices. Defaults to the customer's payment terms."
+msgstr ""
+"Las condiciones de pago que se aplican a esta suscripción. Determina la "
+"fecha de vencimiento de las facturas. Por defecto, se aplican las "
+"condiciones de pago del cliente."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_order_line_mixin.py:0
+#, python-format
+msgid ""
+"The product '%s' is marked as a subscription product but has no subscription"
+" pricing configured. Please configure pricing for this product."
+msgstr ""
+"El producto '%s' está marcado como un producto de suscripción pero no tiene "
+"precios de suscripción configurados. Por favor, configure los precios para "
+"este producto."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription_close_reason.py:0
+#, python-format
+msgid ""
+"The reason '%s' is required by the Subscription application and cannot be "
+"deleted."
+msgstr ""
+"La razón '%s' es requerida por la aplicación de suscripción y no puede ser "
+"eliminada."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid "The reason for closing a subscription"
+msgstr "La razón para cerrar una suscripción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__close_reason_id
+msgid "The reason for closing the subscription, if applicable."
+msgstr "El motivo del cierre de la suscripción, si procede."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__plan_id
+msgid "The recurring plan that defines the billing cycle and rules."
+msgstr "El plan recurrente que define el ciclo de facturación y las reglas."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_pricing__price
+msgid "The recurring price to be charged for the selected product and plan."
+msgstr ""
+"El precio recurrente que se cobrará por el producto y el plan seleccionados."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid "The redirect link of the call to action"
+msgstr "El enlace de redirección del llamado a la acción"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__user_id
+msgid "The salesperson responsible for this subscription."
+msgstr "El vendedor responsable de esta suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__next_invoice_date
+msgid ""
+"The scheduled date for the next invoice to be generated for this "
+"subscription."
+msgstr ""
+"La fecha programada para que se genere la próxima factura de esta "
+"suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__subscription_id
+msgid "The subscription created from this line."
+msgstr "La suscripción creada a partir de esta línea."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__subscription_line_ids
+msgid "The subscription line created from this line."
+msgstr "La línea de suscripción creada a partir de esta línea."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_order_line_mixin.py:0
+#, python-format
+msgid "The subscription start date (%s) cannot be before the order date (%s)."
+msgstr ""
+"La fecha de inicio de la suscripción (%s) no puede ser anterior a la fecha "
+"del pedido (%s)."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__renewed_subscription_ids
+msgid "The subscription that renewed this one."
+msgstr "La suscripción que renovó esta."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__subscription_id
+msgid "The subscription this line belongs to."
+msgstr "La suscripción a la que pertenece esta línea."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__origin_subscription_id
+msgid "The subscription this one was renewed from."
+msgstr "La suscripción de la que se renovó esta."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_wizard__subscription_id
+msgid "The subscription to be closed"
+msgstr "La suscripción que se va a cerrar"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_renew_wizard__subscription_id
+msgid "The subscription to renew/change"
+msgstr "La suscripción que se va a renovar o modificar"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid "The text to display on the call to action"
+msgstr "El texto para mostrar en el llamado a la acción"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_pricing.py:0
+#, python-format
+msgid "There are multiple pricings for an unique product, plan and pricelist."
+msgstr "Hay varios precios para un solo producto, plan y lista de precios."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "This Month"
+msgstr "Este mes"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "This Quarter"
+msgstr "Este trimestre"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "This Semester"
+msgstr "Este semestre"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "This Week"
+msgstr "Esta semana"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "This Year"
+msgstr "Este año"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid ""
+"This message will be displayed to convince the customer to stay (e.g., We "
+"don't want you to leave, can we offer to schedule a meeting with your "
+"account manager?)"
+msgstr ""
+"Este mensaje se mostrará para convencer al cliente de que se quede (por "
+"ejemplo, No queremos que te vayas, ¿podemos ofrecerte programar una reunión "
+"con tu gerente de cuenta?)"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__billing_period_unit
+msgid "Time unit for the billing period (weeks, months, or years)"
+msgstr ""
+"Unidad de tiempo para el período de facturación (semanas, meses o años)"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "To Renew"
+msgstr "A renovar"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Today"
+msgstr "Hoy"
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_too_expensive
+msgid "Too Expensive"
+msgstr ""
+
+#. module: solt_recurring_payment
+#. odoo-javascript
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: code:addons/solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml:0
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__amount_total
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__price_total
+#, python-format
+msgid "Total"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_tree
+msgid "Total MRR"
+msgstr "MRR total"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_order_line_mixin__subscription_period_total
+msgid ""
+"Total amount for the entire subscription period (price_subtotal × "
+"required_recurring_quantity). This is informational only for quotations."
+msgstr ""
+"Importe total de todo el período de suscripción (price_subtotal × "
+"required_recurring_quantity). Esto es solo informativo para cotizaciones."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__amount_untaxed
+msgid "Total amount for the subscription before taxes."
+msgstr "Importe total de la suscripción antes de impuestos."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__amount_total
+msgid "Total amount for the subscription, including taxes."
+msgstr "Importe total de la suscripción, impuestos incluidos."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__price_total
+msgid "Total amount including taxes."
+msgstr "Importe total, impuestos incluidos."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_order_line_mixin__subscription_period_total
+msgid "Total del Periodo"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__recurring_total
+msgid ""
+"Total recurring amount for the subscription, based on the current plan and "
+"lines."
+msgstr ""
+"Importe recurrente total de la suscripción, basado en el plan actual y las "
+"líneas."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__amount_tax
+msgid "Total tax amount for the subscription."
+msgstr "Importe total de los impuestos de la suscripción."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__price_tax
+msgid "Total tax amount for this line."
+msgstr "Importe total del impuesto para esta línea."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.subscription_period_total
+msgid "Total:"
+msgstr "Total:"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__type
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__subscription_type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Tipo de actividad de excepción en el registro."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__type
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__subscription_type
+msgid "Type of the subscription: Sale or Purchase."
+msgstr "Tipo de suscripción: Venta o compra."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_close_reason__retention_button_link
+msgid "URL to open when the retention button is clicked."
+msgstr "URL que se abre al hacer clic en el botón de retención."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__name
+msgid "Unique reference for the subscription, generated automatically."
+msgstr "Referencia única para la suscripción, generada automáticamente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_recurring_plan__billing_period_unit
+msgid "Unit"
+msgstr "Unidad"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__price_unit
+msgid "Unit Price"
+msgstr "Precio unitario"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_line__product_uom
+msgid "Unit of Measure"
+msgstr "Unidad de medida"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__product_uom
+msgid "Unit of measure for the product."
+msgstr "Unidad de medida del producto."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__price_unit
+msgid "Unit price of the product."
+msgstr "Precio unitario del producto."
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_unknown
+msgid "Unknown"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:solt.subscription.close.reason,name:solt_recurring_payment.solt_close_reason_unpaid
+msgid "Unpaid Subscription"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_recurring_plan__auto_close_limit
+msgid ""
+"Unpaid subscription after the due date majored by this number of days will be automatically closed by the subscriptions expiration scheduled action. \n"
+"If the chosen payment method has failed to renew the subscription after this time, the subscription is automatically closed."
+msgstr ""
+"Suscripción no pagada después de la fecha de vencimiento aumentada por este número de días se cerrará automáticamente mediante la acción programada de vencimiento de suscripciones.\n"
+"Si el método de pago elegido no ha logrado renovar la suscripción después de este tiempo, la suscripción se cierra automáticamente."
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__amount_untaxed
+msgid "Untaxed Amount"
+msgstr "Importe sin impuestos"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription_line__product_uom_category_id
+msgid "UoM category related to the selected product."
+msgstr "Categoría UoM relacionada con el producto seleccionado."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/wizard/solt_subscription_renew_wizard.py:0
+#, python-format
+msgid "Upgrade charge invoice: %s"
+msgstr "Factura de cargo por actualización: %s"
+
+#. module: solt_recurring_payment
+#: model:res.groups,comment:solt_recurring_payment.group_subscription_user
+msgid "User can view and work with subscriptions"
+msgstr "El usuario puede ver y trabajar con suscripciones"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_reason__visible_in_portal
+msgid "Visible in Portal"
+msgstr "Visible en el portal"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del sitio web"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,help:solt_recurring_payment.field_solt_subscription__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicación del sitio web"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_recurring_plan__billing_period_unit__week
+msgid "Weeks"
+msgstr "Semanas"
+
+#. module: solt_recurring_payment
+#: model:solt.recurring.plan,name:solt_recurring_payment.solt_subscription_plan_yearly
+msgid "Yearly"
+msgstr ""
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_recurring_plan__billing_period_unit__year
+msgid "Years"
+msgstr "Años"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
+msgid "Yesterday"
+msgstr "Ayer"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid ""
+"You are trying to invoice recurring orders that are past their end date. "
+"Please change their end date or renew them before creating new invoices."
+msgstr ""
+"Está intentando facturar pedidos recurrentes que han superado su fecha de "
+"finalización. Cambie su fecha de finalización o renuévelos antes de crear "
+"nuevas facturas."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/res_partner.py:0
+#, python-format
+msgid ""
+"You can't archive the partner as it is used in the following recurring "
+"orders: %s"
+msgstr ""
+"No se puede archivar el contacto, se utiliza en los siguientes pedidos "
+"recurrentes: %s"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "You cannot confirm a subscription without lines."
+msgstr "No puede confirmar una suscripción sin líneas."
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_subscription.py:0
+#, python-format
+msgid "You cannot delete an active subscription. Please close it first."
+msgstr ""
+"No se puede eliminar una suscripción activa. Cierre primero la suscripción."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.actions.act_window,help:solt_recurring_payment.product_action_subscription
+msgid ""
+"You must define a product for everything you sell or purchase,\n"
+"                whether it's a storable product, a consumable or a service."
+msgstr ""
+"Debe definir un producto para todo lo que vende o compra, ya sea un producto"
+" almacenable, un consumible o un servicio."
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid "button link"
+msgstr "botón de enlace"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid "button text"
+msgstr "texto del botón"
+
+#. module: solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_reason_view_form
+msgid "message"
+msgstr "mensaje"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid "per %d months"
+msgstr "por %d meses"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid "per %d weeks"
+msgstr "por %d semanas"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid "per %d years"
+msgstr "por %d años"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid "per month"
+msgstr "por mes"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid "per week"
+msgstr "por semana"
+
+#. module: solt_recurring_payment
+#. odoo-python
+#: code:addons/solt_recurring_payment/models/solt_recurring_plan.py:0
+#, python-format
+msgid "per year"
+msgstr "por año"
+
+#. module: solt_recurring_payment
+#: model:mail.template,subject:solt_recurring_payment.mail_template_subscription_alert
+msgid ""
+"{{ object.company_id.name }}: Please check the subscription {{ object.name "
+"}}"
+msgstr ""
+"{{ object.company_id.name }}: Por favor, comprueba la suscripción. {{ "
+"object.name }}"
+
+#. module: solt_recurring_payment
+#: model:mail.template,subject:solt_recurring_payment.mail_template_subscription_rating
+msgid "{{ object.company_id.name }}: Service Rating Request"
+msgstr "{{ object.company_id.name }}: Solicitud de valoración del servicio"

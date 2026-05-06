@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- SUBSCRIPTION FORM VIEW -->
+    <record id="solt_subscription_view_form" model="ir.ui.view">
+        <field name="name">solt.subscription.form</field>
+        <field name="model">solt.subscription</field>
+        <field name="arch" type="xml">
+            <form string="Subscription">
+                <header>
+                    <button name="action_confirm"
+                            string="Confirm"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_open_renew_wizard"
+                            string="Manage"
+                            type="object"
+                            invisible="state != 'active'"/>
+                    <button name="action_reopen"
+                            string="Reopen"
+                            type="object"
+                            invisible="state != 'closed'"/>
+                    <button name="action_open_close_wizard"
+                            string="Close"
+                            type="object"
+                            invisible="state != 'active'"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,active,closed"/>
+                </header>
+                <sheet>
+                    <!-- Hidden fields for domains -->
+                    <field name="active" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoices"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-pencil-square-o"
+                                invisible="invoice_count == 0">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon"
+                            title="Archived"
+                            bg_color="text-bg-secondary"
+                            invisible="active"/>
+                    <widget name="web_ribbon"
+                            title="Closed"
+                            bg_color="text-bg-danger"
+                            invisible="state != 'closed' or not active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" widget="res_partner_many2one" readonly="state != 'draft'"/>
+                            <field name="plan_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="pricelist_id" groups="product.group_product_pricelist"
+                                   readonly="state != 'draft'"
+                                   invisible="type == 'purchase'"/>
+                            <field name="origin_subscription_id" invisible="not origin_subscription_id" readonly="1"/>
+                            <field name="renewed_subscription_ids" widget="many2many_tags"
+                                   invisible="not renewed_subscription_ids" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="type" readonly="state != 'draft'"/>
+                            <field name="start_date" readonly="state != 'draft'"/>
+                            <field name="next_invoice_date" readonly="state != 'draft'"/>
+                            <field name="end_date" readonly="state != 'draft'"/>
+                            <field name="close_date" invisible="state != 'closed'" readonly="1"/>
+                            <field name="close_reason_id" invisible="state != 'closed'" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Subscription Lines" name="lines">
+                            <field name="subscription_line_ids"
+                                   context="{'default_subscription_id': id, 'default_subscription_type': type}"
+                                   readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id" domain="product_domain"/>
+                                    <field name="analytic_distribution" widget="analytic_distribution"
+                                           optional="hide"
+                                           groups="analytic.group_analytic_accounting"/>
+                                    <field name="name" optional="hide"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="company_id" column_invisible="True"/>
+                                    <field name="product_uom_id" groups="uom.group_uom"
+                                           domain="[('category_id', '=', product_uom_category_id)]"/>
+                                    <field name="price_unit"/>
+                                    <field name="discount" optional="show"/>
+                                    <field name="tax_ids" widget="many2many_tags" optional="hide"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="price_total" optional="show"/>
+                                    <field name="recurring_monthly" optional="hide"/>
+                                    <field name="product_uom_category_id" column_invisible="True"/>
+                                    <field name="subscription_type" column_invisible="True"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="product_domain" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group col="12" class="oe_invoice_lines_tab">
+                                <group colspan="8">
+                                    <field name="internal_note" placeholder="Internal notes..." colspan="2" nolabel="1" readonly="state != 'draft'"/>
+                                </group>
+                                <group colspan="4">
+                                    <group class="oe_subtotal_footer">
+                                        <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" colspan="2" readonly="1"/>
+                                    </group>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Payment" name="payment">
+                            <group>
+                                <group>
+                                    <field name="payment_token_id"
+                                           options="{'no_create': True}"
+                                           domain="[('partner_id', 'child_of', commercial_partner_id), ('company_id', '=', company_id)]"
+                                           readonly="state != 'draft'"/>
+                                </group>
+                                <group>
+                                    <field name="payment_exception" readonly="state != 'draft'"/>
+                                    <field name="pending_transaction" readonly="state != 'draft'"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Other Info" name="other_info">
+                            <group>
+                                <group>
+                                    <field name="user_id" readonly="state != 'draft'"/>
+                                    <!--                                    <field name="team_id" readonly="state != 'draft'"/>-->
+                                    <field name="company_id" groups="base.group_multi_company"
+                                           readonly="state != 'draft'"/>
+                                </group>
+                                <group>
+                                    <field name="origin_id" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="KPIs">
+                                <group>
+                                    <field name="recurring_total" readonly="state != 'draft'"/>
+                                </group>
+                                <group>
+                                    <field name="recurring_monthly" readonly="state != 'draft'"/>
+                                </group>
+                            </group>
+                            <group string="Technical State" groups="base.group_no_one">
+                                <group>
+                                    <field name="is_batch"/>
+                                </group>
+                                <group>
+                                    <field name="is_invoice_cron"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="description" placeholder="Description..." readonly="state != 'draft'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- SUBSCRIPTION LIST VIEW -->
+    <record id="solt_subscription_view_tree" model="ir.ui.view">
+        <field name="name">solt.subscription.tree</field>
+        <field name="model">solt.subscription</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'closed'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="type"/>
+                <field name="plan_id"/>
+                <field name="start_date"/>
+                <field name="next_invoice_date"/>
+                <field name="recurring_monthly" sum="Total MRR"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-danger="state == 'closed'"
+                       decoration-info="state == 'draft'"/>
+                <field name="user_id" optional="hide" widget="many2one_avatar_user"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- SUBSCRIPTION SEARCH VIEW -->
+    <record id="solt_subscription_view_search" model="ir.ui.view">
+        <field name="name">solt.subscription.search</field>
+        <field name="model">solt.subscription</field>
+        <field name="arch" type="xml">
+            <search string="Search Subscriptions">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="user_id"/>
+                <separator/>
+                <filter name="start_date" string="Start Date" date="start_date"/>
+                <filter name="next_invoice_date" string="Next Invoice Date" date="next_invoice_date"/>
+                <filter string="Today" name="today"
+                        domain="[('start_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Yesterday" name="yesterday"
+                        domain="[('start_date', '=', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Week" name="this_week"
+                        domain="[('start_date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Month" name="this_month"
+                        domain="[('start_date', '&gt;=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Quarter" name="this_quarter"
+                        domain="[('start_date', '&gt;=', (context_today() - datetime.timedelta(days=90)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Semester" name="this_semester"
+                        domain="[('start_date', '&gt;=', (context_today() - datetime.timedelta(days=180)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Year" name="this_year"
+                        domain="[('start_date', '&gt;=', (context_today().strftime('%Y-01-01')))]"/>
+                <filter string="Last Year" name="last_year"
+                        domain="[('start_date', '&gt;=', (context_today() + relativedelta(years=-1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="My Subscriptions"
+                        name="my_subscriptions"
+                        domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Draft"
+                        name="draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter string="Active"
+                        name="active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter string="Closed"
+                        name="churned"
+                        domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <filter string="To Renew"
+                        name="to_renew"
+                        domain="[('state', '=', 'active'), ('next_invoice_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Payment Exception"
+                        name="payment_exception"
+                        domain="[('payment_exception', '=', True)]"/>
+                <separator/>
+                <filter string="Archived"
+                        name="archived"
+                        domain="[('active', '=', False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Plan" name="group_plan" context="{'group_by': 'plan_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Salesperson" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Start Date" name="group_start" context="{'group_by': 'start_date:month'}"/>
+                    <filter string="Next Invoice Date" name="group_next_invoice_date"
+                            context="{'group_by': 'next_invoice_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- SUBSCRIPTION KANBAN VIEW -->
+    <record id="solt_subscription_view_kanban" model="ir.ui.view">
+        <field name="name">solt.subscription.kanban</field>
+        <field name="model">solt.subscription</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="state">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="recurring_monthly"/>
+                <field name="state"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex flex-column">
+                            <strong><field name="name"/></strong>
+                            <field name="partner_id"/>
+                            <div class="d-flex justify-content-between">
+                                <span><field name="plan_id"/></span>
+                                <strong>
+                                    <field name="recurring_monthly" widget="monetary"/>
+                                    <span class="text-muted">/month</span>
+                                </strong>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- SUBSCRIPTION ACTION -->
+    <record id="solt_subscription_action" model="ir.actions.act_window">
+        <field name="name">Subscriptions</field>
+        <field name="res_model">solt.subscription</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="solt_subscription_view_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first subscription!
+            </p>
+            <p>
+                Subscriptions allow you to manage recurring revenue from your customers.
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="force_invoice_subscription">
+        <field name="name">Create invoice</field>
+        <field name="model_id" ref="model_solt_subscription"/>
+        <field name="binding_model_id" ref="model_solt_subscription"/>
+        <field name="state">code</field>
+        <field name="code">records.with_context(recurring_automatic=True)._create_invoices(final=True)</field>
+    </record>
+</odoo>

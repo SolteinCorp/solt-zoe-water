@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="solt_subscription_view_form_sale_orders" model="ir.ui.view">
+        <field name="name">solt.subscription.form.sale.orders</field>
+        <field name="model">solt.subscription</field>
+        <field name="inherit_id" ref="solt_recurring_payment.solt_subscription_view_form"/>
+        <field name="arch" type="xml">
+            <button name="action_view_invoices" position="before">
+                <button name="action_view_generated_sale_orders"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-shopping-cart"
+                        invisible="sale_order_count == 0">
+                    <field name="sale_order_count" widget="statinfo" string="Sale Orders"/>
+                </button>
+            </button>
+        </field>
+    </record>
+</odoo>

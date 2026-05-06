@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_activity_plan_action_subscription" model="ir.actions.act_window">
+        <field name="name">Activity Plans</field>
+        <field name="res_model">mail.activity.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="mail.mail_activity_plan_view_search"/>
+        <field name="context">{'default_res_model': 'solt.subscription'}</field>
+        <field name="domain">[('res_model', '=', 'solt.subscription')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new plan
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_supplierinfo_form_view_inherit_recurring_plan" model="ir.ui.view">
+        <field name="name">product.supplierinfo.form.view.inherit.recurring.plan</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="before">
+                <field name="plan_id" options="{'no_create': True}" invisible="not recurring_ok" required="recurring_ok"/>
+                <field name="required_recurring_quantity" invisible="not recurring_ok"/>
+                <field name="recurring_ok" invisible="True"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_supplierinfo_tree_view2_inherit_recurring_plan" model="ir.ui.view">
+        <field name="name">product.supplierinfo.tree.view2.inherit.recurring.plan</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </xpath>
+            <xpath expr="//list" position="inside">
+                <field name="company_id" column_invisible="True"/>
+            </xpath>
+            <field name="delay" position="after">
+                <field name="plan_id"
+                       options="{'no_create': True}"
+                       optional="show"
+                       column_invisible="not context.get('recurring_ok', True)"/>
+                <field name="required_recurring_quantity"
+                       optional="hide"
+                       column_invisible="not context.get('recurring_ok', True)"/>
+            </field>
+        </field>
+    </record>
+</odoo>

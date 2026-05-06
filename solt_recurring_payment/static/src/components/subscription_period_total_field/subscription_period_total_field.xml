@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+
+    <t t-name="solt_recurring_payment.SubscriptionPeriodTotalField">
+        <table class="o_subscription_period_total" t-if="totals">
+            <tbody>
+                <tr>
+                    <td>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label bold">Subscriptions</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                    </td>
+                                </tr>
+                                <t t-foreach="totals.plans" t-as="plan" t-key="plan['id']">
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label bold" t-out="plan['plan_name']"/>
+                                        </td>
+                                        <td class="o_list_monetary">
+                                            <span class="bold" t-out="plan['formatted_price_unit']"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Subtotal</label>
+                                        </td>
+                                        <td class="o_list_monetary">
+                                            <span name="formatted_periodic_amount"
+                                                  class="bold"
+                                                  t-out="plan['formatted_periodic_amount']"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Taxes</label>
+                                        </td>
+                                        <td class="o_list_monetary">
+                                            <span name="formatted_periodic_tax_amount"
+                                                  class="bold"
+                                                  t-out="plan['formatted_periodic_tax_amount']"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label bold">Total</label>
+                                        </td>
+                                        <td class="o_list_monetary">
+                                            <span name="formatted_period_total"
+                                                  class="oe_subtotal_footer_separator bold"
+                                                  t-out="plan['formatted_period_total']"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label bold">Products/Services</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Subtotal</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                        <span name="formatted_amount_non_subscription"
+                                              class="bold"
+                                              t-out="totals.formatted_amount_non_subscription"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Taxes</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                        <span name="formatted_amount_tax_non_subscription"
+                                              class="bold"
+                                              t-out="totals.formatted_amount_tax_non_subscription"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label bold">Total</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                        <span name="formatted_amount_total_non_subscription"
+                                              class="oe_subtotal_footer_separator bold"
+                                              t-out="totals.formatted_amount_total_non_subscription"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label bold">Final offer</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Subtotal</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                        <span name="formatted_amount_subscription_subtotal"
+                                              class="bold"
+                                              t-out="totals.formatted_amount_subscription_subtotal"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Taxes</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                        <span name="formatted_amount_subscription_tax"
+                                              class="bold"
+                                              t-out="totals.formatted_amount_subscription_tax"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label bold">Total</label>
+                                    </td>
+                                    <td class="o_list_monetary">
+                                        <span name="formatted_amount_subscription_total"
+                                              class="oe_subtotal_footer_separator bold"
+                                              t-out="totals.formatted_amount_subscription_total"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </t>
+</templates>

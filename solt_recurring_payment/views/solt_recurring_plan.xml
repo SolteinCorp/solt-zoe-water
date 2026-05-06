@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- PLAN FORM VIEW -->
+    <record id="solt_recurring_plan_view_form" model="ir.ui.view">
+        <field name="name">solt.recurring.plan.form</field>
+        <field name="model">solt.recurring.plan</field>
+        <field name="arch" type="xml">
+            <form string="Subscription Plan">
+                <sheet>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_active_sub"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-refresh">
+                            <field name="active_subs_count" widget="statinfo" string="Subscriptions"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Plan Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <label for="billing_period_value" string="Billing Period"/>
+                            <div class="o_row">
+                                <field name="billing_period_value" class="oe_inline"/>
+                                <field name="billing_period_unit" class="oe_inline"/>
+                            </div>
+                            <field name="auto_close_limit"/>
+                            <field name="auto_archive_delay"/>
+                        </group>
+                        <group>
+                            <field name="invoice_mail_template_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Self-Service" name="self_service">
+                            <group>
+                                <group string="Customer Portal Options">
+                                    <field name="user_closable"/>
+                                    <field name="user_extend"/>
+                                </group>
+                                <group string="Related Plans">
+                                    <field name="related_plan_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Pricing" name="pricing">
+                            <field name="product_subscription_pricing_ids">
+                                <list editable="bottom">
+                                    <field name="product_template_id"/>
+                                    <field name="product_variant_ids" widget="many2many_tags" optional="show"/>
+                                    <field name="required_recurring_quantity" optional="show"/>
+                                    <field name="free_periods" optional="show"/>
+                                    <field name="pricelist_id" optional="show"/>
+                                    <field name="price"/>
+                                    <field name="currency_id" groups="base.group_multi_currency"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- PLAN TREE VIEW -->
+    <record id="solt_recurring_plan_view_tree" model="ir.ui.view">
+        <field name="name">solt.recurring.plan.tree</field>
+        <field name="model">solt.recurring.plan</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="billing_period_display"/>
+                <field name="active_subs_count"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- PLAN ACTION -->
+    <record id="solt_recurring_plan_action" model="ir.actions.act_window">
+        <field name="name">Subscription Plans</field>
+        <field name="res_model">solt.recurring.plan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

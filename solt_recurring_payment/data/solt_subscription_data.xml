@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sequence for subscriptions -->
+    <record id="seq_solt_subscription_base" model="ir.sequence">
+        <field name="name">Subscription</field>
+        <field name="code">solt.subscription</field>
+        <field name="prefix">SUB/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Close Reasons -->
+    <record id="solt_close_reason_unknown" model="solt.subscription.close.reason">
+        <field name="name">Unknown</field>
+        <field name="sequence">100</field>
+        <field name="is_protected">True</field>
+    </record>
+
+    <record id="solt_close_reason_end_of_contract" model="solt.subscription.close.reason">
+        <field name="name">End of Contract</field>
+        <field name="sequence">10</field>
+        <field name="is_protected">True</field>
+    </record>
+
+    <record id="solt_close_reason_plan_change" model="solt.subscription.close.reason">
+        <field name="name">Plan Change</field>
+        <field name="sequence">20</field>
+        <field name="visible_in_portal">False</field>
+        <field name="is_protected">True</field>
+    </record>
+
+    <record id="solt_close_reason_too_expensive" model="solt.subscription.close.reason">
+        <field name="name">Too Expensive</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="solt_close_reason_not_using" model="solt.subscription.close.reason">
+        <field name="name">Not Using the Service</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="solt_close_reason_competitor" model="solt.subscription.close.reason">
+        <field name="name">Switched to Competitor</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="solt_close_reason_missing_features" model="solt.subscription.close.reason">
+        <field name="name">Missing Features</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="solt_close_reason_bad_support" model="solt.subscription.close.reason">
+        <field name="name">Poor Customer Support</field>
+        <field name="sequence">70</field>
+    </record>
+
+    <record id="solt_close_reason_auto_close_limit" model="solt.subscription.close.reason">
+        <field name="name">Automatic Renewal Failed</field>
+        <field name="sequence">80</field>
+        <field name="visible_in_portal">False</field>
+        <field name="is_protected">True</field>
+    </record>
+
+    <record id="solt_close_reason_unpaid" model="solt.subscription.close.reason">
+        <field name="name">Unpaid Subscription</field>
+        <field name="sequence">90</field>
+        <field name="visible_in_portal">False</field>
+        <field name="is_protected">True</field>
+    </record>
+
+    <data noupdate="1">
+        <!-- Default Subscription Plans -->
+        <record id="solt_subscription_plan_daily" model="solt.recurring.plan">
+            <field name="name">Daily</field>
+            <field name="billing_period_value">1</field>
+            <field name="billing_period_unit">day</field>
+        </record>
+
+        <record id="solt_subscription_plan_monthly" model="solt.recurring.plan">
+            <field name="name">Monthly</field>
+            <field name="billing_period_value">1</field>
+            <field name="billing_period_unit">month</field>
+        </record>
+
+        <record id="solt_subscription_plan_yearly" model="solt.recurring.plan">
+            <field name="name">Yearly</field>
+            <field name="billing_period_value">1</field>
+            <field name="billing_period_unit">year</field>
+        </record>
+
+        <!-- Mail message subtype -->
+        <record id="subtype_subscription_state_change" model="mail.message.subtype">
+            <field name="name">Subscription State Change</field>
+            <field name="res_model">solt.subscription</field>
+            <field name="default" eval="True"/>
+            <field name="internal" eval="True"/>
+            <field name="description">Subscription state has changed</field>
+        </record>
+
+        <!-- Cron Jobs -->
+        <record model="ir.cron" id="ir_cron_recurring_payment_invoice">
+            <field name="name">Recurring payment: Generate Recurring Invoices</field>
+            <field name="model_id" ref="model_solt_subscription"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_invoice_subscriptions()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+
+        <record model="ir.cron" id="ir_cron_recurring_payment_auto_archive">
+            <field name="name">Recurring payment: Auto Archive Closed Subscriptions</field>
+            <field name="model_id" ref="model_solt_subscription"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_auto_archive_subscriptions()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+
+        <record model="ir.cron" id="ir_cron_recurring_payment_expiration">
+            <field name="name">Recurring payment: Check Expiration</field>
+            <field name="model_id" ref="model_solt_subscription"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_check_expiration()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(hours=7)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+    </data>
+</odoo>

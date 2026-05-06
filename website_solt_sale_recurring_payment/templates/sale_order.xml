@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sale_order_portal_content_inherit_subscriptions"
+              inherit_id="sale_management.sale_order_portal_content_inherit_sale_management">
+        <xpath expr="//div[@id='sale_invoices']" position="after">
+            <div id="sale_subscriptions" t-if="sale_order.subscription_ids" class="col-12 col-lg-6 mb-4">
+                <h4 class="mb-1">Subscriptions</h4>
+                <hr class="mt-1 mb-2"/>
+                <t t-foreach="sale_order.subscription_ids" t-as="sos">
+                    <t t-set="sos_url"
+                       t-value="sos.get_portal_url(query_string=keep_query(access_token=sos.access_token))"/>
+                    <div class="d-flex flex-column">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <a t-att-href="sos_url">
+                                <span t-out="sos.name"/>
+                            </a>
+                            <span t-if="sos.state == 'active' and sos.next_invoice_date and sos.next_invoice_date &lt; datetime.date.today()"
+                                  class="badge rounded-pill text-bg-danger">
+                                <i class="fa fa-fw fa-repeat"/> To Renew
+                            </span>
+                            <span t-elif="sos.state == 'active'"
+                                  class="badge rounded-pill text-bg-primary">
+                                <i class="fa fa-fw fa-check"/> Active
+                            </span>
+                            <span t-elif="sos.state == 'closed'"
+                                  class="badge rounded-pill text-bg-dark">
+                                <i class="fa fa-fw fa-times"/> Closed
+                            </span>
+                            <span t-else="" class="badge rounded-pill text-bg-secondary">
+                                <t t-out="sos.state"/>
+                            </span>
+                        </div>
+                        <div class="small d-lg-inline-block">Next invoice date: <span class="text-muted"
+                                                                                      t-field="sos.next_invoice_date"
+                                                                                      t-options="{'widget': 'date'}"/></div>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="sale_order_portal_template" inherit_id="sale.sale_order_portal_template" name="Sales Order Soltein">
+        <xpath expr="//h2[@data-id='total_amount']" position="replace">
+            <h2 t-if="not sale_order.is_subscription or not sale_order.subscription_period_total"
+                t-field="sale_order.amount_total" data-id="total_amount"/>
+            <h2 t-if="sale_order.is_subscription and sale_order.subscription_period_total"
+                t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"
+                t-out="sale_order.subscription_period_total['amount_subscription_total']" data-id="total_amount"/>
+        </xpath>
+    </template>
+</odoo>

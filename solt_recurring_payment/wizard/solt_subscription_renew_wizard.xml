@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="solt_subscription_renew_wizard_view_form" model="ir.ui.view">
+        <field name="name">solt.subscription.renew.wizard.form</field>
+        <field name="model">solt.subscription.renew.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Manage Subscription">
+                <group col="2">
+                    <field name="subscription_id" readonly="1"/>
+                    <field name="action_type" widget="radio" options="{'horizontal': true}"/>
+                </group>
+
+                <!-- Change Plan section -->
+                <group col="2" invisible="action_type != 'change_plan'" string="Change Plan">
+                    <field name="current_plan_id" readonly="1"/>
+                    <field name="available_plan_ids_domain" invisible="1"/>
+                    <field name="new_plan_id"
+                           domain="available_plan_ids_domain"
+                           options="{'no_create': True}"
+                           required="action_type == 'change_plan'"/>
+                </group>
+
+                <!-- Renew section -->
+                <group col="2" invisible="action_type != 'renew'" string="Renew">
+                    <field name="extend_months" required="action_type == 'renew'"/>
+                </group>
+
+                <!-- Upsell section -->
+                <div invisible="action_type != 'upsell'">
+                    <separator string="Products to Add"/>
+                    <field name="upsell_line_ids" nolabel="1">
+                        <list editable="bottom">
+                            <field name="product_id" string="Product"/>
+                            <field name="name" optional="hide"/>
+                            <field name="product_uom_qty" string="Qty"/>
+                            <field name="price_unit" string="Unit Price (optional)" optional="show"/>
+                        </list>
+                    </field>
+                </div>
+
+                <!-- Service Change section -->
+                <div invisible="action_type != 'service_change'">
+                    <group col="2">
+                        <field name="service_change_plan_id"
+                               options="{'no_create': True}"
+                               help="Leave empty to keep the current plan."/>
+                    </group>
+                    <separator string="New Product Set"/>
+                    <field name="service_change_line_ids" nolabel="1">
+                        <list editable="bottom">
+                            <field name="product_id" string="Product"/>
+                            <field name="name" optional="hide"/>
+                            <field name="product_uom_qty" string="Qty"/>
+                            <field name="price_unit" string="Unit Price (optional)" optional="show"/>
+                        </list>
+                    </field>
+                </div>
+
+                <footer>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="solt_subscription_renew_wizard_action" model="ir.actions.act_window">
+        <field name="name">Manage Subscription</field>
+        <field name="res_model">solt.subscription.renew.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

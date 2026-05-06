@@ -1,0 +1,41 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'Recurring Payments',
+    'summary': 'Manage recurring payments with subscriptions.',
+    'author': 'Soltein SA de CV',
+    'website': 'https://soltein.mx',
+    'category': 'Soltein SA de CV/Subscriptions',
+    'version': '18.0.3.0.0',
+    'license': 'LGPL-3',
+    'depends': ['account', 'rating', 'payment'],
+    "excludes": ["sale_subscription"],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'data/solt_subscription_data.xml',
+        'data/mail_template.xml',
+        'views/account_move.xml',
+        'views/mail_activity.xml',
+        'views/mail_activity_plan.xml',
+        'views/product_pricelist.xml',
+        'views/product_supplierinfo.xml',
+        'views/product_template.xml',
+        'views/res_partner.xml',
+        'views/solt_subscription.xml',
+        'views/solt_recurring_plan.xml',
+        'views/solt_subscription_close_reason.xml',
+        'wizard/solt_subscription_close_wizard.xml',
+        'wizard/solt_subscription_renew_wizard.xml',
+        'templates/subscription_period_total.xml',
+        'views/menus.xml',
+    ],
+    'application': True,
+    'assets': {
+        'web.assets_backend': [
+            'solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.js',
+            'solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.xml',
+            'solt_recurring_payment/static/src/components/subscription_period_total_field/subscription_period_total_field.css',
+        ]
+    },
+    'pre_init_hook': 'pre_init_hook',
+}

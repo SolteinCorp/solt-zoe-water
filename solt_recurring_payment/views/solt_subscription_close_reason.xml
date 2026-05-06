@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="solt_subscription_close_reason_view_tree" model="ir.ui.view">
+        <field name="name">solt.subscription.close.reason.list</field>
+        <field name="model">solt.subscription.close.reason</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="visible_in_portal"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="solt_subscription_close_reason_action" model="ir.actions.act_window">
+        <field name="name">Close Reasons</field>
+        <field name="res_model">solt.subscription.close.reason</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="solt_subscription_close_reason_view_form" model="ir.ui.view">
+        <field name="name">solt.subscription.close.reason.form</field>
+        <field name="model">solt.subscription.close.reason</field>
+        <field name="arch" type="xml">
+            <form string="Subscription Close Reason">
+                <sheet>
+                    <field name="empty_retention_message" invisible="1"/>
+                    <group>
+                        <field name="name" placeholder="The reason for closing a subscription"/>
+                        <field name="visible_in_portal"/>
+                    </group>
+                    <separator string="Portal: retention step"/>
+                    <group>
+                        <field name="retention_message" placeholder="This message will be displayed to convince the customer to stay (e.g., We don't want you to leave, can we offer to schedule a meeting with your account manager?)"/>
+                        <field name="retention_button_text" placeholder="The text to display on the call to action"/>
+                        <field name="retention_button_link" placeholder="The redirect link of the call to action"/>
+                    </group>
+                    <div role="alert" class="alert alert-warning" invisible="not visible_in_portal or not empty_retention_message and retention_button_text and retention_button_link or empty_retention_message and not retention_button_text and not retention_button_link">
+                        <strong>Warning:</strong> the survey can only be shown if all information is set. Please complete:
+                        <ul>
+                            <li invisible="not empty_retention_message">message</li>
+                            <li invisible="retention_button_text">button text</li>
+                            <li invisible="retention_button_link">button link</li>
+                        </ul>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
