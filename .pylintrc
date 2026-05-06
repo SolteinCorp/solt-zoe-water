@@ -1,0 +1,125 @@
+# =============================================================================
+# PYLINT CONFIGURATION FOR ODOO MODULES - SOLTEIN
+# =============================================================================
+# This file is copied to client repositories by solt-pre-commit
+# Compatible with pylint-odoo v9.x
+#
+# BLOCKING BEHAVIOR:
+# - All enabled checks below will block PRs when fail-on-warnings: true
+# - Checks are run only on CHANGED files in PRs (not entire repo)
+# =============================================================================
+
+[MASTER]
+load-plugins=pylint_odoo
+score=no
+
+[ODOOLINT]
+# README template URL
+readme-template-url=https://github.com/soltein-net/solt-pre-commit/blob/17.0/templates/README-template.md
+
+# Required author in manifest
+manifest-required-authors=Soltein SA de CV
+
+# Required keys in manifest
+manifest-required-keys=license
+
+# Deprecated keys in manifest
+manifest-deprecated-keys=description,active
+
+# Allowed licenses
+license-allowed=AGPL-3,GPL-2,GPL-2 or any later version,GPL-3,GPL-3 or any later version,LGPL-3
+
+# Valid Odoo versions
+valid-odoo-versions=17.0,18.0,19.0
+
+[MESSAGES CONTROL]
+disable=all
+
+# =============================================================================
+# ENABLED CHECKS - All blocking with fail-on-warnings: true
+# =============================================================================
+enable=
+    # -------------------------------------------------------------------------
+    # CRITICAL - Security and Inheritance (always blocking)
+    # -------------------------------------------------------------------------
+    sql-injection,
+    eval-used,
+    inheritable-method-lambda,
+    inheritable-method-string,
+    prohibited-method-override,
+    super-method-mismatch,
+    renamed-field-parameter,
+
+    # -------------------------------------------------------------------------
+    # DEPRECATION CHECKS
+    # -------------------------------------------------------------------------
+    attribute-deprecated,
+    deprecated-odoo-model-method,
+    odoo-exception-warning,
+    deprecated-name-get,
+
+    # -------------------------------------------------------------------------
+    # MANIFEST CHECKS (C81xx)
+    # -------------------------------------------------------------------------
+    manifest-required-author,
+    manifest-required-key,
+    manifest-version-format,
+    manifest-author-string,
+    manifest-deprecated-key,
+    manifest-behind-migrations,
+    manifest-data-duplicated,
+    website-manifest-key-not-valid-uri,
+    license-allowed,
+    development-status-allowed,
+   # manifest-maintainers-list,
+   # missing-readme,
+   # manifest-superfluous-key,
+
+    # -------------------------------------------------------------------------
+    # METHOD NAMING CHECKS (C81xx)
+    # -------------------------------------------------------------------------
+    method-compute,
+    method-inverse,
+    method-search,
+    method-required-super,
+
+    # -------------------------------------------------------------------------
+    # CODE QUALITY (W81xx, E81xx)
+    # -------------------------------------------------------------------------
+    print-used,
+    except-pass,
+    missing-return,
+    external-request-timeout,
+    no-raise-unlink,
+    no-write-in-compute,
+    context-overridden,
+    # invalid-commit,
+
+    # -------------------------------------------------------------------------
+    # TRANSLATION CHECKS (optional - uncomment if needed)
+    # -------------------------------------------------------------------------
+    # translation-required,
+    # translation-field,
+    # translation-contains-variable,
+    # translation-positional-used,
+    # translation-format-interpolation,
+    # translation-fstring-interpolation,
+    # translation-not-lazy,
+    # translation-too-few-args,
+    # translation-too-many-args,
+
+    # -------------------------------------------------------------------------
+    # STYLE/QUALITY (optional - uncomment if needed)
+    # -------------------------------------------------------------------------
+    # attribute-string-redundant,
+    # consider-merging-classes-inherited,
+    # odoo-addons-relative-import,
+    # use-vim-comment,
+    # test-folder-imported,
+    # bad-builtin-groupby,
+    # prefer-env-translation,
+
+[REPORTS]
+msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
+output-format=colorized
+reports=no

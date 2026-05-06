@@ -1,0 +1,309 @@
+# =============================================================================
+# PYPROJECT CONFIGURATION FOR ODOO MODULES
+# =============================================================================
+# This file is copied to client repositories by solt-pre-commit
+# Contains unified configuration for: ruff, black, isort, pytest, mypy, coverage
+#
+# RUFF CONFIGURATION LEVELS:
+# --------------------------
+# Level 1 (ESSENTIAL): Syntax errors and critical bugs only
+#   - E (pycodestyle errors): E9xx (syntax), E7xx (indentation)
+#   - F (Pyflakes): undefined names, unused imports
+#   - W (pycodestyle warnings): W6xx (deprecated)
+#
+# Level 2 (STANDARD - DEFAULT): Add code quality rules
+#   - All Level 1 plus:
+#   - I (isort): import sorting
+#   - B (bugbear): likely bugs and design problems
+#   - C4 (comprehensions): list/dict comprehension issues
+#
+# Level 3 (STRICT): Add style and modernization
+#   - All Level 2 plus:
+#   - N (pep8-naming): naming conventions
+#   - UP (pyupgrade): Python version upgrades
+#   - SIM (simplify): code simplification
+#   - RUF (ruff): ruff-specific rules
+#
+# To change level, modify the 'select' list in [tool.ruff.lint]
+# See RUFF_LEVELS.md for detailed documentation
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# BLACK - Code Formatter (optional, ruff format can replace it)
+# -----------------------------------------------------------------------------
+[tool.black]
+line-length = 150
+target-version = ['py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | static
+    | lib
+    | node_modules
+    | migrations
+)/
+'''
+
+# -----------------------------------------------------------------------------
+# ISORT - Import Sorting (handled by ruff if using ruff's isort)
+# -----------------------------------------------------------------------------
+[tool.isort]
+profile = "black"
+line_length = 150
+known_odoo = ["odoo", "odoo.addons"]
+known_first_party = []
+sections = [
+    "FUTURE",
+    "STDLIB",
+    "THIRDPARTY",
+    "ODOO",
+    "FIRSTPARTY",
+    "LOCALFOLDER",
+]
+default_section = "THIRDPARTY"
+skip = [
+    ".git",
+    "__pycache__",
+    "static",
+    "lib",
+    "node_modules",
+    "migrations",
+]
+skip_glob = ["**/static/**", "**/lib/**"]
+
+# -----------------------------------------------------------------------------
+# RUFF - Fast Python Linter (v0.14+)
+# -----------------------------------------------------------------------------
+# Using LEVEL 2 (STANDARD) by default - safe for most Odoo projects
+# -----------------------------------------------------------------------------
+[tool.ruff]
+line-length = 150
+target-version = "py310"
+
+exclude = [
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".tox",
+    ".venv",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "static",
+    "lib",
+    "node_modules",
+    "migrations",
+    "__pycache__",
+    ".ruff_cache",
+]
+
+[tool.ruff.lint]
+# =============================================================================
+# LEVEL 2 (STANDARD) - Safe for most Odoo projects
+# =============================================================================
+# For LEVEL 1 (ESSENTIAL only), use:
+#   select = ["E9", "F", "W6"]
+#
+# For LEVEL 3 (STRICT), add:
+#   "N", "UP", "SIM", "RUF"
+# =============================================================================
+select = [
+    # Level 1 - Essential (always enabled)
+    "E",      # pycodestyle errors
+    "F",      # Pyflakes (undefined names, unused imports, etc.)
+    "W",      # pycodestyle warnings
+
+    # Level 2 - Standard (recommended)
+    "I",      # isort - import sorting
+    "B",      # flake8-bugbear - likely bugs and design problems
+    "C4",     # flake8-comprehensions - unnecessary list/dict calls
+]
+
+# =============================================================================
+# IGNORED RULES - Safe to ignore for Odoo development
+# =============================================================================
+ignore = [
+    # ----- Handled by formatters (black/ruff format) -----
+    "E501",   # line too long
+
+    # ----- Common Odoo patterns -----
+    "E731",   # lambda assignment (common in Odoo for default values)
+    "B008",   # function call in default argument (Odoo fields pattern)
+    "B904",   # raise without from (common pattern in Odoo)
+
+    # ----- If using Level 3 (STRICT), also ignore these: -----
+    # "N802",   # function name should be lowercase (Odoo conventions)
+    # "N803",   # argument name should be lowercase
+    # "N806",   # variable in function should be lowercase
+    # "N815",   # mixedCase variable in class scope
+    # "N999",   # invalid module name
+    # "SIM102", # nested if statements (sometimes clearer)
+    # "SIM108", # ternary operator (sometimes less readable)
+    # "UP007",  # Use X | Y for type union (Python 3.10+)
+    # "RUF012", # mutable class attributes (Odoo fields)
+]
+
+# Autofix configuration (disabled by default in pre-commit, enable if needed)
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore unused imports in __init__.py
+"__init__.py" = ["F401", "F403", "I001"]
+
+# Ignore all rules in manifest files
+"__manifest__.py" = ["ALL"]
+"__openerp__.py" = ["ALL"]
+
+# Relaxed rules for tests
+"tests/**/*.py" = [
+    "B011",   # assert False
+    "S101",   # assert used
+]
+
+# Relaxed rules for migrations
+"migrations/**/*.py" = [
+    "E501",   # line too long (SQL queries)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = []
+known-third-party = ["odoo"]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.flake8-bugbear]
+# Extend immutable calls for Odoo field definitions
+extend-immutable-calls = [
+    # Full path (odoo.fields.*)
+    "odoo.fields.Binary",
+    "odoo.fields.Boolean",
+    "odoo.fields.Char",
+    "odoo.fields.Command",
+    "odoo.fields.Date",
+    "odoo.fields.Datetime",
+    "odoo.fields.Float",
+    "odoo.fields.Html",
+    "odoo.fields.Id",
+    "odoo.fields.Integer",
+    "odoo.fields.Image",
+    "odoo.fields.Json",
+    "odoo.fields.Many2many",
+    "odoo.fields.Many2one",
+    "odoo.fields.Many2oneReference",
+    "odoo.fields.Monetary",
+    "odoo.fields.One2many",
+    "odoo.fields.Properties",
+    "odoo.fields.PropertiesDefinition",
+    "odoo.fields.Reference",
+    "odoo.fields.Selection",
+    "odoo.fields.Text",
+    # Short path (fields.*)
+    "fields.Binary",
+    "fields.Boolean",
+    "fields.Char",
+    "fields.Command",
+    "fields.Date",
+    "fields.Datetime",
+    "fields.Float",
+    "fields.Html",
+    "fields.Id",
+    "fields.Integer",
+    "fields.Image",
+    "fields.Json",
+    "fields.Many2many",
+    "fields.Many2one",
+    "fields.Many2oneReference",
+    "fields.Monetary",
+    "fields.One2many",
+    "fields.Properties",
+    "fields.PropertiesDefinition",
+    "fields.Reference",
+    "fields.Selection",
+    "fields.Text",
+    # Command helpers (Odoo 13+)
+    "Command.create",
+    "Command.update",
+    "Command.delete",
+    "Command.unlink",
+    "Command.link",
+    "Command.clear",
+    "Command.set",
+]
+
+# -----------------------------------------------------------------------------
+# PYTEST - Testing
+# -----------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+]
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests as integration tests",
+]
+
+# -----------------------------------------------------------------------------
+# COVERAGE - Code Coverage
+# -----------------------------------------------------------------------------
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "*/tests/*",
+    "*/__manifest__.py",
+    "*/__openerp__.py",
+    "*/migrations/*",
+    "*/static/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+# -----------------------------------------------------------------------------
+# MYPY - Type Checking (optional)
+# -----------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = [
+    "static/",
+    "lib/",
+    "migrations/",
+    "tests/",
+]

@@ -1,0 +1,67 @@
+# =============================================================================
+# PRE-COMMIT CONFIGURATION
+# =============================================================================
+# Install: pip install pre-commit && pre-commit install
+# Run: pre-commit run --all-files
+# Supports Odoo versions: 17.0, 18.0, 19.0
+# =============================================================================
+
+repos:
+  # ─────────────────────────────────────────────────────────────────────────
+  # SOLT PRE-COMMIT HOOKS
+  # ─────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/soltein-net/solt-pre-commit
+    rev: v1.0.1  # Supports Odoo 17.0, 18.0, 19.0
+    hooks:
+      - id: solt-check-branch
+        stages: [ pre-commit, pre-push ]
+      - id: solt-check-odoo
+        verbose: true
+        # args: [--show-info] # Uncomment to see info-level issues
+        # args: [--scope, full]  # Uncomment to validate entire repo
+        # args: [--odoo-version, 18.0]  # Uncomment to force specific version
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PYTHON CODE QUALITY - Ruff (linter only, NO autofix, NO formatter)
+  # Uses configuration from pyproject.toml
+  # Note: Ruff is INFORMATIONAL - does not block commits/PRs
+  # ─────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.1
+    hooks:
+      - id: ruff-check
+        args: [ --no-fix, --output-format=concise ]
+        # Removed: --fix (no autofix)
+        # Removed: ruff-format hook (no auto-formatting)
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # ODOO-SPECIFIC LINTING (OCA) - BLOCKING with fail-on-warnings
+  # ─────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/OCA/pylint-odoo
+    rev: v10.0.0
+    hooks:
+      - id: pylint_odoo
+        args:
+          - --rcfile=.pylintrc
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # GENERAL CODE QUALITY
+  # ─────────────────────────────────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-xml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [ --maxkb=500 ]
+      - id: debug-statements
+
+# =============================================================================
+# CI CONFIGURATION
+# =============================================================================
+ci:
+  autofix_prs: false  # Disabled - no auto-fixing
+  autoupdate_schedule: weekly

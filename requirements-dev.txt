@@ -1,0 +1,5 @@
+ruff
+interrogate
+astroid
+pylint
+pre-commit
