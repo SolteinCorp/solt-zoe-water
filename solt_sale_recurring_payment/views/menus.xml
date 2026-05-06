@@ -5,4 +5,18 @@
               parent="solt_recurring_payment.menu_solt_recurring"
               groups="sales_team.group_sale_salesman"
               sequence="15"/>
+
+    <!-- Products > Customer Pricelists -->
+    <menuitem action="product.product_pricelist_action2"
+              id="menu_solt_recurring_pricelist"
+              parent="solt_recurring_payment.product_menu_catalog"
+              groups="product.group_product_pricelist"
+              sequence="50"/>
+
+    <!-- Configuration > Customer Pricelists -->
+    <menuitem id="menu_product_pricelist_main"
+              action="product.product_pricelist_action2"
+              parent="solt_recurring_payment.menu_solt_subscription_config"
+              groups="product.group_product_pricelist"
+              sequence="130"/>
 </odoo>

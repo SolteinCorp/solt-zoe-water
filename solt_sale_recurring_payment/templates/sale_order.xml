@@ -4,10 +4,10 @@
               inherit_id="sale_management.sale_order_portal_content_inherit_sale_management">
         <xpath expr="//th[@id='product_name_header']" position="after">
             <th t-if="sale_order.is_subscription" class="text-end" id="product_plan_header">Plan</th>
-            <th t-if="sale_order.is_subscription" class="text-end" id="product_start_recurring_date_header">Start Date</th>
+            <th t-if="sale_order.is_subscription" class="text-end" id="product_free_periods_header">Free Periods</th>
         </xpath>
         <xpath expr="//div[@id='total']/div" position="attributes">
-            <attribute name="t-attf-class">#{'col-8 col-md-6' if sale_order.is_subscription else 'col-7 col-md-5'} ms-auto</attribute>
+            <attribute name="t-attf-class">#{'col-xs-8 col-md-6' if sale_order.is_subscription else 'col-xs-7 col-md-5'} ms-auto</attribute>
         </xpath>
         <xpath expr="//td[@id='product_name']" position="after">
             <td t-if="sale_order.is_subscription" class="text-end" id="product_plan_td">
@@ -16,8 +16,8 @@
                 </div>
                 <span t-if="line.plan_id and not line.required_recurring_quantity" t-field="line.plan_id"/>
             </td>
-            <td t-if="sale_order.is_subscription" class="text-end" id="product_start_recurring_date_td">
-                <span t-field="line.start_recurring_date"/>
+            <td t-if="sale_order.is_subscription" class="text-end" id="product_free_periods_td">
+                <span t-if="line.free_periods" t-field="line.free_periods"/>
             </td>
         </xpath>
     </template>

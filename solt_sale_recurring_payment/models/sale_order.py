@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# Copyright 2026 Soltein SA. de CV.
-# License LGPL-3 or later (http://www.gnu.org/licenses/lgpl.html)
-
 import logging
 
 from odoo import models
@@ -14,20 +11,18 @@ class SaleOrder(models.Model):
     _inherit = ["sale.order", "solt.recurring.order.mixin"]
 
     def _action_confirm(self):
-        """Create subscriptions on sale order confirmation."""
-        result = super()._action_confirm()
+        res = super()._action_confirm()
         self._create_subscriptions()
-        return result
+        return res
 
     def _action_cancel(self):
-        """Delete draft subscriptions on sale order cancellation."""
-        result = super()._action_cancel()
-        self.subscription_ids.filtered(lambda subscription: subscription.state == "draft").unlink()
-        return result
+        res = super()._action_cancel()
+        self.subscription_ids.filtered(lambda s: s.state == "draft").unlink()
+        return res
 
-    def _prepare_subscription_values(self, plan_id, start_date, lines):
+    def _prepare_subscription_values(self, plan_id, lines):
         """Get additional values for sale order subscription."""
-        values = super()._prepare_subscription_values(plan_id, start_date, lines)
+        values = super()._prepare_subscription_values(plan_id, lines)
         values.update(
             {
                 "type": "sale",
@@ -45,16 +40,44 @@ class SaleOrder(models.Model):
         asignado. Al confirmar esa orden, _create_subscriptions() no debe crear
         suscripciones duplicadas a partir de esas líneas.
         """
-        return super()._get_recurring_order_line().filtered(
-            lambda line: not line.subscription_id
-        )
+        return super()._get_recurring_order_line().filtered(lambda line: not line.subscription_id)
 
     def _get_invoiceable_lines(self, final=False):
-        """Filter out subscription lines that are not yet due for invoicing."""
-        lines = super()._get_invoiceable_lines(final=final)
-        return lines.filtered(lambda line: not line.subscription_id or not line.start_recurring_date or line.start_recurring_date == self.date_order)
+        """Sobre el resultado del padre, quita las líneas de suscripción en
+        periodo gratuito. Si al quitarlas una sección se queda sin ninguna
+        línea de producto, también se descartan esa sección y las notas
+        que pertenecen a ella.
+        """
+        base_lines = super()._get_invoiceable_lines(final=final)
+        lines_to_remove = base_lines.filtered(lambda ln: not ln.display_type and ln.subscription_id)
+        if not lines_to_remove:
+            return base_lines
+
+        remaining_lines = (base_lines - lines_to_remove).sorted("sequence")
+
+        sections_with_products = set()
+        current_section_id = None
+        for line in remaining_lines:
+            if line.display_type == "line_section":
+                current_section_id = line.id
+            elif not line.display_type and current_section_id is not None:
+                sections_with_products.add(current_section_id)
+
+        kept_ids = []
+        current_section_active = True
+        for line in remaining_lines:
+            if line.display_type == "line_section":
+                current_section_active = line.id in sections_with_products
+                if current_section_active:
+                    kept_ids.append(line.id)
+            elif line.display_type == "line_note":
+                if current_section_active:
+                    kept_ids.append(line.id)
+            else:
+                kept_ids.append(line.id)
+
+        return self.env["sale.order.line"].browse(kept_ids)
 
     def _get_name_tax_totals_view(self):
-        """Return the subscription period total view for subscription orders."""
         self.ensure_one()
         return "solt_recurring_payment.subscription_period_total" if self.is_subscription else super()._get_name_tax_totals_view()

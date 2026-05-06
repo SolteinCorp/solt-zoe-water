@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!--
-        Patch base account.document_tax_totals_template so it doesn't crash when
-        tax_totals is None or partial (missing 'subtotals'/'same_tax_base'). The
-        standard Odoo 18 sale report calls this template without a t-if guard,
-        unlike the invoice report.
-    -->
-
     <template id="report_saleorder_document_inherit_sale_management" inherit_id="sale.report_saleorder_document">
         <xpath expr="//th[@name='th_description']" position="after">
             <th t-if="doc.is_subscription" class="text-end" id="product_plan_header">Plan</th>
-            <th t-if="doc.is_subscription" class="text-end" id="product_start_recurring_date_header">Start Date</th>
+            <th t-if="doc.is_subscription" class="text-end" id="product_free_periods_header">Free Periods</th>
         </xpath>
         <xpath expr="//td[@name='td_name']" position="after">
             <td t-if="doc.is_subscription" class="text-end" id="product_plan_td">
@@ -20,15 +13,15 @@
                 </div>
                 <span t-if="line.plan_id and not line.required_recurring_quantity" t-field="line.plan_id"/>
             </td>
-            <td t-if="doc.is_subscription" class="text-end" id="product_start_recurring_date_td">
-                <span t-field="line.start_recurring_date"/>
+            <td t-if="doc.is_subscription" class="text-end" id="product_free_periods_td">
+                <span t-if="line.free_periods" t-field="line.free_periods"/>
             </td>
         </xpath>
+        <!--        <xpath expr="//div[@id='total']/div" position="attributes">-->
+        <!--            <attribute name="t-attf-class">#{'col-8' if doc.is_subscription or report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto</attribute>-->
+        <!--        </xpath>-->
         <xpath expr="//t[@t-call='sale.document_tax_totals']" position="replace">
-            <t t-call="#{doc._get_name_tax_totals_view()}">
-                <t t-set="tax_totals" t-value="doc.tax_totals"/>
-                <t t-set="currency" t-value="doc.currency_id"/>
-            </t>
+            <t t-call="#{doc._get_name_tax_totals_view()}"/>
         </xpath>
     </template>
 </odoo>

@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# Copyright 2026 Soltein SA. de CV.
-# License LGPL-3 or later (http://www.gnu.org/licenses/lgpl.html)
-
 import logging
 
 from odoo import Command, api, fields, models
@@ -38,14 +35,16 @@ class SoltSubscription(models.Model):
             self.sale_order_count = 0
             return
 
-        sale_order_lines = self.env["sale.order.line"].search([
-            ("subscription_id", "in", all_subscription_ids),
-        ])
+        sale_order_lines = self.env["sale.order.line"].search(
+            [
+                ("subscription_id", "in", all_subscription_ids),
+            ]
+        )
         subscription_to_sale_order_ids = {}
         for sale_order_line in sale_order_lines:
-            linked_subscription_id = sale_order_line.subscription_id.id
-            subscription_to_sale_order_ids.setdefault(linked_subscription_id, set())
-            subscription_to_sale_order_ids[linked_subscription_id].add(sale_order_line.order_id.id)
+            subscription_id = sale_order_line.subscription_id.id
+            subscription_to_sale_order_ids.setdefault(subscription_id, set())
+            subscription_to_sale_order_ids[subscription_id].add(sale_order_line.order_id.id)
 
         for subscription in self:
             all_linked_ids = subscription_to_sale_order_ids.get(subscription.id, set())
@@ -76,10 +75,7 @@ class SoltSubscription(models.Model):
         Un producto almacenable tiene product.type == 'product', valor que agrega el
         módulo stock cuando detailed_type == 'product' (Producto Almacenable).
         """
-        return any(
-            line.product_id.type == "product"
-            for line in self.subscription_line_ids
-        )
+        return any(line.product_id.type == "product" for line in self.subscription_line_ids)
 
     def _prepare_sale_order_values(self):
         """Prepara el dict de valores para crear una sale.order en estado borrador.
@@ -88,9 +84,7 @@ class SoltSubscription(models.Model):
         desde next_invoice_date (fields.Date) usando fields.Datetime.to_datetime().
         """
         self.ensure_one()
-        billing_datetime = fields.Datetime.to_datetime(
-            self.next_invoice_date or fields.Date.today()
-        )
+        billing_datetime = fields.Datetime.to_datetime(self.next_invoice_date or fields.Date.today())
         return {
             "partner_id": self.partner_id.id,
             "company_id": self.company_id.id,
@@ -115,19 +109,18 @@ class SoltSubscription(models.Model):
         """
         self.ensure_one()
         product = subscription_line.product_id
-        applicable_sale_taxes = product.taxes_id.filtered(
-            lambda tax: tax.company_id == self.company_id
-        )
+        applicable_sale_taxes = product.taxes_id.filtered(lambda tax: tax.company_id == self.company_id)
 
         return {
             "product_id": product.id,
             "plan_id": self.plan_id.id,
             "name": subscription_line.name,
             "product_uom_qty": subscription_line.product_uom_qty,
-            "product_uom": subscription_line.product_uom_id.id,
+            "product_uom": subscription_line.product_uom.id,
             "price_unit": subscription_line.price_unit,
             "tax_id": [Command.set(applicable_sale_taxes.ids)],
             "subscription_id": self.id,
+            "analytic_distribution": subscription_line._get_analytic_distribution(),
         }
 
     def _create_sale_order_for_subscription(self):
@@ -174,10 +167,7 @@ class SoltSubscription(models.Model):
           - Confirmar la suscripción y avanzar next_invoice_date (en _post()).
         """
         sale_subscriptions_with_storable = self.filtered(
-            lambda subscription: (
-                subscription.type == "sale"
-                and subscription._has_storable_subscription_lines()
-            )
+            lambda subscription: subscription.type == "sale" and subscription._has_storable_subscription_lines()
         )
 
         for subscription in sale_subscriptions_with_storable:

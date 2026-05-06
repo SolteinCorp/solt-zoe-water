@@ -26,7 +26,8 @@
                        domain="available_plan_ids_domain"
                        optional="show"
                        options="{'no_create': True}"/>
-                <field name="start_recurring_date"
+                <field name="free_periods"
+                       string="Free Periods"
                        optional="hide"/>
                 <field name="required_recurring_quantity"
                        string="Periodos"
@@ -55,7 +56,7 @@
         </field>
     </record>
 
-    <!-- SALE ORDER LIST VIEW - Add subscription info -->
+    <!-- SALE ORDER TREE VIEW - Add subscription info -->
     <record id="view_order_tree_subscription" model="ir.ui.view">
         <field name="name">sale.order.list.subscription</field>
         <field name="model">sale.order</field>
