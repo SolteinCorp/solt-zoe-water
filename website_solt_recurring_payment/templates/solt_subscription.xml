@@ -584,7 +584,7 @@
             <attribute name="class">container-fluid o_portal_sidebar</attribute>
         </xpath>
         <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
-            <t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+            <t t-set="o_portal_fullwidth_alert" groups="solt_recurring_payment.group_subscription_manager">
                 <t t-call="portal.portal_back_in_edit_mode"/>
             </t>
             <div class="row o_portal_subscription_sidebar">
@@ -971,17 +971,37 @@
                         <input type="hidden" name="action_type" value="change_plan"/>
                         <main class="modal-body">
                             <div class="mb-3">
+                                <p class="mb-1">
+                                    <strong>Current plan:</strong>
+                                    <span t-field="subscription.plan_id" class="text-primary"/>
+                                    <span class="text-muted">
+                                        (<t t-out="subscription.plan_id.billing_period_display_sentence"/>
+                                        — <span t-field="subscription.recurring_total"
+                                                t-options="{'widget': 'monetary', 'display_currency': subscription.currency_id}"/>)
+                                    </span>
+                                </p>
+                                <p class="text-muted small mb-3">
+                                    Next invoice: <span t-field="subscription.next_invoice_date"/>
+                                </p>
+                            </div>
+                            <div class="mb-3">
                                 <label for="new_plan_id" class="form-label">Select new plan:</label>
                                 <select class="form-select" id="new_plan_id" name="new_plan_id" required="required">
                                     <option value="">-- Select a plan --</option>
                                     <t t-foreach="subscription.available_plan_ids" t-as="plan">
-                                        <option t-att-value="plan.id" t-out="plan.name"/>
+                                        <option t-att-value="plan.id">
+                                            <t t-out="plan.name"/>
+                                            (<t t-out="plan.billing_period_display_sentence"/>)
+                                        </option>
                                     </t>
                                 </select>
                             </div>
-                            <p class="fst-italic text-muted">
-                                Current plan: <span t-field="subscription.plan_id" class="text-primary"/>
-                            </p>
+                            <div class="alert alert-info small mb-0" role="alert">
+                                <i class="fa fa-info-circle me-1"/>
+                                The plan change takes effect immediately. A prorated charge or credit
+                                will be applied for the remaining period, and the billing cycle will
+                                reset from today.
+                            </div>
                         </main>
                         <footer class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

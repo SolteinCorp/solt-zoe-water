@@ -3,17 +3,16 @@ from operator import itemgetter
 from typing import Any
 
 import werkzeug
-from werkzeug.urls import url_encode
-
 from odoo import _, http
 from odoo.addons.payment.controllers import portal as payment_portal
 from odoo.addons.portal.controllers.portal import pager as portal_pager
-from odoo.addons.website_common.utils.urls import get_url
 from odoo.addons.website_common.controllers.portal import CommonPortalController
+from odoo.addons.website_common.utils.urls import get_url
 from odoo.exceptions import AccessError, MissingError
 from odoo.http import request
 from odoo.osv.expression import AND, OR
 from odoo.tools import groupby as groupbyelem
+from werkzeug.urls import url_encode
 
 _logger = logging.getLogger(__name__)
 
@@ -29,9 +28,21 @@ def _check_message_type(message_type: str) -> str:
     Returns:
         str: The valid message type or "info" if the provided type is not valid.
     """
-    return (message_type if message_type in [
-        "primary", "secondary", "success", "danger", "warning", "info", "light", "dark",
-    ] else "info")
+    return (
+        message_type
+        if message_type
+        in [
+            "primary",
+            "secondary",
+            "success",
+            "danger",
+            "warning",
+            "info",
+            "light",
+            "dark",
+        ]
+        else "info"
+    )
 
 
 def set_flash_message(message: str, message_type: str = "info"):
@@ -53,10 +64,12 @@ def set_flash_message(message: str, message_type: str = "info"):
 
     if "flash_messages" not in request.session:
         request.session["flash_messages"] = []
-    request.session["flash_messages"].append({
-        "message": message,
-        "type": _check_message_type(message_type),
-    })
+    request.session["flash_messages"].append(
+        {
+            "message": message,
+            "type": _check_message_type(message_type),
+        }
+    )
     request.session.is_dirty = True
 
 
@@ -93,12 +106,11 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
             formatted_value = value.strftime("%Y-%m-%d %H:%M:%S") if field.type == "datetime" else value.strftime("%Y-%m-%d")
             return formatted_value, formatted_value
         elif field.type == "boolean":
-            return (
-                "yes" if first_solt_subscription[field_name] else "no", _("Yes") if first_solt_subscription[field_name] else _("No"),
-            )
+            return ("yes" if first_solt_subscription[field_name] else "no", _("Yes") if first_solt_subscription[field_name] else _("No"))
         elif field.type in ["many2many", "one2many"]:
             return (
-                ",".join(str(rec.id) for rec in first_solt_subscription[field_name]), ", ".join(rec.name for rec in first_solt_subscription[field_name]),
+                ",".join(str(rec.id) for rec in first_solt_subscription[field_name]),
+                ", ".join(rec.name for rec in first_solt_subscription[field_name]),
             )
         else:
             return first_solt_subscription[field_name], first_solt_subscription[field_name]
@@ -117,36 +129,12 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
             dict: Sorted dictionary of listing options for the searchbar.
         """
         values = {
-            1: {
-                "input": "1",
-                "label": _("1 element"),
-                "order": 1,
-            },
-            10: {
-                "input": "10",
-                "label": _("10 elements"),
-                "order": 10,
-            },
-            20: {
-                "input": "20",
-                "label": _("20 elements"),
-                "order": 20,
-            },
-            40: {
-                "input": "40",
-                "label": _("40 elements"),
-                "order": 40,
-            },
-            80: {
-                "input": "80",
-                "label": _("80 elements"),
-                "order": 80,
-            },
-            160: {
-                "input": "160",
-                "label": _("160 elements"),
-                "order": 160,
-            },
+            1: {"input": "1", "label": _("1 element"), "order": 1},
+            10: {"input": "10", "label": _("10 elements"), "order": 10},
+            20: {"input": "20", "label": _("20 elements"), "order": 20},
+            40: {"input": "40", "label": _("40 elements"), "order": 40},
+            80: {"input": "80", "label": _("80 elements"), "order": 80},
+            160: {"input": "160", "label": _("160 elements"), "order": 160},
         }
         return dict(sorted(values.items(), key=lambda item: item[1]["order"]))
 
@@ -163,7 +151,8 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
             list: A domain list to filter subscriptions by partner and state.
         """
         return [
-            ("partner_id", "in", [partner.id, partner.commercial_partner_id.id]), ("state", "in", ["active", "closed"]),
+            ("partner_id", "in", [partner.id, partner.commercial_partner_id.id]),
+            ("state", "in", ["active", "closed"]),
         ]
 
     def _prepare_home_portal_values(self, counters: dict) -> dict:
@@ -182,9 +171,11 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         """
         values = super()._prepare_home_portal_values(counters)
         if "subscription_count" in counters:
-            if request.env["solt.subscription"].has_access("read"):
+            if request.env["solt.subscription"].check_access_rights("read", raise_exception=False):
                 partner = request.env.user.partner_id
-                values["subscription_count"] = request.env["solt.subscription"].search_count(self._get_portal_solt_subscription_default_domain(partner))
+                values["subscription_count"] = request.env["solt.subscription"].search_count(
+                    self._get_portal_solt_subscription_default_domain(partner)
+                )
             else:
                 values["subscription_count"] = 0
         return values
@@ -201,15 +192,15 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
             dict[str, dict]: A dictionary mapping filter keys to their filter definitions.
         """
         searchbar_filters = {
-            "all": {
-                "label": _("All"),
-                "domain": [],
-                "sequence": 1,
-            },
+            "all": {"label": _("All"), "domain": [], "sequence": 1},
         }
         filters, date_filters = self.view_data["filters"]
         for date_filter in date_filters.values():
-            searchbar_filters.update(CommonPortalController.add_date_searchbar_filters(date_filter["name"], date_filter["label"], date_filter["sequence"], request.env.context.get("lang", "en_US")))
+            searchbar_filters.update(
+                CommonPortalController.add_date_searchbar_filters(
+                    date_filter["name"], date_filter["label"], date_filter["sequence"], request.env.context.get("lang", "en_US")
+                )
+            )
         searchbar_filters.update(filters)
         return searchbar_filters
 
@@ -226,9 +217,7 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         search_domain = []
         for search_in_option, search_field in self.view_data["inputs_mapping"].items():
             if search_in in search_in_option:
-                search_domain = OR([
-                    search_domain, [(search_field, "ilike", search)] if isinstance(search_field, str) else search_field,
-                ])
+                search_domain = OR([search_domain, [(search_field, "ilike", search)] if isinstance(search_field, str) else search_field])
         return search_domain
 
     def _solt_subscriptions_get_groupby_mapping(self) -> dict:
@@ -267,10 +256,12 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         solt_subscription_url = "%s/%s"
 
         values["prev_record"] = current_solt_subscription_index != 0 and solt_subscription_url % (
-            url, history[current_solt_subscription_index - 1],
+            url,
+            history[current_solt_subscription_index - 1],
         )
         values["next_record"] = current_solt_subscription_index < total_solt_subscriptions - 1 and solt_subscription_url % (
-            url, history[current_solt_subscription_index + 1],
+            url,
+            history[current_solt_subscription_index + 1],
         )
         return values
 
@@ -324,7 +315,10 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
             else:
                 raise werkzeug.exceptions.NotFound()
         except MissingError:
-            set_flash_message(_("The selected subscription dont exists."), "danger", )
+            set_flash_message(
+                _("The selected subscription dont exists."),
+                "danger",
+            )
             return solt_subscription_sudo, request.redirect("/my/subscriptions")
         return solt_subscription_sudo, None
 
@@ -343,67 +337,67 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
                 - 'fees_by_provider': An empty dict (placeholder for provider fees).
         """
         providers_sudo = (
-            request.env["payment.provider"].sudo()._get_compatible_providers(company_id=solt_subscription_sudo.company_id.id, partner_id=solt_subscription_sudo.partner_id.id, amount=solt_subscription_sudo.recurring_total, currency_id=solt_subscription_sudo.currency_id.id, ))
-        tokens_sudo = (request.env["payment.token"].sudo()._get_available_tokens(providers_sudo.ids, solt_subscription_sudo.partner_id.id, ))
+            request.env["payment.provider"]
+            .sudo()
+            ._get_compatible_providers(
+                company_id=solt_subscription_sudo.company_id.id,
+                partner_id=solt_subscription_sudo.partner_id.id,
+                amount=solt_subscription_sudo.recurring_total,
+                currency_id=solt_subscription_sudo.currency_id.id,
+            )
+        )
+        tokens_sudo = (
+            request.env["payment.token"]
+            .sudo()
+            ._get_available_tokens(
+                providers_sudo.ids,
+                solt_subscription_sudo.partner_id.id,
+            )
+        )
         return {
             "providers": providers_sudo,
             "tokens": tokens_sudo,
             "fees_by_provider": {},
         }
 
-    def _solt_subscription_entries_display(self, page: int = 1, date_begin: str | None = None, date_end: str | None = None, sortby: str | None = None, filterby: str | None = None, search: str | None = None, search_in: str = "all", groupby: str | None = None, listing: int = 80,
-        template: str = "website_solt_recurring_payment.portal_my_solt_subscriptions", query_with_sudo: bool = False, **kw, ) -> http.Response:
+    def _solt_subscription_entries_display(
+        self,
+        page: int = 1,
+        date_begin: str | None = None,
+        date_end: str | None = None,
+        sortby: str | None = None,
+        filterby: str | None = None,
+        search: str | None = None,
+        search_in: str = "all",
+        groupby: str | None = None,
+        listing: int = 80,
+        template: str = "website_solt_recurring_payment.portal_my_solt_subscriptions",
+        query_with_sudo: bool = False,
+        **kw,
+    ) -> http.Response:
         base_url = "/my/subscriptions"
         values = self._prepare_portal_layout_values()
         solt_subscription_object = request.env["solt.subscription"].sudo() if query_with_sudo else request.env["solt.subscription"]
         domain = self._get_portal_solt_subscription_default_domain(request.env.user.partner_id)
-        self.view_data = CommonPortalController.extract_search_view_to_searchbar("solt.subscription", include_fields_on_search_panel=True, include_first_level_filters_only=True, search=search)
+        self.view_data = CommonPortalController.extract_search_view_to_searchbar(
+            "solt.subscription", include_fields_on_search_panel=True, include_first_level_filters_only=True, search=search
+        )
         searchbar_sortings = {
-            "name": {
-                "label": _("Name"),
-                "order": "name, id",
-            },
-            "company": {
-                "label": _("Company"),
-                "order": "company_id desc, id",
-            },
-            "customer": {
-                "label": _("Customer"),
-                "order": "partner_id, id",
-            },
-            "price_list": {
-                "label": _("Price List"),
-                "order": "pricelist_id, id",
-            },
-            "plan": {
-                "label": _("Plan"),
-                "order": "plan_id, id",
-            },
-            "state": {
-                "label": _("State"),
-                "order": "state, id",
-            },
-            "start": {
-                "label": _("Start Date"),
-                "order": "start_date, id",
-            },
-            "next_invoice": {
-                "label": _("Next Invoice Date"),
-                "order": "next_invoice_date, id",
-            },
+            "name": {"label": _("Name"), "order": "name, id"},
+            "company": {"label": _("Company"), "order": "company_id desc, id"},
+            "customer": {"label": _("Customer"), "order": "partner_id, id"},
+            "price_list": {"label": _("Price List"), "order": "pricelist_id, id"},
+            "plan": {"label": _("Plan"), "order": "plan_id, id"},
+            "state": {"label": _("State"), "order": "state, id"},
+            "start": {"label": _("Start Date"), "order": "start_date, id"},
+            "next_invoice": {"label": _("Next Invoice Date"), "order": "next_invoice_date, id"},
         }
         searchbar_inputs = {
-            "all": {
-                "label": _("Search in All"),
-                "input": "all",
-            },
+            "all": {"label": _("Search in All"), "input": "all"},
         }
         searchbar_inputs.update(self.view_data["inputs"])
         searchbar_groupby = {
-            "none": {
-                "label": _("None"),
-                "input": "none",
-            },
+            "none": {"label": _("None"), "input": "none"},
         }
         searchbar_groupby.update({k: v for k, v in self.view_data["group_by"].items() if ":month" not in k})
         # Listing Items Settings
@@ -435,15 +429,21 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         if search and search_in:
             domain = AND([domain, self._get_solt_subscriptions_search_domain(search_in, search)])
         solt_subscriptions_count = solt_subscription_object.search_count(domain)
-        pager = portal_pager(url=base_url, url_args={
-            "sortby": sortby,
-            "search_in": search_in,
-            "search": search,
-            "groupby": groupby,
-            "filterby": filterby,
-            "listing": listing,
-            "layout": layout,
-        }, total=solt_subscriptions_count, page=page, step=self._items_per_page, )
+        pager = portal_pager(
+            url=base_url,
+            url_args={
+                "sortby": sortby,
+                "search_in": search_in,
+                "search": search,
+                "groupby": groupby,
+                "filterby": filterby,
+                "listing": listing,
+                "layout": layout,
+            },
+            total=solt_subscriptions_count,
+            page=page,
+            step=self._items_per_page,
+        )
         solt_subscriptions = solt_subscription_object.search(domain, order=order, limit=self._items_per_page, offset=pager["offset"])
         request.session["my_solt_subscriptions_history"] = solt_subscriptions.ids[:100]
         group = groupby_mapping.get(groupby)
@@ -466,49 +466,67 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
             url = kwargs.get("url", base_url)
             if not isinstance(url, str):
                 url = base_url
-            return get_url(url, page, {
-                                          "date_begin": date_begin,
-                                          "date_end": date_end,
-                                          "sortby": sortby,
-                                          "search": search,
-                                          "search_in": search_in,
-                                          "groupby": groupby,
-                                          "listing": listing,
-                                          "layout": layout,
-                                      } | kwargs, )
+            return get_url(
+                url,
+                page,
+                {
+                    "date_begin": date_begin,
+                    "date_end": date_end,
+                    "sortby": sortby,
+                    "search": search,
+                    "search_in": search_in,
+                    "groupby": groupby,
+                    "listing": listing,
+                    "layout": layout,
+                }
+                | kwargs,
+            )
 
-        values.update({
-            "solt_subscriptions": solt_subscriptions,
-            "grouped_solt_subscriptions": grouped_solt_subscriptions,
-            "page_name": "all_solt_subscriptions",
-            "pager": pager,
-            "default_url": base_url,
-            "groupby_mapping": groupby_mapping,
-            "searchbar_sortings": searchbar_sortings,
-            "search_in": search_in,
-            "search": search,
-            "sortby": sortby,
-            "groupby": groupby or "none",
-            "groupby_type": group_by_field.type if group_by_field else "char",
-            "filterby": filterby,
-            "searchbar_inputs": searchbar_inputs,
-            "searchbar_groupby": searchbar_groupby,
-            "searchbar_filters": searchbar_filters,
-            "layout": layout,
-            "solt_subscriptions_count": solt_subscriptions_count,
-            "listing": listing,
-            "searchbar_listings": listings,
-            "keep_the_url": keep_the_url,
-            "type": type,
-            "additional_title": _("My Subscriptions"),
-            "tab": tab,
-            "stage_name": self.solt_subscription_stage_name,
-        })
+        values.update(
+            {
+                "solt_subscriptions": solt_subscriptions,
+                "grouped_solt_subscriptions": grouped_solt_subscriptions,
+                "page_name": "all_solt_subscriptions",
+                "pager": pager,
+                "default_url": base_url,
+                "groupby_mapping": groupby_mapping,
+                "searchbar_sortings": searchbar_sortings,
+                "search_in": search_in,
+                "search": search,
+                "sortby": sortby,
+                "groupby": groupby or "none",
+                "groupby_type": group_by_field.type if group_by_field else "char",
+                "filterby": filterby,
+                "searchbar_inputs": searchbar_inputs,
+                "searchbar_groupby": searchbar_groupby,
+                "searchbar_filters": searchbar_filters,
+                "layout": layout,
+                "solt_subscriptions_count": solt_subscriptions_count,
+                "listing": listing,
+                "searchbar_listings": listings,
+                "keep_the_url": keep_the_url,
+                "type": type,
+                "additional_title": _("My Subscriptions"),
+                "tab": tab,
+                "stage_name": self.solt_subscription_stage_name,
+            }
+        )
         return request.render(template, values)
 
     @http.route(["/my/subscriptions", "/my/subscriptions/page/<int:page>"], type="http", auth="user", website=True)
-    def my_solt_subscriptions(self, page: int = 1, date_begin: str | None = None, date_end: str | None = None, sortby: str | None = None, filterby: str | None = None, search: str | None = None, search_in: str = "all", groupby: str | None = None, listing: int = 80,
-        **kw, ) -> http.Response:
+    def my_solt_subscriptions(
+        self,
+        page: int = 1,
+        date_begin: str | None = None,
+        date_end: str | None = None,
+        sortby: str | None = None,
+        filterby: str | None = None,
+        search: str | None = None,
+        search_in: str = "all",
+        groupby: str | None = None,
+        listing: int = 80,
+        **kw,
+    ) -> http.Response:
         """
         Handles the portal route for displaying a paginated list of `solt.subscription` records.
 
@@ -529,8 +547,15 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         """
         return self._solt_subscription_entries_display(page, date_begin, date_end, sortby, filterby, search, search_in, groupby, listing, **kw)
 
-    @http.route(["/my/subscriptions/<int:subscription_id>", "/my/subscriptions/<int:subscription_id>/<access_token>"], type="http", auth="public", website=True)
-    def my_solt_subscription(self, subscription_id: int, access_token: str | None = None, message: str = "", message_class: str = "", **kw) -> http.Response:
+    @http.route(
+        ["/my/subscriptions/<int:subscription_id>", "/my/subscriptions/<int:subscription_id>/<access_token>"],
+        type="http",
+        auth="public",
+        website=True,
+    )
+    def my_solt_subscription(
+        self, subscription_id: int, access_token: str | None = None, message: str = "", message_class: str = "", **kw
+    ) -> http.Response:
         solt_subscription_sudo, redirection = self._get_solt_subscription(access_token, subscription_id)
         if redirection:
             return redirection
@@ -539,9 +564,9 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         display_close = solt_subscription_sudo.user_closable and solt_subscription_sudo.state == "active"
         is_follower = partner in solt_subscription_sudo.message_follower_ids.partner_id
         # Get unpaid invoices
-        unpaid_invoices = solt_subscription_sudo.invoice_ids.filtered(lambda inv: inv.state == "posted" and inv.move_type == "out_invoice" and inv.payment_state not in [
-            "paid", "in_payment", "reversed",
-        ])
+        unpaid_invoices = solt_subscription_sudo.invoice_ids.filtered(
+            lambda inv: inv.state == "posted" and inv.move_type == "out_invoice" and inv.payment_state not in ["paid", "in_payment", "reversed"]
+        )
         first_unpaid_invoice = unpaid_invoices[:1] if unpaid_invoices else False
 
         # Check if online payment is enabled
@@ -563,12 +588,14 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
             "access_token": access_token,
         }
 
-        backend_url = "/web#" + url_encode({
-            "model": solt_subscription_sudo._name,
-            "id": solt_subscription_sudo.id,
-            "action": solt_subscription_sudo._get_portal_return_action().id,
-            "view_type": "form",
-        })
+        backend_url = "/web#" + url_encode(
+            {
+                "model": solt_subscription_sudo._name,
+                "id": solt_subscription_sudo.id,
+                "action": solt_subscription_sudo._get_portal_return_action().id,
+                "view_type": "form",
+            }
+        )
 
         portal_page_values = {
             "page_name": "subscription",
@@ -587,7 +614,9 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
             "online_payment_enabled": False,
         }
 
-        portal_page_values = self._get_page_view_values(solt_subscription_sudo, access_token, portal_page_values, "my_solt_subscriptions_history", False)
+        portal_page_values = self._get_page_view_values(
+            solt_subscription_sudo, access_token, portal_page_values, "my_solt_subscriptions_history", False
+        )
 
         payment_form_values = {
             "default_token_id": solt_subscription_sudo.payment_token_id.id,
@@ -600,7 +629,10 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         }
 
         rendering_context = {
-            **self._get_solt_subscription_payment_values(solt_subscription_sudo), **portal_page_values, **payment_form_values, **payment_context,
+            **self._get_solt_subscription_payment_values(solt_subscription_sudo),
+            **portal_page_values,
+            **payment_form_values,
+            **payment_context,
         }
         return request.render("website_solt_recurring_payment.portal_my_solt_subscription", rendering_context)
 
@@ -655,21 +687,25 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
 
         # Crear y ejecutar el wizard con sudo
         extend_months = int(kw.get("extend_months", 12))
-        wizard = (request.env["solt.subscription.renew.wizard"].sudo().create({
-            "subscription_id": subscription_sudo.id,
-            "action_type": action_type,
-            "extend_months": extend_months,
-            "new_plan_id": int(kw.get("new_plan_id")) if kw.get("new_plan_id") else False,
-        }))
+        wizard = (
+            request.env["solt.subscription.renew.wizard"]
+            .sudo()
+            .create(
+                {
+                    "subscription_id": subscription_sudo.id,
+                    "action_type": action_type,
+                    "extend_months": extend_months,
+                    "new_plan_id": int(kw.get("new_plan_id")) if kw.get("new_plan_id") else False,
+                }
+            )
+        )
 
         # Ejecutar directamente la acción
         try:
             wizard.sudo().action_confirm()
         except Exception as e:
-            # Log error but still redirect
-            _logger.exception("Error executing renew action: %s", str(e))
-        if action_type == "change_plan" and subscription_sudo.renewed_subscription_ids:
-            subscription_id = subscription_sudo.renewed_subscription_ids.ids[0]
+            _logger.exception("Error executing subscription action: %s", str(e))
+
         return request.redirect(_redirect_url(subscription_id, access_token))
 
     @http.route("/my/subscriptions/assign_token/<int:subscription_id>", type="json", auth="user")
@@ -680,9 +716,17 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
 
         partner_id = request.env.user.partner_id
 
-        token_sudo = (request.env["payment.token"].sudo().search([
-            ("id", "=", token_id), ("partner_id", "child_of", partner_id.commercial_partner_id.id), ("active", "=", True),
-        ]))
+        token_sudo = (
+            request.env["payment.token"]
+            .sudo()
+            .search(
+                [
+                    ("id", "=", token_id),
+                    ("partner_id", "child_of", partner_id.commercial_partner_id.id),
+                    ("active", "=", True),
+                ]
+            )
+        )
 
         if not token_sudo:
             raise werkzeug.exceptions.NotFound()
