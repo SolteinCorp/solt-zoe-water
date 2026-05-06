@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="avatar" name="Partner Avatar">
+        <!--
+        Renderiza el avatar de un socio.
+        Parámetros:
+        - p: objeto socio (res.partner)
+        - image_size: tamaño de la imagen (opcional, por defecto 'image_256', valores posibles: 'image_128', 'image_1920', 'image_1024', 'image_512', 'image_256')
+        - round_class: clase CSS para redondear la imagen (opcional, por defecto 'rounded-circle', valores posibles: 'rounded', 'rounded-circle')
+        - size_class: clase CSS para el tamaño del avatar (opcional, por defecto 'sm', valores posibles: 'sm', 'md', 'lg', 'xl')
+        - extra_classes: clases CSS adicionales para el título del avatar (opcional, por defecto 'bg-info text-white font-size-16')
+        -->
+        <div t-attf-class="avatar-image-container avatar-#{size_class or 'sm'}" t-if="p.sudo().image_1920">
+            <img data-bs-toggle="tooltip" t-attf-data-bs-placement="#{tooltip_placement or 'top'}"
+                 t-attf-title="#{tooltip_title or ''}"
+                 t-attf-src="/web/image/res.partner/#{p.id}/#{image_size or 'image_256'}?sudo_load=1"
+                 t-attf-alt="Avatar of #{p.sudo().display_name}"
+                 t-attf-class="fallback #{round_class or 'rounded-circle'}"/>
+        </div>
+        <div t-attf-class="avatar-#{size_class or 'sm'}" t-else="0" data-bs-toggle="tooltip"
+             t-attf-data-bs-placement="#{tooltip_placement or 'top'}" t-attf-title="#{tooltip_title or ''}">
+            <span t-attf-class="avatar-title #{round_class or 'rounded-circle'} #{extra_classes or 'bg-info text-white font-size-16'}">
+                <t t-out="p.sudo().name[0].upper()"/>
+            </span>
+        </div>
+    </template>
+    <template id="media_with_avatar" name="Media Partner Avatar">
+        <!--
+            This template renders a user avatar alongside user information.
+            - Uses the 'website_common.avatar' template to display the avatar.
+            - Shows the user's name in bold, fetched via 'p.sudo().name'.
+            - Optionally displays additional text if 'extra_text' is provided.
+            - Layout is horizontally aligned using Bootstrap's flex utilities.
+            Parámetros:
+            - p: objeto socio (res.partner)
+            - image_size: tamaño de la imagen (opcional, por defecto 'image_256', valores posibles: 'image_128', 'image_1920', 'image_1024', 'image_512', 'image_256')
+            - round_class: clase CSS para redondear la imagen (opcional, por defecto 'rounded-circle', valores posibles: 'rounded', 'rounded-circle')
+            - size_class: clase CSS para el tamaño del avatar (opcional, por defecto 'sm', valores posibles: 'sm', 'md', 'lg', 'xl')
+            - extra_classes: clases CSS adicionales para el título del avatar (opcional, por defecto 'bg-info text-white font-size-16')
+            - extra_text: texto adicional para mostrar junto al nombre del socio (opcional)
+        -->
+        <div class="align-items-center d-flex gap-2">
+            <t t-call="website_common.avatar"/>
+            <div class="">
+                <div t-attf-class="fw-bold {{name_extra_classes or ''}}" t-out="p.sudo().name"/>
+                <div t-attf-class="{{text_extra_classes or ''}}" t-out="extra_text or ''"/>
+            </div>
+        </div>
+    </template>
+    <template id="avatar_group" name="Partner Avatar Group">
+        <!--
+        Renderiza un grupo de avatares de socios.
+        Parámetros:
+        - title: título opcional para el grupo de avatares
+        - title_class: clase CSS para el título (opcional, por defecto '')
+        - partners: lista de objetos socio (res.partner)
+        - partners_class: clase CSS para los avatares de los socios (opcional, por defecto '')
+        -->
+        <div class="avatar-group align-items-center">
+            <div t-attf-class="me-4 {{title_class or ''}}" t-if="title"><t t-out="title"/></div>
+            <t t-set="partners" t-value="[] if not partners else [partners] if len(partners) == 0 else partners"/>
+            <div t-attf-class="avatar-group-item {{partners_class or ''}}" t-foreach="partners" t-as="p" t-key="p.id">
+                <a href="javascript: void(0);" class="d-block" data-bs-toggle="tooltip" data-bs-placement="top"
+                   t-att-aria-label="p.sudo().display_name" t-att-title="p.sudo().display_name"
+                   t-att-data-bs-original-title="p.sudo().display_name">
+                    <t t-call="website_common.avatar"/>
+                </a>
+            </div>
+        </div>
+    </template>
+    <template id="no_image_avatar" name="No Image Avatar">
+        <!--
+        Renderiza un avatar sin imagen.
+        Parámetros:
+        - size_class: clase CSS para el tamaño del avatar (opcional, por defecto 'sm', valores posibles: 'sm', 'md', 'lg', 'xl')
+        - tooltip_placement: posición del tooltip (opcional, por defecto 'top')
+        - tooltip_title: título del tooltip (opcional)
+        - round_class: clase CSS para redondear la imagen (opcional, por defecto 'rounded-circle', valores posibles: 'rounded', 'rounded-circle')
+        - extra_classes: clases CSS adicionales para el título del avatar (opcional, por defecto 'bg-info text-white font-size-16')
+        -->
+        <div t-attf-class="avatar-#{size_class or 'sm'}" data-bs-toggle="tooltip"
+             t-attf-data-bs-placement="#{tooltip_placement or 'top'}" t-attf-title="#{tooltip_title or ''}">
+            <div t-attf-class="avatar-title #{round_class or 'rounded-circle'} #{extra_classes or 'bg-info text-white font-size-16'}">
+                <t t-out="0"/>
+            </div>
+        </div>
+    </template>
+</odoo>

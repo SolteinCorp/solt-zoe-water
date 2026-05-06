@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_website_upload_profile_all,access_website_upload_profile_all,model_website_upload_profile,,1,0,0,0
+access_website_upload_mime_all,access_website_upload_mime_all,model_website_upload_mime,,1,0,0,0
+access_website_upload_profile_admin,access_website_upload_profile_admin,model_website_upload_profile,base.group_system,1,1,1,1
+access_website_upload_mime_admin,access_website_upload_mime_admin,model_website_upload_mime,base.group_system,1,1,1,1
+access_snippet_chart_all, access.snippet.chart.all,website_common.model_snippet_chart,,1,0,0,0
+access_snippet_chart_designer, access.snippet.chart.designer,website_common.model_snippet_chart,website.group_website_designer,1,1,1,1

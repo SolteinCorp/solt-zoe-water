@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="website_common.tabs_dropdown.items">
+        <t t-foreach="items" t-as="i" t-key="i['value']">
+            <li>
+                <a data-bs-toggle="tab" t-attf-class="dropdown-item #{(i['isSelected']) ? 'active' : ''}" t-att-href="i['href']">
+                    <t t-out="i['label']"/>
+                </a>
+            </li>
+        </t>
+    </t>
+    <t t-name="website_common.tabs_dropdown">
+        <li t-attf-class="nav-item dropdown d-none #{positionClass}" t-attf-id="tabs-#{positionClass}">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">...</a>
+            <ul t-attf-class="dropdown-menu #{positionClass}">
+                <t t-call="website_common.tabs_dropdown.items"/>
+            </ul>
+        </li>
+    </t>
+</templates>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website_upload_mime_view_tree" model="ir.ui.view">
+        <field name="name">website.upload.mime.view.list</field>
+        <field name="model">website.upload.mime</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="mime_type"/>
+                <field name="category"/>
+            </list>
+        </field>
+    </record>
+    <record id="website_upload_mime_view_form" model="ir.ui.view">
+        <field name="name">website.upload.mime.view.form</field>
+        <field name="model">website.upload.mime</field>
+        <field name="arch" type="xml">
+            <form string="Upload Mime Type">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="mime_type"/>
+                        </group>
+                        <group>
+                            <field name="sequence" readonly="1"/>
+                            <field name="category"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="website_upload_profile_view_tree" model="ir.ui.view">
+        <field name="name">website.upload.profile.view.list</field>
+        <field name="model">website.upload.profile</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="slug"/>
+                <field name="maximum_size_mb"/>
+                <field name="minimum_width"/>
+                <field name="minimum_height"/>
+                <field name="maximum_width"/>
+                <field name="maximum_height"/>
+            </list>
+        </field>
+    </record>
+    <record id="website_upload_profile_view_form" model="ir.ui.view">
+        <field name="name">website.upload.profile.view.form</field>
+        <field name="model">website.upload.profile</field>
+        <field name="arch" type="xml">
+            <form string="Upload Profile">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="slug" readonly="1"/>
+                            <field name="minimum_width"/>
+                            <field name="minimum_height"/>
+                        </group>
+                        <group>
+                            <field name="website_id" readonly="1"/>
+                            <field name="maximum_size_mb"/>
+                            <field name="maximum_width"/>
+                            <field name="maximum_height"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="mime_types" string="Mime Types">
+                            <field name="allowed_mime_type_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,105 @@
+$prm-color: o-color('o-color-2') !default;
+$scn-color: o-color('o-color-1') !default;
+
+:root {
+    --prm-color: #{$prm-color};
+    --scn-color: #{$scn-color};
+}
+
+.o_field_statusbar {
+    $-btn-secondary-design: map-get($o-btns-bs-override, "secondary");
+
+    &.secondary {
+        --prm-color: #{$scn-color};
+        --scn-color: #{$prm-color};
+    }
+
+    > .o_statusbar_status {
+        display: flex;
+        align-content: space-around;
+        margin-left: auto;
+        flex-flow: row-reverse wrap-reverse;
+        align-self: stretch;
+        align-items: stretch;
+        overflow: hidden;
+
+        > .o_arrow_button:not(.d-none) {
+            position: relative;
+            padding-left: $o-statusbar-arrow-width * 1.5;
+            border-radius: 0;
+            font-size: 14px;
+            background-color: var(--prm-color);
+            border-color: var(--prm-color);
+            color: white !important;
+            font-weight: 600 !important;
+            line-height: 1.3125 !important;
+
+            &.o_first {
+                @include border-end-radius($border-radius);
+                padding-right: $o-horizontal-padding; // Compensate container padding
+                overflow: hidden; // to prevent scroll due to last arrow
+            }
+
+            &.o_last {
+                @include border-start-radius($border-radius);
+                padding-left: $o-horizontal-padding;
+            }
+
+            &:not(.o_first),
+            &:not(.o_last) {
+                &:before, &:after {
+                    @include o-position-absolute(-$border-width, -$o-statusbar-arrow-width);
+                    display: block;
+
+                    border-top: floor($o-statusbar-height/2) solid transparent;
+                    border-bottom: ceil($o-statusbar-height/2) solid transparent;
+                    border-right: none;
+                    border-left: $o-statusbar-arrow-width solid var(--prm-color);
+                    -moz-transform: scale(0.9999); // Smooth the triangle on firefox
+                    content: " ";
+                    @include transition($btn-transition);
+                }
+
+                &:before {
+                    right: calc(-#{$o-statusbar-arrow-width} - #{$border-width});
+                    border-left-color: $o-view-background-color;
+                }
+
+                &:hover:after {
+                    border-left-color: var(--prm-color);
+                    //border-left-color: map-get($-btn-secondary-design, hover-background);
+                }
+            }
+
+            &:disabled {
+                opacity: 1;
+                cursor: default;
+            }
+
+            &.o_arrow_button_current:disabled, &:active:not(.o_first) {
+                background-color: var(--scn-color);//map-get($-btn-secondary-design, active-background);
+                border-color: var(--scn-color);//map-get($-btn-secondary-design, active-border);
+                //color: map-get($-btn-secondary-design, active-color);
+
+                &:after {
+                    border-left-color: var(--scn-color);
+                    //border-left-color: map-get($-btn-secondary-design, active-background);
+                }
+
+                &, & + .btn {
+                    &:before {
+                        border-left-color: map-get($-btn-secondary-design, active-border);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.o_statusbar_status.o_statusbar_groups .decoration-success {
+    background-color: o-color('o-color-1') !important;
+}
+
+.o_statusbar_status.o_statusbar_groups .decoration-danger {
+    background-color: o-color('o-color-2') !important;
+}

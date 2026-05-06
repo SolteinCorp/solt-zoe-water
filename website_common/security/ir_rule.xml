@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+        Security Rule: Portal User Read Access for Related Model Followers
+        
+        Purpose:
+            Grants read-only permission to portal users for ir.attachment records
+            where the authenticated user is a follower of the related model.
+        
+        Details:
+            - Model: ir.attachment
+            - Groups: base.group_portal (Portal Users)
+            - Domain: Filters attachments where 'auth_user_is_related_model_follower' is True
+            - Permissions:
+                * Read: Allowed
+                * Write: Denied
+                * Create: Denied
+                * Delete: Denied
+        
+        Use Case:
+            Enables portal users to view attachments associated with models
+            they are following, maintaining data security while improving
+            collaboration and transparency within the portal environment.
+    -->
+    <record id="ir_rule_portal_user_can_read_following_related_model" model="ir.rule">
+        <field name="name">Attachment: Auth Portal User can read because is Related Model Follower</field>
+        <field name="model_id" ref="base.model_ir_attachment"/>
+        <field name="domain_force">[('auth_user_is_related_model_follower', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+</odoo>

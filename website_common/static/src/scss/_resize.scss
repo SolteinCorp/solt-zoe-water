@@ -1,0 +1,75 @@
+/*
+    _resize.scss
+
+    Styles for draggable column resize grips and table layout in portal documents.
+
+    Classes:
+      .grip
+        - Defines the draggable grip area for resizing columns.
+
+      .JCLRgrip
+        - Styles the vertical grip line for column resizing.
+        - Includes hover and drag states.
+
+      .JCLRgrip:hover
+        - Changes background and grip image on hover.
+
+      .JCLRgrip.JCLRgripDrag
+        - Styles the grip while dragging.
+
+      .JCLRgrip .JCLRgripDrag
+        - Styles the guide line during resizing.
+
+      .o_portal_wrap .o_portal_my_doc_table td
+        - Adjusts cell padding for portal document tables.
+
+      .o_portal_my_doc_table
+        - Sets table layout and width for portal document tables.
+  */
+
+  .grip {
+    width: 16px;
+    height: 16px;
+    margin-top: 5px;
+    margin-left: -7px;
+    position: relative;
+    z-index: 88;
+    cursor: col-resize;
+  }
+
+  .JCLRgrip {
+    background: transparent;
+    transition: background 0.2s;
+    width: 2px;
+  }
+
+  /* Hover sobre el grip */
+  .JCLRgrip:hover {
+    background: o-color('o-color-1');
+
+    .grip {
+      background-image: url('/website_common/static/src/img/resize/resize-v.svg');
+    }
+  }
+
+  /* Mientras se arrastra */
+  .JCLRgrip.JCLRgripDrag {
+    background: o-color('o-color-1');
+    border-right: .5px dashed o-color('o-color-1');
+  }
+
+  /* Línea guía vertical mientras redimensionas */
+  .JCLRgrip .JCLRgripDrag {
+    background: o-color('o-color-1');
+    opacity: 0.8;
+  }
+
+  .o_portal_wrap .o_portal_my_doc_table td {
+    padding-left: 0.3rem !important;
+    padding-right: 0.3rem !important;
+  }
+
+  .o_portal_my_doc_table {
+    table-layout: fixed;
+    width: 100%;
+  }

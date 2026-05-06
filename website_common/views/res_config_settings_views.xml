@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="res_config_settings_portal" model="ir.ui.view">
+        <field name="name">res.config.settings.portal.view.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="website.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='website_settings']" position="after">
+                <block title="Portal" id="website_portal">
+                    <setting id="display_compact_search_bar"
+                             string="Portal Small Search Bar"
+                             help="If marked a small search bar will be shown in the portal"
+                             title="Portal Small Search Bar">
+                        <field name="display_compact_search_bar"/>
+                    </setting>
+                    <setting id="display_search_bar_at_top"
+                             string="Display Search Bar at Top"
+                             help="If marked the search bar will be displayed at the top of the portal pages."
+                             title="Display Search Bar at Top">
+                        <field name="display_search_bar_at_top"/>
+                    </setting>
+                    <setting id="attachment_models_managed_by_group_portal_ids"
+                             string="Attachment Models Managed by Portal Users"
+                             help="The group portal users will be able to access attachments linked to the selected models."
+                             title="Attachment Models Managed by Portal Users">
+                        <field name="attachment_models_managed_by_group_portal_ids" widget="many2many_tags"/>
+                    </setting>
+                    <setting id="allow_portal_users_chatter_messaging"
+                             string="Allow portal users chatter messaging"
+                             help="Allow portal users chatter messaging on my account backend views."
+                             title="Allow portal users chatter messaging">
+                        <field name="allow_portal_users_chatter_messaging"/>
+                    </setting>
+                    <setting id="add_access_token_to_attachment_format"
+                             string="Add access token value to attachment format"
+                             help="If checked the value of access token in attachments will be added to attributes read"
+                             title="Add access token value to attachment format">
+                        <field name="add_access_token_to_attachment_format"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,251 @@
+$object-fits: cover contain fill scale-down none;
+$steps: (1: .25rem) !default;
+$pm-steps: () !default;
+$font-sizes: () !default;
+
+$i: 2;
+@while $i < 99 {
+    @if $i != 50 {
+        $steps: map-merge($steps, ($i: #{$i / 4}rem));
+    }
+    @if $i > 5 {
+        $pm-steps: map-merge($pm-steps, ($i: #{$i / 4}rem));
+    }
+    @if $i > 11 {
+        $font-sizes: map-merge($font-sizes, (#{$i - 1}: #{$i - 1}px, $i: #{$i}px));
+    }
+    $i: $i + 2;
+}
+
+$bw: (1: 1px solid $border-color, 2: 2px solid $border-color, 3: 3px solid $border-color, 4: 4px solid $border-color, 5: 5px solid $border-color);
+
+$negative-pm-steps: if($enable-negative-margins, negativify-map($pm-steps), null) !default;
+
+$utilities: map-merge(
+    $utilities,
+    (
+        // Limit 'text-X' classes generation.
+        // See bootstrap_review_backend.scss
+        "o-fit": (
+            property: object-fit,
+            class: object-fit,
+            responsive: true,
+            values: $object-fits,
+        ),
+        "height": map-merge(
+            map-get($utilities, "height"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "height"), "values"),
+                    $steps,
+                ),
+            ),
+        ),
+        "width": map-merge(
+            map-get($utilities, "width"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "width"), "values"),
+                    $steps,
+                ),
+                responsive: true
+            ),
+        ),
+        "border-top": map-merge(
+            map-get($utilities, "border-top"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "border-top"), "values"),
+                    $bw,
+                ),
+            ),
+        ),
+        "border-bottom": map-merge(
+            map-get($utilities, "border-bottom"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "border-bottom"), "values"),
+                    $bw,
+                ),
+            ),
+        ),
+        "border-start": map-merge(
+            map-get($utilities, "border-start"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "border-start"), "values"),
+                    $bw,
+                ),
+            ),
+        ),
+        "border-end": map-merge(
+            map-get($utilities, "border-end"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "border-end"), "values"),
+                    $bw,
+                ),
+            ),
+        ),
+        "margin": map-merge(
+            map-get($utilities, "margin"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "margin"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "margin-x": map-merge(
+            map-get($utilities, "margin-x"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "margin-x"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "margin-y": map-merge(
+            map-get($utilities, "margin-y"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "margin-y"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "margin-top": map-merge(
+            map-get($utilities, "margin-top"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "margin-top"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "margin-end": map-merge(
+            map-get($utilities, "margin-end"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "margin-end"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "margin-bottom": map-merge(
+            map-get($utilities, "margin-bottom"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "margin-bottom"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "margin-start": map-merge(
+            map-get($utilities, "margin-start"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "margin-start"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "padding": map-merge(
+            map-get($utilities, "padding"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "padding"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "padding-x": map-merge(
+            map-get($utilities, "padding-x"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "padding-x"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "padding-y": map-merge(
+            map-get($utilities, "padding-y"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "padding-y"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "padding-top": map-merge(
+            map-get($utilities, "padding-top"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "padding-top"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "padding-end": map-merge(
+            map-get($utilities, "padding-end"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "padding-end"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "padding-bottom": map-merge(
+            map-get($utilities, "padding-bottom"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "padding-bottom"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "padding-start": map-merge(
+            map-get($utilities, "padding-start"),
+            (
+                values: map-merge(
+                    map-get(map-get($utilities, "padding-start"), "values"),
+                    $pm-steps,
+                ),
+            ),
+        ),
+        "mfs": (
+          property: font-size,
+          class: font-size,
+          responsive: true,
+          values: $font-sizes,
+        ),
+        "miw": (
+          property: min-width,
+          class: min-width,
+          responsive: true,
+          values: $steps,
+        ),
+        "maw": (
+          property: max-width,
+          class: max-width,
+          responsive: true,
+          values: $steps,
+        ),
+        "mih": (
+          property: min-height,
+          class: min-height,
+          responsive: true,
+          values: $steps,
+        ),
+        "mah": (
+          property: max-height,
+          class: max-height,
+          responsive: true,
+          values: $steps,
+        )
+    )
+);
+
+.text-underline {
+    text-decoration: underline !important;
+}

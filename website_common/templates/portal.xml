@@ -1,0 +1,312 @@
+<odoo>
+    <!--
+        Template: view_type_selector
+        Name: Portal Searchbar View Type Selector
+
+        This template renders a dropdown menu for selecting the view type in the portal searchbar.
+        - Shows options for 'List', 'Grid', and optionally 'Calendar' views.
+        - The active view is highlighted.
+        - Uses Bootstrap dropdown and FontAwesome icons.
+        - If the portal searchbar view is not active, calls the single view type selector template.
+
+        Variables:
+        - layout: current view type ('list', 'grid', 'calendar')
+        - is_view_active: function to check if a view is active
+        - list_url, grid_url, calendar_url: URLs for each view type
+        - list_title, grid_title, calendar_title: Titles for each view type
+        - include_calendar: whether to show the calendar option
+    -->
+    <template id="view_type_selector" name="Portal Searchbar View Type Selector">
+        <div class="dropdown" t-if="layout and is_view_active('website_common.portal_searchbar')">
+            <button type="button"
+                    class="btn btn-primary o_arrow_button dropdown-toggle rounded-0 d-flex justify-content-between align-items-center"
+                    id="viewAsMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="d-flex text-truncate">
+                    <small>View As</small>
+                    <div class="icon-selected text-truncate">
+                        <i class="fa fa-th-large"/>
+                        <span class="text-truncate" t-out="'Lista' if layout == 'list' else 'Cuadrícula'"/>
+                    </div>
+                </div>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="viewAsMenuButton">
+                <li>
+                    <a t-attf-class="dropdown-item #{'' if layout == 'grid' else 'active'}"
+                       t-att-href="list_url or '/my'" data-bs-toggle="tooltip"
+                       data-bs-placement="top" t-att-aria-label="list_tooltip or 'Lista'"
+                       t-att-data-bs-original-title="list_tooltip or 'List'">
+                        <i class="fa fa-list"/>
+                        <span t-out="list_title or 'Lista'"/>
+                    </a>
+                </li>
+                <li>
+                    <a t-attf-class="dropdown-item #{'' if layout == 'list' else 'active'}"
+                       t-att-href="grid_url or '/my'" data-bs-toggle="tooltip"
+                       data-bs-placement="top" t-att-aria-label="grid_tooltip or 'Cuadrícula'"
+                       t-att-data-bs-original-title="grid_tooltip or 'Cuadrícula'">
+                        <i class="fa fa-th-large"/>
+                        <span t-out="grid_title or 'Cuadrícula'"/>
+                    </a>
+                </li>
+                <li t-if="include_calendar">
+                    <a t-attf-class="dropdown-item #{'' if layout == 'calendar' else 'active'}"
+                       t-att-href="calendar_url or '/my'" data-bs-toggle="tooltip"
+                       data-bs-placement="top" t-att-aria-label="calendar_tooltip or 'Calendario'"
+                       t-att-data-bs-original-title="calendar_tooltip or 'Calendario'">
+                        <i class="fa fa-calendar"/>
+                        <span t-out="calendar_title or 'Calendario'"/>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <t t-call="website_common.view_type_selector_single"
+           t-elif="layout and not is_view_active('website_common.portal')"/>
+    </template>
+    <!--
+        Template: view_type_selector_single
+        Name: View Type Selector Single
+
+        Renders a set of navigation pills for switching between view types.
+        - Shows options for 'List', 'Grid', and optionally 'Calendar' views.
+        - The active view is highlighted based on the 'layout' variable.
+        - Uses Bootstrap nav-pills and FontAwesome icons.
+        - Variables:
+            - layout: current view type ('list', 'grid', 'calendar')
+            - list_url, grid_url, calendar_url: URLs for each view type
+            - list_tooltip, grid_tooltip, calendar_tooltip: Tooltip text for each view type
+            - include_calendar: whether to show the calendar option
+    -->
+    <template id="view_type_selector_single" name="View Type Selector Single">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a t-attf-class="nav-link #{'' if layout == 'grid' else 'active'}" t-att-href="list_url or '/my'"
+                   data-bs-toggle="tooltip" data-bs-placement="top" t-att-aria-label="list_tooltip or 'Lista'"
+                   t-att-data-bs-original-title="list_tooltip or 'Lista'"><i class="fa fa-list"/></a>
+            </li>
+            <li class="nav-item">
+                <a t-attf-class="nav-link #{'active' if layout == 'grid' else ''}" t-att-href="grid_url or '/my'"
+                   data-bs-toggle="tooltip" data-bs-placement="top" t-att-aria-label="grid_tooltip or 'Cuadrícula'"
+                   t-att-data-bs-original-title="grid_tooltip or 'Cuadrícula'"><i class="fa fa-th-large"/></a>
+            </li>
+            <li class="nav-item" t-if="include_calendar">
+                <a t-attf-class="nav-link #{'active' if layout == 'calendar' else ''}"
+                   t-att-href="calendar_url or '/my'" data-bs-toggle="tooltip" data-bs-placement="top"
+                   t-att-aria-label="calendar_tooltip or 'Calendario'"
+                   t-att-data-bs-original-title="calendar_tooltip or 'Calendario'"><i class="fa fa-calendar"/></a>
+            </li>
+        </ul>
+    </template>
+    <!--
+        Template: btn_group_portal_searchbar
+        Name: Groups Portal Searchbar
+
+        This template renders a group of dropdowns for advanced portal searchbar controls in Odoo.
+
+        Features:
+        - Listings dropdown: Allows selection of different listing types.
+        - Sort By dropdown: Allows sorting of results by various criteria.
+        - Filter By dropdown: Allows filtering results, supports headers, dividers, and nested options.
+        - Group By dropdown: Allows grouping of results by a field.
+        - Search By dropdown: Allows selection of search input type and provides a search input box.
+
+        Variables:
+        - searchbar_listings: dict of available listings.
+        - searchbar_sortings: dict of available sort options.
+        - searchbar_filters: dict of available filters, supports headers, dividers, and nested options.
+        - searchbar_groupby: dict of available group by options.
+        - searchbar_inputs: dict of available search input types.
+        - listing, sortby, filterby, groupby, search_in: current selected values.
+        - extra_args: additional query parameters.
+        - default_url: base URL for filter/groupby links.
+        - request: Odoo request object.
+    -->
+    <template id="btn_group_portal_searchbar" name="Groups Portal Searchbar">
+        <div t-attf-class="btn-group btn-group-portal-searchbar {{extra_class}}" role="group"
+             aria-label="Filter Areas">
+            <!-- Listings Dropdown -->
+            <div class="dropdown" t-if="searchbar_listings">
+                <button type="button"
+                        class="btn btn-primary o_arrow_button dropdown-toggle rounded-0 d-flex justify-content-between align-items-center"
+                        id="listCountMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="d-flex text-truncate">
+                        <small># elements</small>
+                        <div class="icon-selected text-truncate">
+                            <i class="fa fa-sort"/>
+                            <span class="text-truncate" t-out="searchbar_listings[listing].get('input', lising)"/>
+                        </div>
+                    </div>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="listCountMenuButton">
+                    <t t-foreach="searchbar_listings" t-as="option">
+                        <li>
+                            <a t-att-href="request.httprequest.path + '?' + keep_query('*', listing=option, **extra_args)"
+                               t-attf-class="dropdown-item #{listing == option and 'active' or ''}">
+                                <span t-out="searchbar_listings[option].get('label')"/>
+                            </a>
+                        </li>
+                    </t>
+                </ul>
+            </div>
+            <!-- Sort By Dropdown -->
+            <div class="dropdown" t-if="searchbar_sortings">
+                <button type="button"
+                        class="btn btn-primary o_arrow_button dropdown-toggle rounded-0 d-flex justify-content-between align-items-center"
+                        id="sortByMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="d-flex text-truncate">
+                        <small>Sort By</small>
+                        <div class="icon-selected text-truncate">
+                            <i class="fa fa-sort"/>
+                            <span class="text-truncate" t-out="searchbar_sortings[sortby].get('label', 'Newest')"/>
+                        </div>
+                    </div>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortByMenuButton">
+                    <t t-foreach="searchbar_sortings" t-as="option">
+                        <li>
+                            <a t-att-href="request.httprequest.path + '?' + keep_query('*', sortby=option, **extra_args)"
+                               t-attf-class="dropdown-item#{sortby == option and ' active' or ''}">
+                                <span t-out="searchbar_sortings[option].get('label')"/>
+                            </a>
+                        </li>
+                    </t>
+                </ul>
+            </div>
+            <!-- Filter By Dropdown (supports headers, dividers, and nested options) -->
+            <div class="dropdown" t-if="searchbar_filters">
+                <button type="button"
+                        class="btn btn-primary o_arrow_button dropdown-toggle rounded-0 d-flex justify-content-between align-items-center"
+                        id="filterByMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="d-flex text-truncate">
+                        <small>Filter By</small>
+                        <div class="icon-selected text-truncate">
+                            <i class="fa fa-filter"/>
+                            <t t-set="label" t-value="searchbar_filters.get(filterby, 0)"/>
+                            <t t-if="label != 0">
+                                <t t-set="label" t-value="label.get('label', 'All')"/>
+                            </t>
+                            <t t-else="0">
+                                <t t-foreach="searchbar_filters.values()" t-as="v">
+                                    <t t-if="v.get('type', 'option') == 'header' and 'items' in v and filterby in v.get('items', {})">
+                                        <t t-set="label"
+                                           t-value="v.get('items', {}).get(filterby, {}).get('label', 'All')"/>
+                                    </t>
+                                </t>
+                            </t>
+                            <span class="text-truncate" t-out="label"/>
+                        </div>
+                    </div>
+                </button>
+                <ul class="dropdown-menu filter-by" aria-labelledby="filterByMenuButton">
+                    <t t-foreach="searchbar_filters" t-as="key">
+                        <t t-set="option" t-value="searchbar_filters[key]"/>
+                        <t t-if="option.get('type', 'option') == 'header'">
+                            <t t-set="children"
+                               t-value="{k: v for k, v in searchbar_filters.items() if 'parent' in v and v['parent'] == key}"/>
+                            <li t-if="len(children.keys()) == 0">
+                                <h6 class="dropdown-header" t-out="option.get('label')"/>
+                            </li>
+                            <li t-else="0">
+                                <t t-set="active_filter"
+                                   t-value="searchbar_filters.get(filterby, searchbar_filters.get('all'))"/>
+                                <t t-set="expanded"
+                                   t-value="'parent' in active_filter and active_filter['parent'] == key"/>
+                                <a class="dropdown-item has-submenu" data-bs-toggle="collapse"
+                                   t-attf-href="#submenu-{{key}}" role="button"
+                                   t-attf-aria-expanded="{{'true' if expanded else 'false'}}"
+                                   t-attf-aria-controls="submenu-{{key}}">
+                                    <span t-out="option.get('label')"/>
+                                    <i class="fa fa-chevron-down toggle-icon"></i>
+                                </a>
+                                <div t-attf-class="collapse submenu {{'show' if expanded else ''}}"
+                                     t-attf-id="submenu-{{key}}">
+                                    <t t-foreach="children" t-as="sub_key">
+                                        <t t-set="sub_option" t-value="children[sub_key]"/>
+                                        <a t-att-href="default_url + '?' + keep_query('*', filterby='all' if filterby == sub_key else sub_key, **extra_args)"
+                                           t-attf-class="dropdown-item#{filterby == sub_key and ' active' or ''}">
+                                            <span t-out="sub_option.get('label')"/>
+                                        </a>
+                                    </t>
+                                </div>
+                            </li>
+                        </t>
+                        <li t-if="option.get('type', 'option') == 'divider'">
+                            <hr class="dropdown-divider"/>
+                        </li>
+                        <li t-if="option.get('type', 'option') == 'option' and 'parent' not in option">
+                            <a t-att-href="default_url + '?' + keep_query('*', filterby='all' if filterby == key else key, **extra_args)"
+                               t-attf-class="dropdown-item#{filterby == key and ' active' or ''}">
+                                <span t-out="option.get('label')"/>
+                            </a>
+                        </li>
+                    </t>
+                </ul>
+            </div>
+            <!-- Group By Dropdown -->
+            <div class="dropdown" t-if="searchbar_groupby">
+                <button type="button"
+                        class="btn btn-primary o_arrow_button dropdown-toggle rounded-0 d-flex justify-content-between align-items-center"
+                        id="groupByMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="d-flex text-truncate">
+                        <small>Group By</small>
+                        <div class="icon-selected text-truncate">
+                            <i class="fa fa-object-group"/>
+                            <span class="text-truncate" t-out="searchbar_groupby[groupby].get('label', 'None')"/>
+                        </div>
+                    </div>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="groupByMenuButton">
+                    <t t-foreach="searchbar_groupby" t-as="option">
+                        <li>
+                            <a t-att-href="default_url + '?' + keep_query('*', groupby=option, **extra_args)"
+                               t-attf-class="dropdown-item#{groupby == option and ' active' or ''}">
+                                <span t-out="searchbar_groupby[option].get('label')"/>
+                            </a>
+                        </li>
+                    </t>
+                </ul>
+            </div>
+            <!-- Search By Dropdown with input box -->
+            <div class="dropdown" t-if="searchbar_inputs">
+                <button type="button"
+                        class="btn btn-primary o_arrow_button dropdown-toggle rounded-0 d-flex justify-content-between align-items-center"
+                        id="searchByMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="d-flex text-truncate">
+                        <small>Search By</small>
+                        <div class="icon-selected text-truncate">
+                            <i class="fa fa-search"/>
+                            <span class="text-truncate" t-out="searchbar_inputs[search_in].get('label', 'All')"/>
+                        </div>
+                    </div>
+                </button>
+                <div class="dropdown-menu dropdown-menu-searchbar" aria-labelledby="searchByMenuButton">
+                    <form class="o_portal_soltein_search_panel p-2 w-100">
+                        <div class="mb-3">
+                            <input type="text" class="form-control w-100" placeholder="Search" t-att-value='search'
+                                   name="search"/>
+                        </div>
+                    </form>
+                    <t t-foreach='searchbar_inputs' t-as='input'>
+                        <a t-att-href="'#' + input_value['input']"
+                           t-attf-class="dropdown-item#{search_in == input_value['input'] and ' active' or ''}">
+                            <span t-out="input_value['label']"/>
+                        </a>
+                    </t>
+                </div>
+            </div>
+            <!-- Dummy output to avoid empty template -->
+            <t t-out="0"/>
+        </div>
+    </template>
+    <template id="portal_searchbar" name="Soltein Portal Searchbar" inherit_id="portal.portal_searchbar"
+              active="False">
+        <xpath expr="//div[@id='o_portal_navbar_content']/div[hasclass('nav')]" position="replace"/>
+        <xpath expr="//div[@id='o_portal_navbar_content']/form[hasclass('o_portal_search_panel')]"
+               position="replace"/>
+        <xpath expr="//div[@id='o_portal_navbar_content']" position="inside">
+            <t t-set="extra_args" t-value="extra_args or {}"/>
+            <t t-call="website_common.btn_group_portal_searchbar" t-if="display_at_top">
+                <t t-out="0"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>

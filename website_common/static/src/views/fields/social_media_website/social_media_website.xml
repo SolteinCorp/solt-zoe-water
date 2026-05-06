@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="website_common.SocialMediaWebsiteField" t-inherit="web.CharField" t-inherit-mode="primary" owl="1">
+        <xpath expr="//t[@t-if='props.readonly']" position="before">
+            <div class="input-group mb-3 flex-nowrap" t-att-class="{'o_input_group_translate': isTranslatable}" t-attf-id="o-input-group-{{props.id}}">
+                <button class="btn btn-outline-secondary dropdown-toggle o-social-media-website-dropdown-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">Apply to</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="#" t-on-click.prevent="() => this.applyToAll()">All</a>
+                    </li>
+                    <li t-foreach="websites" t-as="website" t-key="website.id">
+                        <a class="dropdown-item" href="#" t-on-click.prevent="() => this.applyToWebsite(website)" t-out="website.name"/>
+                    </li>
+                </ul>
+            </div>
+        </xpath>
+        <xpath expr="//button[hasclass('o-social-media-website-dropdown-button')]" position="before">
+            <xpath expr="//t[@t-if='props.readonly']" position="move"/>
+            <xpath expr="//t[@t-else]" position="move"/>
+        </xpath>
+    </t>
+</templates>

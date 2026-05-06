@@ -1,0 +1,136 @@
+.s_soltein_banner .row:first-child{
+    @extend .mx-0;
+}
+
+.banner-box {
+    height: auto;
+    min-height: 18.75rem;
+    position: relative;
+}
+
+.has-logo {
+    position: relative;
+    z-index: 2;
+    padding: 1.875rem;
+    min-height: 18.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+
+    .entity-logo,
+    .logo-color-secretary {
+        width: 21.875rem;
+        height: 10rem;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+}
+
+.has-logo img {
+    height: 5rem;
+}
+
+.has-logo h2,
+.has-logo h4 {
+    color: var(--white-color, #FFFFFF);
+    text-align: center;
+}
+
+.banner-box .banner-cover {
+    position: absolute;
+    opacity: .3;
+    object-fit: cover;
+    top: 0;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+
+    &.frontpage-1 {
+        background-image: url('../img/backgrounds/banner/banner-1.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: bottom center;
+    }
+
+    &.frontpage-2 {
+        background-image: url('../img/backgrounds/banner/banner-2.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: bottom center;
+    }
+
+    &.frontpage-3 {
+        background-image: url('../img/backgrounds/banner/banner-3.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: bottom center;
+    }
+
+    &.frontpage-4 {
+        background-image: url('../img/backgrounds/banner/banner-4.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+
+}
+
+.banner-box.is-grid {
+    overflow: visible;
+    height: 12.5rem;
+    min-height: 12.5rem;
+    max-height: 12.5rem;
+    margin-bottom: calc(var(--unit, .5rem) * 13);
+}
+
+.banner-box.is-grid > img {
+    position: absolute;
+    z-index: 1;
+    top: -.375rem;
+    width: auto;
+    right: 0;
+    left: 0;
+    margin: auto;
+    opacity: 1;
+    height: auto;
+}
+
+.banner-box.is-grid .grid-area {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.banner-box.is-grid .has-logo {
+    min-height: calc(100% + 30px);
+}
+
+.banner-box.is-grid .logo-color-secretary {
+    width: 18.75rem;
+    height: 7.5rem;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.banner-box.is-grid .grid-area .first {
+    background-color: var(--primary-color-hover, o-color('o-color-1'));
+}
+
+.banner-box.is-grid .grid-area .second {
+    background-color: var(--primary-color, o-color('o-color-2'));
+}
+
+.banner-box.is-grid .grid-area .third {
+    background-color: var(--primary-color-label, o-color('o-color-1'));
+}
+
+.banner-box.is-grid .grid-area .fourth {
+    background-color: var(--primary-color-background, o-color('o-color-2'));
+}

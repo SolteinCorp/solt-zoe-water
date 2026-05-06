@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="website_solt_procedure.RecursiveRule">
+        <div>
+            <t t-out="humanReadable"/>
+        </div>
+    </t>
+</templates>

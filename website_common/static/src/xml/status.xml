@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="website_common.status_dropdown">
+        <t t-foreach="items" t-as="i" t-key="i['value']">
+            <li>
+                <a t-attf-class="dropdown-item #{(i['isSelected']) ? 'active' : ''} #{(i['isSelected'] || readonly) ? 'disabled' : ''}" t-att-disabled="i['isSelected'] || readonly" href="#" t-att-data-value="i['value']">
+                    <t t-out="i['label']"/>
+                </a>
+            </li>
+        </t>
+    </t>
+</templates>

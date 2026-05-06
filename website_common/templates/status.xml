@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="status_bar" name="Status Bar">
+        <!--
+        This template renders a status bar component for displaying and selecting statuses.
+
+        Attributes:
+        - name: The name of the status bar, defaulting to 'state'.
+        - res_method: The method to be called on status change.
+        - res_field: The field to be updated on status change.
+        - readonly: Indicates if the status bar is read-only.
+        - res_model: The model associated with the status bar.
+        - res_id: The ID of the record associated with the status bar.
+        - extraClasses: Additional CSS classes for styling.
+        - title: The title attribute for the status bar.
+        -->
+        <div t-attf-name="#{name or 'state'}" t-att-data-res-method="res_method" t-att-data-res-field="res_field"
+             t-attf-data-readonly="#{1 if readonly else 0}" t-att-data-res-model="res_model" t-att-data-res-id="res_id"
+             t-attf-class="o_field_statusbar adjustable #{extraClasses}" t-attf-title="#{title or ''}">
+            <div class="o_statusbar_status position-relative" id="status-root" role="radiogroup">
+                <div class="overlay position-absolute top-0 start-0 bottom-0 end-0"/>
+                <t t-set="selectedLabel" t-value="'...'"/>
+                <button type="button" class="btn btn-secondary dropdown-toggle o_arrow_button o_first d-none"
+                        id="status-after" aria-expanded="false" data-bs-toggle="dropdown">
+                    <div class="o-dropdown dropdown o-dropdown--no-caret"></div>...
+                </button>
+                <ul class="dropdown-menu after" aria-labelledby="status-after"/>
+                <t t-foreach="items[::-1]" t-as="i">
+                    <button type="button"
+                            t-attf-class="btn btn-secondary o_arrow_button #{'o_first' if i_first else ''} #{'o_last' if i_last else ''} #{'o_arrow_button_current' if i['id'] == value else ''}"
+                            role="radio" t-att-disabled="i['id'] == value or readonly" t-att-aria-label="i['name']"
+                            t-attf-aria-checked="#{'true' if i['id'] == value else 'false'}"
+                            t-att-data-value="i['id']"><t t-out="i['name']"/></button>
+                    <t t-set="selectedLabel" t-value="i['name'] if i['id'] == value else selectedLabel"/>
+                </t>
+                <button type="button" class="btn btn-secondary dropdown-toggle o_arrow_button o_last d-none"
+                        id="status-before" aria-expanded="false" data-bs-toggle="dropdown">
+                    <div class="o-dropdown dropdown o-dropdown--no-caret"></div>...
+                </button>
+                <ul class="dropdown-menu before" aria-labelledby="status-after"/>
+                <div id="status-dropdown" class="dropdown d-none">
+                    <button id="status-dropdown-btn" type="button"
+                            class="btn py-1 border-0 btn-secondary dropdown-toggle" aria-expanded="false"
+                            data-bs-toggle="dropdown">
+                        <t t-out="selectedLabel"/>
+                    </button>
+                    <ul role="menu" class="dropdown-menu" aria-labelledby="status-dropdown-btn">
+                        <t t-foreach="items" t-as="i">
+                            <li>
+                                <a t-att-disabled="i['id'] == value or readonly"
+                                   t-attf-class="dropdown-item #{'active' if i['id'] == value else ''} #{'disabled' if i['id'] == value or readonly else ''}"
+                                   role="menuitem" tabindex="0" t-att-data-value="i['id']" href="#">
+                                    <span t-out="i['name']"/>
+                                </a>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

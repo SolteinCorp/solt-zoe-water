@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="website_menus_side_form_view" model="ir.ui.view">
+        <field name="name">website.menu.side.form</field>
+        <field name="model">website.menu</field>
+        <field name="inherit_id" ref="website.website_menus_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_mega_menu']" position="after">
+                <field name="display_on_main_menu"/>
+                <field name="is_side_menu_item"/>
+            </xpath>
+            <xpath expr="//field[@name='website_id']" position="after">
+                <field name="icon_font_family"/>
+                <field name="icon_name" required="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="menu_side_tree" model="ir.ui.view">
+        <field name="name">website.menu.side.tree</field>
+        <field name="model">website.menu</field>
+        <field name="inherit_id" ref="website.menu_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_mega_menu']" position="after">
+                <field name="is_side_menu_item"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,45 @@
+@mixin lines-to-clamp($lines: 2) {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $lines;
+}
+
+$borders: top, right, bottom, left;
+
+@mixin o-record-color {
+    @for $size from 2 through length($o-colors) {
+        @each $border in $borders {
+            .border-#{$border}-color-#{$size - 1} {
+                border-#{$border}-color: nth($o-colors, $size) !important;
+            }
+        }
+        .badge-bg-color-#{$size - 1} {
+            background-color: nth($o-colors, $size);
+            color: color-contrast(nth($o-colors, $size));
+        }
+        .text-color-#{$size - 1} {
+            color: nth($o-colors, $size);
+        }
+    }
+    .badge-bg-color-20 {
+        background-color: $o-success;
+        color: color-contrast($o-success);
+    }
+    .badge-bg-color-21 {
+        background-color: $o-info;
+        color: color-contrast($o-info);
+    }
+    .badge-bg-color-22 {
+        background-color: $o-warning;
+        color: color-contrast($o-warning);
+    }
+    .badge-bg-color-23 {
+        background-color: $o-danger;
+        color: color-contrast($o-danger);
+    }
+    .badge-bg-color-24 {
+        background-color: $primary;
+        color: color-contrast($primary);
+    }
+}

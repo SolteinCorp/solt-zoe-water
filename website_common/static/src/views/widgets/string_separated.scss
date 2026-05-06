@@ -1,0 +1,5 @@
+.o_recurrent_string {
+    display: grid;
+    max-width: 280px;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+}

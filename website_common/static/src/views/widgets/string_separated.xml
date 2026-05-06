@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="website_solt_procedure.StringSeparated">
+        <div class="d-flex flex-column align-items-start mb-2">
+            <span class="fw-bold" t-out="props.title"/>
+        </div>
+        <div class="o_recurrent_string mb-2">
+            <t t-foreach="labelKeys" t-as="l" t-key="l">
+                <button t-attf-class="btn btn-sm rounded-0 {{data[l] ? 'btn-primary' : 'btn-outline-primary'}}"
+                    t-on-click="this.props.readonly? () => {} : () => this.onChange(l)">
+                    <t t-out="labels[l]"/>
+                </button>
+            </t>
+            <button t-attf-class="btn btn-sm rounded-0 {{allSelected ? 'btn-primary' : 'btn-outline-primary'}}"
+                t-on-click="this.props.readonly? () => {} : () => this.onAllSelectedChange()" data-bs-toggle="tooltip" data-bs-placement="top" title="Select all">
+                <i class="fa fa-check-square-o"/>
+            </button>
+            <button class="btn btn-sm btn-danger rounded-0" t-on-click="this.props.readonly? () => {} : () => this.clear()" data-bs-toggle="tooltip" data-bs-placement="top" title="Clear selection">
+                <i class="fa fa-remove"/>
+            </button>
+        </div>
+    </t>
+</templates>

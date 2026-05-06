@@ -1,0 +1,229 @@
+// ============================================================================
+// FUNCIONES SASS PARA ACLARAR COLORES POR PORCENTAJE
+// Compatible con LibSass y Ruby Sass
+// ============================================================================
+
+/// Aclara un color por un porcentaje basado en HSL Lightness
+/// @param {Color} $color - Color base en cualquier formato (hex, rgb, hsl)
+/// @param {Number} $percentage - Porcentaje para aclarar (ej: 20 para 20% más claro)
+/// @return {Color} - Color aclarado
+/// @example
+///   $base-color: #1a5490;
+///   $lighter-color: lighten-by-percentage($base-color, 50); // 50% más claro
+@function lighten-by-percentage($color, $percentage) {
+  // Obtener lightness como número sin unidad y convertir a porcentaje
+  $current-lightness: lightness($color) / 1%;
+  $new-lightness: $current-lightness * (1 + $percentage / 100);
+
+  // Asegurar que no exceda el 100
+  @if $new-lightness > 100 {
+    $new-lightness: 100;
+  }
+
+  @return hsl(hue($color), saturation($color), $new-lightness * 1%);
+}
+
+/// Oscurece un color por un porcentaje basado en HSL Lightness
+/// @param {Color} $color - Color base en cualquier formato (hex, rgb, hsl)
+/// @param {Number} $percentage - Porcentaje para oscurecer (ej: 20 para 20% más oscuro)
+/// @return {Color} - Color oscurecido
+/// @example
+///   $base-color: #4a9dff;
+///   $darker-color: darken-by-percentage($base-color, 30); // 30% más oscuro
+@function darken-by-percentage($color, $percentage) {
+  // Obtener lightness como número sin unidad y convertir a porcentaje
+  $current-lightness: lightness($color) / 1%;
+  $new-lightness: $current-lightness * (1 - $percentage / 100);
+
+  // Asegurar que no sea menor a 0
+  @if $new-lightness < 0 {
+    $new-lightness: 0;
+  }
+
+  @return hsl(hue($color), saturation($color), $new-lightness * 1%);
+}
+
+/// Implementación de potencia usando multiplicación (helper interno)
+/// @param {Number} $base - Base
+/// @param {Number} $exponent - Exponente (debe ser 2.4 para WCAG)
+/// @return {Number} - Resultado de la potencia
+@function _pow($base, $exponent) {
+  // Para WCAG usamos exponente 2.4
+  // Aproximación: x^2.4 ≈ x^2 * x^0.4
+  // Para x^0.4 usamos aproximación de Taylor
+
+  @if $exponent == 2.4 {
+    $squared: $base * $base;
+    // Aproximación de x^0.4 usando serie de Taylor simplificada
+    $point-four: 1 + 0.4 * ($base - 1) - 0.08 * ($base - 1) * ($base - 1);
+    @return $squared * $point-four;
+  }
+
+  // Fallback para otros exponentes (multiplicación simple)
+  $result: 1;
+  @for $i from 1 through $exponent {
+    $result: $result * $base;
+  }
+  @return $result;
+}
+
+/// Valor absoluto
+/// @param {Number} $number - Número
+/// @return {Number} - Valor absoluto
+@function _abs($number) {
+  @if $number < 0 {
+    @return -$number;
+  }
+  @return $number;
+}
+
+/// Convierte un canal de color a luminancia relativa (helper para WCAG)
+/// @param {Number} $channel - Valor del canal (0-255)
+/// @return {Number} - Valor de luminancia ajustado
+@function _adjust-channel-wcag($channel) {
+  $c: $channel / 255;
+
+  @if $c <= 0.03928 {
+    @return $c / 12.92;
+  } @else {
+    @return _pow(($c + 0.055) / 1.055, 2.4);
+  }
+}
+
+/// Calcula la luminancia relativa según WCAG
+/// @param {Color} $color - Color en cualquier formato
+/// @return {Number} - Luminancia relativa (0-1)
+@function _calculate-wcag-luminance($color) {
+  $r: _adjust-channel-wcag(red($color));
+  $g: _adjust-channel-wcag(green($color));
+  $b: _adjust-channel-wcag(blue($color));
+
+  @return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+}
+
+/// Aclara un color por un porcentaje basado en luminancia WCAG
+/// Esta función usa un enfoque iterativo para encontrar el color más claro
+/// @param {Color} $color - Color base en cualquier formato (hex, rgb, hsl)
+/// @param {Number} $percentage - Porcentaje para aclarar según luminancia WCAG
+/// @param {Number} $tolerance - Tolerancia para la búsqueda (default: 0.5)
+/// @return {Color} - Color aclarado
+/// @example
+///   $base-color: #1a5490;
+///   $lighter-color: lighten-by-wcag($base-color, 50); // 50% más luminoso según WCAG
+@function lighten-by-wcag($color, $percentage, $tolerance: 0.5) {
+  $current-luminance: _calculate-wcag-luminance($color);
+  $target-luminance: $current-luminance * (1 + $percentage / 100);
+
+  // Limitar a máximo 1.0
+  @if $target-luminance > 1 {
+    $target-luminance: 1;
+  }
+
+  // Usar lightness como aproximación inicial (sin unidad)
+  $current-lightness: lightness($color) / 1%;
+  $increment: 1;
+  $max-iterations: 100;
+  $iteration: 0;
+
+  // Búsqueda iterativa del lightness correcto
+  @while $iteration < $max-iterations {
+    $test-color: hsl(hue($color), saturation($color), $current-lightness * 1%);
+    $test-luminance: _calculate-wcag-luminance($test-color);
+    $difference: $target-luminance - $test-luminance;
+
+    @if _abs($difference * 100) < $tolerance {
+      @return $test-color;
+    }
+
+    @if $difference > 0 {
+      $current-lightness: $current-lightness + $increment;
+      @if $current-lightness > 100 {
+        @return hsl(hue($color), saturation($color), 100%);
+      }
+    } @else {
+      $current-lightness: $current-lightness - $increment;
+      @if $current-lightness < 0 {
+        @return hsl(hue($color), saturation($color), 0%);
+      }
+    }
+
+    $iteration: $iteration + 1;
+  }
+
+  // Si no se encuentra en las iteraciones, devolver el último intento
+  @return hsl(hue($color), saturation($color), $current-lightness * 1%);
+}
+
+/// Oscurece un color por un porcentaje basado en luminancia WCAG
+/// @param {Color} $color - Color base en cualquier formato (hex, rgb, hsl)
+/// @param {Number} $percentage - Porcentaje para oscurecer según luminancia WCAG
+/// @param {Number} $tolerance - Tolerancia para la búsqueda (default: 0.5)
+/// @return {Color} - Color oscurecido
+/// @example
+///   $base-color: #4a9dff;
+///   $darker-color: darken-by-wcag($base-color, 30); // 30% más oscuro según WCAG
+@function darken-by-wcag($color, $percentage, $tolerance: 0.5) {
+  $current-luminance: _calculate-wcag-luminance($color);
+  $target-luminance: $current-luminance * (1 - $percentage / 100);
+
+  // Limitar a mínimo 0
+  @if $target-luminance < 0 {
+    $target-luminance: 0;
+  }
+
+  // Usar lightness como aproximación inicial (sin unidad)
+  $current-lightness: lightness($color) / 1%;
+  $increment: 1;
+  $max-iterations: 100;
+  $iteration: 0;
+
+  // Búsqueda iterativa del lightness correcto
+  @while $iteration < $max-iterations {
+    $test-color: hsl(hue($color), saturation($color), $current-lightness * 1%);
+    $test-luminance: _calculate-wcag-luminance($test-color);
+    $difference: $target-luminance - $test-luminance;
+
+    @if _abs($difference * 100) < $tolerance {
+      @return $test-color;
+    }
+
+    @if $difference > 0 {
+      $current-lightness: $current-lightness + $increment;
+      @if $current-lightness > 100 {
+        @return hsl(hue($color), saturation($color), 100%);
+      }
+    } @else {
+      $current-lightness: $current-lightness - $increment;
+      @if $current-lightness < 0 {
+        @return hsl(hue($color), saturation($color), 0%);
+      }
+    }
+
+    $iteration: $iteration + 1;
+  }
+
+  // Si no se encuentra en las iteraciones, devolver el último intento
+  @return hsl(hue($color), saturation($color), $current-lightness * 1%);
+}
+
+// ============================================================================
+// NOTAS DE USO
+// ============================================================================
+
+// 1. lighten-by-percentage() y darken-by-percentage() usan HSL Lightness
+//    - Más rápido
+//    - Más predecible matemáticamente
+//    - Recomendado para uso general
+//
+// 2. lighten-by-wcag() y darken-by-wcag() usan luminancia WCAG
+//    - Más preciso para percepción visual humana
+//    - Ligeramente más lento (usa iteraciones)
+//    - Recomendado para accesibilidad y diseños que requieren precisión visual
+//
+// 3. Ambos métodos aceptan colores en cualquier formato: hex, rgb, hsl, rgba, hsla
+//
+// 4. El porcentaje es relativo al valor actual:
+//    - Si un color tiene 50% lightness y lo aclaras 20%, quedará en 60% (50 * 1.20)
+//    - NO es una suma directa de porcentajes
+//
+// 5. Esta versión es compatible con LibSass y Ruby Sass (no requiere Dart Sass)

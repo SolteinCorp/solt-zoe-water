@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="mime_jpeg" model="website.upload.mime">
+        <field name="name">JPEG</field>
+        <field name="category">image</field>
+        <field name="mime_type">image/jpeg</field>
+    </record>
+    <record id="mime_jpg" model="website.upload.mime">
+        <field name="name">JPG</field>
+        <field name="category">image</field>
+        <field name="mime_type">image/jpg</field>
+    </record>
+    <record id="mime_png" model="website.upload.mime">
+        <field name="name">PNG</field>
+        <field name="category">image</field>
+        <field name="mime_type">image/png</field>
+    </record>
+    <record id="mime_gif" model="website.upload.mime">
+        <field name="name">GIF</field>
+        <field name="category">image</field>
+        <field name="mime_type">image/gif</field>
+    </record>
+    <record id="mime_svg" model="website.upload.mime">
+        <field name="name">SVG</field>
+        <field name="category">image</field>
+        <field name="mime_type">image/svg+xml</field>
+    </record>
+    <record id="mime_webp" model="website.upload.mime">
+        <field name="name">WEBP</field>
+        <field name="category">image</field>
+        <field name="mime_type">image/webp</field>
+    </record>
+    <record id="mime_tiff" model="website.upload.mime">
+        <field name="name">TIFF</field>
+        <field name="category">image</field>
+        <field name="mime_type">image/tiff</field>
+    </record>
+    <record id="mime_bmp" model="website.upload.mime">
+        <field name="name">BMP</field>
+        <field name="category">image</field>
+        <field name="mime_type">image/bmp</field>
+    </record>
+    <record id="mime_pdf" model="website.upload.mime">
+        <field name="name">PDF</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/pdf</field>
+    </record>
+    <record id="mime_doc" model="website.upload.mime">
+        <field name="name">DOC</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/msword</field>
+    </record>
+    <record id="mime_docx" model="website.upload.mime">
+        <field name="name">DOCX</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/vnd.openxmlformats-officedocument.wordprocessingml.document</field>
+    </record>
+    <record id="mime_xls" model="website.upload.mime">
+        <field name="name">XLS</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/vnd.ms-excel</field>
+    </record>
+    <record id="mime_xlsx" model="website.upload.mime">
+        <field name="name">XLSX</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</field>
+    </record>
+    <record id="mime_ppt" model="website.upload.mime">
+        <field name="name">PPT</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/vnd.ms-powerpoint</field>
+    </record>
+    <record id="mime_pptx" model="website.upload.mime">
+        <field name="name">PPTX</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/vnd.openxmlformats-officedocument.presentationml.presentation</field>
+    </record>
+    <record id="mime_txt" model="website.upload.mime">
+        <field name="name">TXT</field>
+        <field name="category">document</field>
+        <field name="mime_type">text/plain</field>
+    </record>
+    <record id="mime_csv" model="website.upload.mime">
+        <field name="name">CSV</field>
+        <field name="category">document</field>
+        <field name="mime_type">text/csv</field>
+    </record>
+    <record id="mime_rtf" model="website.upload.mime">
+        <field name="name">RTF</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/rtf</field>
+    </record>
+    <record id="mime_mp3" model="website.upload.mime">
+        <field name="name">MP3</field>
+        <field name="category">audio</field>
+        <field name="mime_type">audio/mpeg</field>
+    </record>
+    <record id="mime_wav" model="website.upload.mime">
+        <field name="name">WAV</field>
+        <field name="category">audio</field>
+        <field name="mime_type">audio/wav</field>
+    </record>
+    <record id="mime_ogg" model="website.upload.mime">
+        <field name="name">OGG</field>
+        <field name="category">audio</field>
+        <field name="mime_type">audio/ogg</field>
+    </record>
+    <record id="mime_aac" model="website.upload.mime">
+        <field name="name">AAC</field>
+        <field name="category">audio</field>
+        <field name="mime_type">audio/aac</field>
+    </record>
+    <record id="mime_webm" model="website.upload.mime">
+        <field name="name">WEBM</field>
+        <field name="category">audio</field>
+        <field name="mime_type">audio/webm</field>
+    </record>
+    <record id="mime_mp4" model="website.upload.mime">
+        <field name="name">MP4</field>
+        <field name="category">video</field>
+        <field name="mime_type">video/mp4</field>
+    </record>
+    <record id="mime_webmv" model="website.upload.mime">
+        <field name="name">WEBM Video</field>
+        <field name="category">video</field>
+        <field name="mime_type">video/webm</field>
+    </record>
+    <record id="mime_oggv" model="website.upload.mime">
+        <field name="name">OGG Videp</field>
+        <field name="category">video</field>
+        <field name="mime_type">video/ogg</field>
+    </record>
+    <record id="mime_avi" model="website.upload.mime">
+        <field name="name">AVI</field>
+        <field name="category">video</field>
+        <field name="mime_type">video/x-msvideo</field>
+    </record>
+    <record id="mime_mov" model="website.upload.mime">
+        <field name="name">MOV</field>
+        <field name="category">video</field>
+        <field name="mime_type">video/quicktime</field>
+    </record>
+    <record id="mime_zip" model="website.upload.mime">
+        <field name="name">ZIP</field>
+        <field name="category">archive</field>
+        <field name="mime_type">application/zip</field>
+    </record>
+    <record id="mime_rar" model="website.upload.mime">
+        <field name="name">RAR</field>
+        <field name="category">archive</field>
+        <field name="mime_type">application/x-rar-compressed</field>
+    </record>
+    <record id="mime_7z" model="website.upload.mime">
+        <field name="name">7Z</field>
+        <field name="category">archive</field>
+        <field name="mime_type">application/x-7z-compressed</field>
+    </record>
+    <record id="mime_gzip" model="website.upload.mime">
+        <field name="name">GZIP</field>
+        <field name="category">archive</field>
+        <field name="mime_type">application/gzip</field>
+    </record>
+    <record id="mime_tar" model="website.upload.mime">
+        <field name="name">TAR</field>
+        <field name="category">archive</field>
+        <field name="mime_type">application/x-tar</field>
+    </record>
+    <record id="mime_json" model="website.upload.mime">
+        <field name="name">JSON</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/json</field>
+    </record>
+    <record id="mime_xml" model="website.upload.mime">
+        <field name="name">XML</field>
+        <field name="category">document</field>
+        <field name="mime_type">application/xml</field>
+    </record>
+    <record id="mime_octet" model="website.upload.mime">
+        <field name="name">Binary</field>
+        <field name="category">other</field>
+        <field name="mime_type">application/octet-stream</field>
+    </record>
+</odoo>

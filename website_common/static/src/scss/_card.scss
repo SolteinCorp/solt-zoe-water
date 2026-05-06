@@ -1,0 +1,104 @@
+//
+// _card.scss
+//
+
+.card {
+    margin-bottom: $grid-gutter-width;
+
+    .card-header.bg-light{
+        background-color: var(--#{$prefix}light) !important;
+    }
+    .card-header.bg-dark{
+        background-color: var(--#{$prefix}dark) !important;
+    }
+    &.bg-dark{
+        background-color: $dark;
+    }
+}
+
+.card-drop {
+    color: $body-color;
+}
+
+.card-title {
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+.card-title-desc {
+    margin-bottom: 24px;
+}
+
+.card-h-100 {
+    height: calc(100% - #{$grid-gutter-width});
+}
+
+@mixin card-header-variant($bg) {
+    background-color: lighten($bg, 5%) !important;
+    border-bottom: none
+}
+
+@each $color,
+$value in $theme-colors {
+    .card-header.bg-#{$color} {
+        @include card-header-variant($value);
+    }
+}
+
+.cards-section {
+    margin-top: var(--base-unit, 2rem);
+    gap: var(--base-unit, 2rem);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+
+    .card-box {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: 23.125rem;
+    }
+}
+
+.is-vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+@for $i from 1 through 12 {
+    .\3#{$i}-columns {
+        display: grid;
+        grid-template-columns: repeat(#{$i}, 1fr);
+    }
+    @if $i > 2 {
+        @include media-breakpoint-down(lg) {
+            .cards-section.\3#{$i}-columns {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    }
+
+    @include media-breakpoint-down(md) {
+        .cards-section.\3#{$i}-columns {
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+}
+
+.card-body .badge.text-bg-danger,
+.card-body .badge.bg-danger {
+    background-color: o-color('o-color-2') !important;
+}
+
+.card-body .badge.badge-primary-subtle,
+.card-body .badge.text-bg-success,
+.card-body .badge.bg-success,
+.card-body .badge.badge-bg-color-20 {
+    background-color: o-color('o-color-1') !important;
+    color: o-color('o-color-4') !important;
+}
+
+.card-body .badge.text-bg-info,
+.card-body .badge.bg-info{
+    background-color: o-color('o-color-3') !important;
+    color: o-color('o-color-4') !important;
+}
