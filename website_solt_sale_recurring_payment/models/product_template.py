@@ -207,10 +207,12 @@ class ProductTemplate(models.Model):
             0,
         )
 
-    def _get_sales_prices(self, pricelist, fiscal_position):
+    def _get_sales_prices(self, website):
         """Extend catalog pricing to include subscription pricing info."""
-        prices = super()._get_sales_prices(pricelist, fiscal_position)
-        currency = pricelist.currency_id or self.env.company.currency_id
+        prices = super()._get_sales_prices(website)
+        pricelist = website.pricelist_id
+        fiscal_position = website.fiscal_position_id.sudo()
+        currency = website.currency_id or pricelist.currency_id or self.env.company.currency_id
         today = fields.Date.context_today(self)
 
         for template in self.filtered("recurring_ok"):
