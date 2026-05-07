@@ -21,7 +21,6 @@ VariantMixin._onChangeCombinationSubscription = function (ev, $parent, combinati
     const pricingSelector =
         parentElement.querySelector(".js_main_product h5:has(.o_subscription_price)") ||
         parentElement.querySelector(".js_main_product select.plan_select");
-    const pricingTable = document.querySelector("#oe_wsale_subscription_pricing_table");
     const addToCartButton = document.querySelector('#add_to_cart');
     if (addToCartButton) {
         addToCartButton.dataset.subscriptionPlanId = combination.pricings.length > 0 ? combination.subscription_default_pricing_plan_id : '';
@@ -51,21 +50,6 @@ VariantMixin._onChangeCombinationSubscription = function (ev, $parent, combinati
         const containerNode = parentElement.querySelector(".js_main_product div div");
         containerNode.append(
             renderToElement("website_solt_sale_recurring_payment.SubscriptionPricingSelect", {
-                combination_info: combination,
-            })
-        );
-    }
-    if (pricingTable) {
-        pricingTable.replaceWith(
-            renderToElement("website_solt_sale_recurring_payment.SubscriptionPricingTable", {
-                combination_info: combination,
-            })
-        );
-    } else {
-        // No pricing table exists yet — append one after the product form
-        const formNode = document.querySelector("#product_details form");
-        formNode.after(
-            renderToElement("website_solt_sale_recurring_payment.SubscriptionPricingTable", {
                 combination_info: combination,
             })
         );
