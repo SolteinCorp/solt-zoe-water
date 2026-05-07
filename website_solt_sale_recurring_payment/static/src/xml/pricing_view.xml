@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
-    <!-- JS-rendered pricing comparison table -->
-    <div t-name="website_solt_sale_recurring_payment.SubscriptionPricingTable" id="oe_wsale_subscription_pricing_table">
-        <table class="o_not_editable table w-100">
-            <tbody t-if="combination_info.pricings">
-                <t t-foreach="combination_info.pricings" t-as="pricing" t-key="pricing.plan_id">
-                    <tr>
-                        <td class="w-50" t-esc="pricing.table_name"/>
-                        <td class="w-50 text-end" t-esc="pricing.table_price"/>
-                    </tr>
-                </t>
-            </tbody>
-        </table>
-    </div>
-
     <!-- JS-rendered plan selector (dropdown for multiple, h5 for single) -->
     <div t-name="website_solt_sale_recurring_payment.SubscriptionPricingSelect">
         <select t-if="combination_info.pricings and combination_info.subscription_pricing_select"
