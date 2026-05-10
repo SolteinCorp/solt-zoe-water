@@ -43,17 +43,28 @@ class SaleOrder(models.Model):
         return super()._get_recurring_order_line().filtered(lambda line: not line.subscription_id)
 
     def _get_invoiceable_lines(self, final=False):
-        """Sobre el resultado del padre, quita las líneas de suscripción en
-        periodo gratuito. Si al quitarlas una sección se queda sin ninguna
-        línea de producto, también se descartan esa sección y las notas
-        que pertenecen a ella.
-        """
-        base_lines = super()._get_invoiceable_lines(final=final)
-        lines_to_remove = base_lines.filtered(lambda ln: not ln.display_type and ln.subscription_id)
-        if not lines_to_remove:
-            return base_lines
+        """Return invoiceable lines, removing only:
+          - Lines from cron-generated monthly SOs (subscription_id set AND the
+            current SO is not the subscription's origin); the cron handles their
+            invoicing from the subscription itself.
+          - Lines whose free_periods window has not elapsed yet (the subscription
+            checks per line at invoicing time).
 
-        remaining_lines = (base_lines - lines_to_remove).sorted("sequence")
+        Lines on the original SO always pass: the first invoice (with qty
+        expanded for prepaid pricings) is generated from the SO origin like in
+        the standard Odoo flow.
+        """
+        parent_lines = super()._get_invoiceable_lines(final=final)
+        subscription_lines_to_remove = parent_lines.filtered(
+            lambda ln: not ln.display_type and ln.recurring_ok and (
+                (ln.subscription_id and ln.order_id != ln.subscription_id.origin_id)
+                or ln.free_periods > 0
+            )
+        )
+        if not subscription_lines_to_remove:
+            return parent_lines
+
+        remaining_lines = (parent_lines - subscription_lines_to_remove).sorted("sequence")
 
         sections_with_products = set()
         current_section_id = None
@@ -63,20 +74,20 @@ class SaleOrder(models.Model):
             elif not line.display_type and current_section_id is not None:
                 sections_with_products.add(current_section_id)
 
-        kept_ids = []
+        kept_line_ids = []
         current_section_active = True
         for line in remaining_lines:
             if line.display_type == "line_section":
                 current_section_active = line.id in sections_with_products
                 if current_section_active:
-                    kept_ids.append(line.id)
+                    kept_line_ids.append(line.id)
             elif line.display_type == "line_note":
                 if current_section_active:
-                    kept_ids.append(line.id)
+                    kept_line_ids.append(line.id)
             else:
-                kept_ids.append(line.id)
+                kept_line_ids.append(line.id)
 
-        return self.env["sale.order.line"].browse(kept_ids)
+        return self.env["sale.order.line"].browse(kept_line_ids)
 
     def _get_name_tax_totals_view(self):
         self.ensure_one()

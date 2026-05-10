@@ -5,7 +5,7 @@
     "author": "Soltein SA de CV",
     "website": "https://soltein.mx",
     "category": "Soltein SA de CV/Sales",
-    "version": "18.0.3.0.2",
+    "version": "18.0.3.1.0",
     "license": "LGPL-3",
     "depends": ["solt_recurring_payment", "sale_management", "payment"],
     "data": [

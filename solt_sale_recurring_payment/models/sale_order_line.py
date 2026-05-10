@@ -62,12 +62,40 @@ class SaleOrderLine(models.Model):
         recurring_lines.pricelist_item_id = False
         return result
 
+    def _get_prepaid_pricing(self):
+        """Return the matching solt.recurring.pricing record for this line if it
+        applies AND is marked as prepaid. Empty recordset otherwise.
+        """
+        self.ensure_one()
+        if not self.recurring_ok or not self.plan_id or not self.product_id:
+            return self.env["solt.recurring.pricing"]
+        pricing = self.env["solt.recurring.pricing"]._get_first_suitable_recurring_pricing(
+            self.product_id, self.plan_id, self.order_id.pricelist_id,
+        )
+        return pricing if pricing.prepaid else self.env["solt.recurring.pricing"]
+
     def _prepare_invoice_line(self, **optional_values):
-        """Override to add subscription info to invoice lines."""
-        vals = super()._prepare_invoice_line(**optional_values)
+        """Override to add subscription info and to expand qty for prepaid lines.
+        Prepaid lines are billed up front from the SO with qty × required_recurring_quantity.
+        """
+        invoice_line_values = super()._prepare_invoice_line(**optional_values)
         if self.recurring_ok and (self.subscription_id or self.subscription_line_ids):
-            vals.update({"subscription_id": (self.subscription_id or self.subscription_line_ids.subscription_id).id})
-        return vals
+            invoice_line_values.update({"subscription_id": (self.subscription_id or self.subscription_line_ids.subscription_id).id})
+        prepaid_pricing = self._get_prepaid_pricing()
+        if prepaid_pricing:
+            invoice_line_values["quantity"] = invoice_line_values.get("quantity", 1) * prepaid_pricing.required_recurring_quantity
+        return invoice_line_values
+
+    @api.depends("free_periods")
+    def _compute_qty_to_invoice(self):  # pylint: disable=W8110
+        """Lines with free_periods > 0 are not invoiced on the SO confirmation:
+        the subscription's per-line check defers them until the free window
+        elapses and the cron picks them up.
+        """
+        super()._compute_qty_to_invoice()
+        for line in self:
+            if line.recurring_ok and line.free_periods > 0:
+                line.qty_to_invoice = 0
 
     @api.onchange("product_id")
     def _onchange_product_subscription(self):
