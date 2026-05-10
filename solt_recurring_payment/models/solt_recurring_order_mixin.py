@@ -233,15 +233,13 @@ class RecurringOrderMixin(models.AbstractModel):
     def _prepare_subscription_values(self, plan_id, lines):
         """Prepare values for creating a subscription.
 
-        The start_date is always the order date.
-        The next_invoice_date is calculated by adding free_periods * billing_period
-        to the order date. If no free periods, next_invoice_date equals start_date.
+        The start_date is always the order date. ``next_invoice_date`` always
+        starts at the order date — ``free_periods`` is checked per subscription
+        line at invoicing time (lines still in their free window are skipped
+        for that cycle), not by globally offsetting the schedule here.
         """
         self.ensure_one()
         order_date = self.date_order.date() if hasattr(self.date_order, "date") else self.date_order
-        plan = self.env["solt.recurring.plan"].browse(plan_id)
-        max_free_periods = max(lines.mapped("free_periods") or [0])
-        next_invoice_date = order_date + (plan.billing_period * max_free_periods) if max_free_periods else order_date
         return {
             "origin_id": f"{self._name},{self.id}",
             "partner_id": self.partner_id.id,
@@ -249,7 +247,7 @@ class RecurringOrderMixin(models.AbstractModel):
             "currency_id": self.currency_id.id,
             "plan_id": plan_id,
             "start_date": order_date,
-            "next_invoice_date": next_invoice_date,
+            "next_invoice_date": order_date,
             "user_id": self.user_id.id,
             "subscription_line_ids": [Command.create(line._prepare_subscription_line_values()) for line in lines],
         }

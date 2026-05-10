@@ -5,7 +5,7 @@
     "author": "Soltein SA de CV",
     "website": "https://soltein.mx",
     "category": "Soltein SA de CV/Subscriptions",
-    "version": "18.0.3.0.3",
+    "version": "18.0.3.1.0",
     "license": "LGPL-3",
     "excludes": [
         "sale_subscription",

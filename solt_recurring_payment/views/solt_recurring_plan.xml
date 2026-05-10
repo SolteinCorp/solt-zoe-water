@@ -56,6 +56,7 @@
                                     <field name="product_variant_ids" widget="many2many_tags" optional="show"/>
                                     <field name="required_recurring_quantity" optional="show"/>
                                     <field name="free_periods" optional="show"/>
+                                    <field name="prepaid" optional="show"/>
                                     <field name="pricelist_id" optional="show"/>
                                     <field name="price"/>
                                     <field name="currency_id" groups="base.group_multi_currency"/>

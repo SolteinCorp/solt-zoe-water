@@ -161,6 +161,48 @@ class SoltSaleSubscription(models.Model):
         help="The lines that define the products and services included in this subscription."
     )
 
+    # === PREPAID INFO === #
+    is_prepaid = fields.Boolean(
+        string='Prepaid Subscription',
+        compute='_compute_prepaid_info',
+        store=True,
+        help="True if the subscription contains at least one downpayment line.",
+    )
+    prepaid_periods = fields.Integer(
+        string='Prepaid Periods per Cycle',
+        compute='_compute_prepaid_info',
+        store=True,
+        help="Number of periods covered by each prepaid invoice (sum of quantities of "
+             "the downpayment lines).",
+    )
+    prepaid_periods_remaining = fields.Float(
+        string='Prepaid Periods Remaining',
+        compute='_compute_prepaid_info',
+        help="Number of prepaid periods not yet applied to monthly invoices.",
+    )
+    prepaid_amount_total = fields.Monetary(
+        string='Prepaid Amount',
+        compute='_compute_prepaid_info',
+        help="Total amount charged on the prepaid invoice (sum of downpayment line "
+             "subtotals × periods).",
+    )
+
+    @api.depends(
+        'subscription_line_ids.is_downpayment',
+        'subscription_line_ids.product_uom_qty',
+        'subscription_line_ids.qty_invoiced',
+        'subscription_line_ids.price_unit',
+    )
+    def _compute_prepaid_info(self):
+        for sub in self:
+            dp_lines = sub.subscription_line_ids.filtered('is_downpayment')
+            sub.is_prepaid = bool(dp_lines)
+            sub.prepaid_periods = int(sum(dp_lines.mapped('product_uom_qty')))
+            sub.prepaid_periods_remaining = sum(dp_lines.mapped('qty_invoiced'))
+            sub.prepaid_amount_total = sum(
+                line.product_uom_qty * line.price_unit for line in dp_lines
+            )
+
     # === PAYMENT FIELDS === #
     payment_token_id = fields.Many2one('payment.token', string='Payment Token', check_company=True, domain="[('partner_id', 'child_of', commercial_partner_id), ('company_id', '=', company_id)]", copy=True,
         help="If set, automatic payments will use this token.",
@@ -1010,10 +1052,14 @@ class SoltSaleSubscription(models.Model):
         return values
 
     def _create_account_invoices(self, invoice_vals_list, final):
-        """Small method to allow overriding the behavior right after an invoice is created."""
+        """Small method to allow overriding the behavior right after an invoice is created.
+
+        Each ``invoice_vals`` dict already carries its own ``move_type`` (set in
+        ``_prepare_invoice``), so we don't force it via context here.
+        """
         # Manage the creation of invoices in sudo because a salesperson must be able to generate an invoice from a
         # sale order without "billing" access rights. However, he should not be able to create an invoice from scratch.
-        return self.env['account.move'].sudo().with_context(default_move_type='out_invoice').create(invoice_vals_list)
+        return self.env['account.move'].sudo().create(invoice_vals_list)
 
     def _create_invoices(self, final=False):
         """Create invoice(s) for the given Sales Order(s).
@@ -1030,14 +1076,58 @@ class SoltSaleSubscription(models.Model):
                 return self.env['account.move']
 
         invoice_vals_list = []
+        applied_downpayment_lines = []  # (line, applied_qty) tuples to update qty_invoiced after creation
+        today = fields.Date.context_today(self)
         for sub in self:
             if sub.partner_id.lang:
                 sub = sub.with_context(lang=sub.partner_id.lang)
             sub = sub.with_company(sub.company_id)
+            # Auto-renewal: any downpayment line whose advance is fully consumed
+            # (initial_invoice_done=True and qty_invoiced=0) is reset so a new
+            # prepaid invoice will be issued next.
+            for line in sub.subscription_line_ids:
+                if line.is_downpayment and line.initial_invoice_done \
+                        and line.currency_id.is_zero(line.qty_invoiced):
+                    line.initial_invoice_done = False
             invoice_vals = sub._prepare_invoice()
             invoice_line_vals = []
+            # If there is an unbilled downpayment line, this is the "initial prepaid
+            # invoice": only the downpayment is invoiced (regular recurring lines
+            # are deferred to the next monthly cycle).
+            has_pending_initial_dp = any(
+                line.is_downpayment and not line.initial_invoice_done
+                for line in sub.subscription_line_ids
+            )
+            use_negative = sub._use_downpayment_negative_line()
             for line in sub.subscription_line_ids:
-                invoice_line_vals.append(Command.create(line._prepare_invoice_line()))
+                # Skip lines whose free_periods window has not yet elapsed.
+                # The check is per line: a subscription with mixed lines bills
+                # the eligible ones now and defers the others until their free
+                # window ends (a later cron tick will pick them up).
+                if line.free_periods and not line.is_downpayment:
+                    end_of_free = sub._compute_free_period_end_date(line.free_periods)
+                    if end_of_free and today < end_of_free:
+                        continue
+                if line.is_downpayment:
+                    # Mirrors the sale.advance.payment.inv wizard:
+                    # - !initial_invoice_done → prepaid invoice, qty=product_uom_qty (N periods).
+                    # - initial_invoice_done & qty_invoiced>0 → monthly application qty=-period_qty
+                    #   (only when _use_downpayment_negative_line is active; bridges such as
+                    #   CFDI Anticipos handle the application via a credit note instead).
+                    # - initial_invoice_done & qty_invoiced=0 → advance exhausted, skip it
+                    #   (the subscription continues with regular billing or auto-renews the prepaid).
+                    if not line.initial_invoice_done:
+                        applied_qty = line.product_uom_qty
+                    elif line.qty_invoiced > 0 and use_negative:
+                        applied_qty = -line.period_qty
+                    else:
+                        continue
+                    invoice_line_vals.append(Command.create(line._prepare_invoice_line(quantity=applied_qty)))
+                    applied_downpayment_lines.append((line, applied_qty))
+                else:
+                    if has_pending_initial_dp:
+                        continue
+                    invoice_line_vals.append(Command.create(line._prepare_invoice_line()))
             invoice_vals['invoice_line_ids'] += invoice_line_vals
             invoice_vals_list.append(invoice_vals)
 
@@ -1058,6 +1148,14 @@ class SoltSaleSubscription(models.Model):
                 moves_to_switch.action_switch_move_type()
                 self.invoice_ids._set_reversed_entry(moves_to_switch)
 
+        # Update qty_invoiced on downpayment subscription lines so the next
+        # invoice cycle uses the right state (positive prepaid invoice, then
+        # negative monthly applications, until balance is exhausted).
+        for line, applied_qty in applied_downpayment_lines:
+            line.qty_invoiced += applied_qty
+            if not line.initial_invoice_done:
+                line.initial_invoice_done = True
+
         return moves
 
     def _get_traceback_body(self, exc, body):
@@ -1072,9 +1170,54 @@ class SoltSaleSubscription(models.Model):
         return {**self.env.context, **mail_ctx, **{'total_amount': self.recurring_total, 'currency_name': self.currency_id.name, 'responsible_email': self.user_id.email, 'code': self.name}}
 
     def _process_auto_invoice(self, invoice):
-        """Hook for extension, to support different invoice states"""
+        """Hook for extension, to support different invoice states. Skip the
+        non-zero-total constraint when the invoice is fully covered by a
+        downpayment line (legitimate case: monthly invoice consumed entirely
+        by the prepaid advance).
+        """
+        if any(line.is_downpayment for line in invoice.invoice_line_ids):
+            invoice = invoice.with_context(allow_zero_total_invoice=True)
         invoice.action_post()
         return
+
+    def _use_downpayment_negative_line(self):
+        """Return True when the recurring monthly invoice should include the
+        downpayment-style negative line that nets the invoice total to zero
+        (base behaviour). Bridges (e.g. CFDI Anticipos) can override and return
+        False when an external mechanism — refund_advance_credit_note_amount,
+        SAT credit note flow, etc. — handles the advance application instead.
+        """
+        self.ensure_one()
+        return True
+
+    def _compute_free_period_end_date(self, free_periods):
+        """Return the date when a `free_periods` window ends, counted from
+        ``start_date``. Each unit of ``free_periods`` is one full plan period
+        (e.g. free_periods=1 + plan annual = 1 year free).
+        """
+        self.ensure_one()
+        if not free_periods or not self.start_date or not self.plan_id.billing_period:
+            return False
+        return self.start_date + (self.plan_id.billing_period * int(free_periods))
+
+    def _get_invoice_periods_advanced(self, invoice_lines):
+        """How many billing periods this invoice covers for the subscription.
+        Prepaid lines (qty was expanded by required_recurring_quantity at SO
+        time) cover N periods; regular lines cover 1.
+        """
+        self.ensure_one()
+        max_periods = 1
+        for inv_line in invoice_lines:
+            origin_line = None
+            if 'sale_line_ids' in inv_line._fields and inv_line.sale_line_ids:
+                origin_line = inv_line.sale_line_ids[:1]
+            if not origin_line or not getattr(origin_line, 'recurring_ok', False) or not origin_line.plan_id:
+                continue
+            if origin_line._name == 'sale.order.line' and hasattr(origin_line, '_get_prepaid_pricing'):
+                pricing = origin_line._get_prepaid_pricing()
+                if pricing:
+                    max_periods = max(max_periods, int(pricing.required_recurring_quantity or 1))
+        return max_periods
 
     # === PROGRESSIVE PAYMENT RETRY === #
 

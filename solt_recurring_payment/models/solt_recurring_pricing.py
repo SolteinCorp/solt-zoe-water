@@ -19,7 +19,25 @@ class SoltSaleRecurringPricing(models.Model):
     price = fields.Monetary(string="Recurring Price", required=True, default=1.0, help="The recurring price to be charged for the selected product and plan.")
     currency_id = fields.Many2one('res.currency', string='Currency', compute='_compute_currency_id', store=True, help="Currency in which the recurring price is set.")
     required_recurring_quantity = fields.Integer('Required Recurring Quantity', help="Minimum quantity of recurring periods that must be purchased with this pricing.")
-    free_periods = fields.Integer('Free Periods', help="Number of free recurring periods offered with this pricing.")
+    free_periods = fields.Integer('Free Periods', help="Number of free recurring periods offered with this pricing. Each unit is a full plan period (e.g. 1 = one full year free on an annual plan).")
+    prepaid = fields.Boolean(
+        string="Prepaid",
+        default=False,
+        help="When enabled, the customer pays upfront for the number of periods set in "
+             "'Required Recurring Quantity'. The first invoice charges the full prepaid "
+             "amount and is recorded as a customer advance; each subsequent monthly "
+             "invoice is automatically settled from that advance until exhausted.",
+    )
+
+    @api.constrains('prepaid', 'required_recurring_quantity')
+    def _check_prepaid_required_quantity(self):
+        """Prepaid pricings require required_recurring_quantity > 1."""
+        for pricing in self:
+            if pricing.prepaid and pricing.required_recurring_quantity <= 1:
+                raise UserError(_(
+                    "Prepaid pricing requires 'Required Recurring Quantity' to be greater than 1. "
+                    "If only one period is required, the pricing is not prepaid."
+                ))
 
     @api.constrains('plan_id', 'pricelist_id', 'product_template_id', 'product_variant_ids')
     def _unique_pricing_constraint(self):

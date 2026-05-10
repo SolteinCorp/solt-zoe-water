@@ -8,6 +8,7 @@
             <field name="company_id" position="before">
                 <field name="plan_id" options="{'no_create': True}" invisible="not recurring_ok" required="recurring_ok"/>
                 <field name="required_recurring_quantity" invisible="not recurring_ok"/>
+                <field name="prepaid" invisible="not recurring_ok"/>
                 <field name="recurring_ok" invisible="True"/>
             </field>
         </field>
@@ -30,6 +31,9 @@
                        optional="show"
                        column_invisible="not context.get('recurring_ok', True)"/>
                 <field name="required_recurring_quantity"
+                       optional="hide"
+                       column_invisible="not context.get('recurring_ok', True)"/>
+                <field name="prepaid"
                        optional="hide"
                        column_invisible="not context.get('recurring_ok', True)"/>
             </field>

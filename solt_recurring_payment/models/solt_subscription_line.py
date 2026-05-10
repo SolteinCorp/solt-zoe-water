@@ -84,6 +84,62 @@ class SoltSaleSubscriptionLine(models.Model):
         default=1.0,
         help='Quantity of the product to invoice.',
     )
+    free_periods = fields.Integer(
+        string='Free Periods',
+        default=0,
+        copy=False,
+        help='Number of free periods at the start of the subscription for this line. '
+             'Each unit is a full plan period (e.g. 1 = one full year free on an annual plan). '
+             'While start_date + free_periods * period > today, the line is skipped from invoices '
+             'and only starts billing once the free window has elapsed.',
+    )
+    is_downpayment = fields.Boolean(
+        string='Is Downpayment',
+        default=False,
+        copy=False,
+        help='Marks this line as a downpayment. Mirrors the sale.advance.payment.inv wizard '
+             'semantics: the line represents N prepaid periods. The first invoice charges '
+             'qty=product_uom_qty (full prepaid quantity); each subsequent monthly invoice '
+             'includes a negative qty=-period_qty counterpart until the balance is exhausted.',
+    )
+    period_qty = fields.Float(
+        string='Quantity per Period',
+        default=1.0,
+        copy=False,
+        help='Quantity consumed per billing period when this line is a downpayment. '
+             'The prepaid invoice posts product_uom_qty (= period_qty * number of prepaid '
+             'periods); each monthly invoice applies qty=-period_qty.',
+    )
+    initial_invoice_done = fields.Boolean(
+        string='Initial Invoice Issued',
+        default=False,
+        copy=False,
+        help='True once the initial prepaid invoice has been issued. When qty_invoiced '
+             'returns to 0 (advance fully consumed), this line stops generating new prepaid '
+             'invoices and the subscription continues with regular billing.',
+    )
+    qty_invoiced = fields.Float(
+        string='Quantity Invoiced',
+        default=0.0,
+        copy=False,
+        help='Cumulative invoiced quantity for this line (positives add, negatives subtract). '
+             'For downpayment lines it tracks how many prepaid periods are still pending '
+             'application against monthly invoices.',
+    )
+    qty_to_invoice = fields.Float(
+        string='Quantity to Invoice',
+        compute='_compute_qty_to_invoice',
+        help='For downpayment lines: the positive qty (initial invoice) when not yet invoiced, '
+             'or the remaining negative qty (monthly applications) while there is balance.',
+    )
+
+    @api.depends('product_uom_qty', 'qty_invoiced', 'is_downpayment')
+    def _compute_qty_to_invoice(self):
+        for line in self:
+            if line.is_downpayment:
+                line.qty_to_invoice = line.product_uom_qty - line.qty_invoiced
+            else:
+                line.qty_to_invoice = line.product_uom_qty
     product_uom_id = fields.Many2one(
         'uom.uom',
         string='Unit of Measure',
@@ -341,8 +397,14 @@ class SoltSaleSubscriptionLine(models.Model):
         # Fallback to product price
         return self.product_id.lst_price
 
-    def _prepare_invoice_line(self):
-        """Prepare invoice line values for this subscription line."""
+    def _prepare_invoice_line(self, quantity=None):
+        """Prepare invoice line values for this subscription line.
+
+        :param quantity: optional override for the line quantity. Used by
+            ``solt.subscription._create_invoices`` to emit downpayment lines
+            (positive on the initial prepaid invoice, negative on subsequent
+            monthly invoices).
+        """
         self.ensure_one()
 
         subscription = self.subscription_id
@@ -354,7 +416,7 @@ class SoltSaleSubscriptionLine(models.Model):
 
         # Format description with period
         description = self.name
-        if plan:
+        if plan and not self.is_downpayment:
             format_start = fields.Date.to_string(period_start)
             format_end = fields.Date.to_string(period_end)
             period_desc = f"\n{format_start} - {format_end}"
@@ -373,11 +435,12 @@ class SoltSaleSubscriptionLine(models.Model):
             'name': description,
             'product_id': self.product_id.id,
             'product_uom_id': self.product_uom_id.id,
-            'quantity': self.product_uom_qty,
+            'quantity': self.product_uom_qty if quantity is None else quantity,
             'price_unit': price_unit,
             'discount': discount,
             'tax_ids': [Command.set(self.tax_ids.ids)],
             'subscription_id': subscription.id,
+            'is_downpayment': self.is_downpayment,
         }
 
     @api.model

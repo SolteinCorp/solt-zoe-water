@@ -80,6 +80,10 @@
                             <field name="end_date" readonly="state != 'draft'"/>
                             <field name="close_date" invisible="state != 'closed'" readonly="1"/>
                             <field name="close_reason_id" invisible="state != 'closed'" readonly="state != 'draft'"/>
+                            <field name="is_prepaid" invisible="not is_prepaid"/>
+                            <field name="prepaid_periods" invisible="not is_prepaid"/>
+                            <field name="prepaid_periods_remaining" invisible="not is_prepaid"/>
+                            <field name="prepaid_amount_total" invisible="not is_prepaid"/>
                         </group>
                     </group>
                     <notebook>
@@ -101,6 +105,11 @@
                                     <field name="price_subtotal"/>
                                     <field name="price_total" optional="show"/>
                                     <field name="recurring_monthly" optional="hide"/>
+                                    <field name="is_downpayment" optional="show"/>
+                                    <field name="period_qty" optional="show"/>
+                                    <field name="qty_invoiced" optional="hide" readonly="1"/>
+                                    <field name="initial_invoice_done" optional="hide" readonly="1"/>
+                                    <field name="free_periods" optional="hide"/>
                                     <field name="product_uom_category_id" column_invisible="True"/>
                                     <field name="product_uom_id" column_invisible="True"/>
                                     <field name="subscription_type" column_invisible="True"/>

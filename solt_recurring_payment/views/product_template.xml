@@ -48,6 +48,7 @@
                             <field name="plan_id"/>
                             <field name="required_recurring_quantity" optional="show"/>
                             <field name="free_periods" optional="show"/>
+                            <field name="prepaid" optional="show"/>
                             <field name="pricelist_id" groups="product.group_product_pricelist" optional="show"/>
                             <field name="currency_id" column_invisible="True"/>
                             <field name="price"/>

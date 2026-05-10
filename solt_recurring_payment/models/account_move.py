@@ -39,6 +39,7 @@ class AccountMove(models.Model):
             move.is_recurring_document = bool(subscription_ids)
 
     def _post(self, soft=True):
+        """Override to auto-confirm draft subscriptions and advance invoice dates when posted."""
         posted_moves = super()._post(soft=soft)
         for move in posted_moves:
             subscription_lines = move.invoice_line_ids.filtered('subscription_id')
@@ -54,7 +55,15 @@ class AccountMove(models.Model):
                 if subscription.state == 'draft':
                     subscription.action_confirm()
                 if move.invoice_date == subscription.next_invoice_date:
-                    subscription._update_next_invoice_date()
+                    # Determine how many periods this invoice covers: prepaid lines
+                    # (qty expanded by required_recurring_quantity at SO time)
+                    # advance next_invoice_date by N periods; regular by 1.
+                    sub_lines_in_move = subscription_lines.filtered(
+                        lambda line, sub=subscription: line.subscription_id == sub
+                    )
+                    periods_to_advance = subscription._get_invoice_periods_advanced(sub_lines_in_move)
+                    for _idx in range(max(periods_to_advance, 1)):
+                        subscription._update_next_invoice_date()
         return posted_moves
 
     def _message_auto_subscribe_followers(self, updated_values, subtype_ids):
