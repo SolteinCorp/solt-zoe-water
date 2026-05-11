@@ -49,14 +49,23 @@ class SoltSaleRecurringPricing(models.Model):
 
     @api.constrains('plan_id', 'product_template_id', 'product_variant_ids')
     def _unique_pricing_constraint(self):
-        pricings_per_group = self.read_group(
-            ['|', ('product_template_id', 'in', self.product_template_id.ids), ('product_variant_ids', 'in', self.product_variant_ids.ids)],
-            ['product_variant_ids:array_agg'],
-            ['product_template_id', 'plan_id'], lazy=False)
-        for pricings in pricings_per_group:
-            if pricings['__count'] < 2:
+        if not self:
+            return
+        candidate_pricings = self.search([
+            ('product_template_id', 'in', self.product_template_id.ids),
+            ('plan_id', 'in', self.plan_id.ids),
+        ])
+        pricings_by_group = {}
+        for pricing in candidate_pricings:
+            group_key = (pricing.product_template_id.id, pricing.plan_id.id)
+            pricings_by_group.setdefault(group_key, []).append(pricing)
+        for grouped_pricings in pricings_by_group.values():
+            if len(grouped_pricings) < 2:
                 continue
-            if len(set(pricings['product_variant_ids'])) != len(pricings['product_variant_ids']):
+            variant_ids_seen = []
+            for pricing in grouped_pricings:
+                variant_ids_seen.extend(pricing.product_variant_ids.ids or [None])
+            if len(set(variant_ids_seen)) != len(variant_ids_seen):
                 raise UserError(_("There are multiple pricings for the same product and plan."))
 
     @api.depends('plan_id', 'plan_id.company_id', 'plan_id.company_id.currency_id')
