@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2026 Soltein SA. de CV.
 # License LGPL-3 or later (http://www.gnu.org/licenses/lgpl.html)
-from odoo import _, api, fields, models
+from odoo import _lt, api, fields, models
 from odoo.http import request
 
 MIME_TYPES = [
@@ -147,7 +147,7 @@ class UploadProfile(models.Model):
         (
             "slug_website_id_unique",
             "unique (slug, website_id)",
-            _("There is a upload profile with the same slug in this website!"),
+            _lt("There is a upload profile with the same slug in this website!"),
         ),
     ]
 

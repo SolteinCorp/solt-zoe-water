@@ -30,7 +30,6 @@
         "web.assets_frontend": [
             "website_common/static/libs/echarts/echarts.min.js",
             "website_common/static/libs/colResizable-1.6.min.js",
-            "website_common/static/src/services/**/*",
             "website_common/static/libs/simplebar/simplebar.css",
             "website_common/static/libs/dragula/dragula.min.css",
             "website_common/static/libs/simplebar/simplebar.min.js",
