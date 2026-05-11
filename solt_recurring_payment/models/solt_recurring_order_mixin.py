@@ -68,6 +68,7 @@ class RecurringOrderMixin(models.AbstractModel):
         help="Summary of subscription totals grouped by plan (for quotation display only). Contains plan information and period totals.",
     )
 
+    @api.depends("order_line.subscription_id")
     def _compute_subscription_ids(self):
         subscriptions = self.env["solt.subscription"].read_group(
             domain=[("origin_id", "in", self.mapped(lambda rec: f"{rec._name},{rec.id}"))],
@@ -142,21 +143,18 @@ class RecurringOrderMixin(models.AbstractModel):
                         "period": line.required_recurring_quantity or 0,
                     }
 
-                tax_base_line_dict = self.env["account.tax"]._convert_to_tax_base_line_dict(
+                AccountTax = self.env["account.tax"].with_company(line.company_id)
+                tax_base_line = AccountTax._prepare_base_line_for_taxes_computation(
                     line,
-                    partner=line.order_id.partner_id,
-                    currency=line.order_id.currency_id,
-                    product=line.product_id,
-                    taxes=line._get_tax_ids(),
-                    price_unit=line.price_unit,
+                    tax_ids=line._get_tax_ids(),
                     quantity=line.product_uom_qty * (line.required_recurring_quantity or 1),
-                    discount=line.discount,
-                    price_subtotal=line.price_subtotal,
+                    partner_id=line.order_id.partner_id,
+                    currency_id=line.order_id.currency_id,
                 )
-                tax_results = self.env["account.tax"].with_company(line.company_id)._compute_taxes([tax_base_line_dict])
-                totals = list(tax_results["totals"].values())[0]
-                amount_untaxed = totals["amount_untaxed"]
-                amount_tax = totals["amount_tax"]
+                AccountTax._add_tax_details_in_base_line(tax_base_line, line.company_id)
+                AccountTax._round_base_lines_tax_details([tax_base_line], line.company_id)
+                amount_untaxed = tax_base_line["tax_details"]["total_excluded_currency"]
+                amount_tax = tax_base_line["tax_details"]["total_included_currency"] - amount_untaxed
                 plans_data[plan.id]["price_unit"] += line.price_unit
                 plans_data[plan.id]["periodic_amount"] += amount_untaxed
                 plans_data[plan.id]["periodic_tax_amount"] += amount_tax
@@ -237,9 +235,21 @@ class RecurringOrderMixin(models.AbstractModel):
         starts at the order date — ``free_periods`` is checked per subscription
         line at invoicing time (lines still in their free window are skipped
         for that cycle), not by globally offsetting the schedule here.
+
+        For each recurring line we emit one regular subscription line; lines
+        flagged as prepaid additionally emit a downpayment subscription line
+        (via ``_prepare_subscription_downpayment_line_values``) so the cron can
+        apply the prepaid balance as a negative line on subsequent monthly
+        invoices, mirroring the native ``sale.advance.payment.inv`` pattern.
         """
         self.ensure_one()
         order_date = self.date_order.date() if hasattr(self.date_order, "date") else self.date_order
+        subscription_line_commands = []
+        for line in lines:
+            subscription_line_commands.append(Command.create(line._prepare_subscription_line_values()))
+            downpayment_vals = line._prepare_subscription_downpayment_line_values()
+            if downpayment_vals:
+                subscription_line_commands.append(Command.create(downpayment_vals))
         return {
             "origin_id": f"{self._name},{self.id}",
             "partner_id": self.partner_id.id,
@@ -249,7 +259,7 @@ class RecurringOrderMixin(models.AbstractModel):
             "start_date": order_date,
             "next_invoice_date": order_date,
             "user_id": self.user_id.id,
-            "subscription_line_ids": [Command.create(line._prepare_subscription_line_values()) for line in lines],
+            "subscription_line_ids": subscription_line_commands,
         }
 
     def action_open_subscriptions(self):

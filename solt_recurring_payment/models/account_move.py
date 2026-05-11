@@ -54,14 +54,21 @@ class AccountMove(models.Model):
             for subscription in subscriptions:
                 if subscription.state == 'draft':
                     subscription.action_confirm()
-                if move.invoice_date == subscription.next_invoice_date:
-                    # Determine how many periods this invoice covers: prepaid lines
-                    # (qty expanded by required_recurring_quantity at SO time)
-                    # advance next_invoice_date by N periods; regular by 1.
-                    sub_lines_in_move = subscription_lines.filtered(
-                        lambda line, sub=subscription: line.subscription_id == sub
-                    )
-                    periods_to_advance = subscription._get_invoice_periods_advanced(sub_lines_in_move)
+                sub_lines_in_move = subscription_lines.filtered(
+                    lambda line, sub=subscription: line.subscription_id == sub
+                )
+                # Sync the downpayment subscription line's state when the SO
+                # origin posts the initial prepaid invoice: mark it as
+                # ``initial_invoice_done=True`` with the full balance loaded,
+                # so the next cron tick applies monthly negative lines instead
+                # of re-emitting the prepaid invoice.
+                subscription._mark_prepaid_initial_invoiced(sub_lines_in_move)
+                periods_to_advance = subscription._get_invoice_periods_advanced(sub_lines_in_move)
+                # Prepaid origin invoices (periods_to_advance > 1) always advance.
+                # Regular cron invoices advance only when posted on the scheduled
+                # next_invoice_date (avoids double-advance if the user posts
+                # late or out of sequence).
+                if periods_to_advance > 1 or move.invoice_date == subscription.next_invoice_date:
                     for _idx in range(max(periods_to_advance, 1)):
                         subscription._update_next_invoice_date()
         return posted_moves

@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="product_pricelist_view" model="ir.ui.view">
-        <field name="name">sale.subscription.product.pricelist.form.inherit</field>
-        <field name="model">product.pricelist</field>
-        <field name="inherit_id" ref="product.product_pricelist_view"/>
+    <record id="product_pricelist_item_form_view_inherit_recurring" model="ir.ui.view">
+        <field name="name">product.pricelist.item.form.inherit.recurring</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
         <field name="arch" type="xml">
-            <page name="pricelist_rules" position="after">
-                <page name="product_subscription_pricing_ids" string="Recurring Prices">
-                    <field name="product_subscription_pricing_ids" nolabel="1">
-                        <list editable="bottom">
-                            <control>
-                                <create name="add_product_pricing" string="Add a price rule"/>
-                            </control>
-                            <field name="product_template_id" domain="[('recurring_ok', '=', True)]"
-                                   options="{'no_create': 1}" required="1"/>
-                            <field name="product_variant_ids" widget="many2many_tags"
-                                   groups="product.group_product_variant" options="{'no_create': 1}"
-                                   domain="[('product_tmpl_id', '=', product_template_id)]"/>
-                            <field name="currency_id" column_invisible="True"/>
-                            <field name="plan_id" required="1"/>
-                            <field name="prepaid" optional="hide"/>
-                            <field name="price"/>
-                        </list>
-                    </field>
-                </page>
-            </page>
+            <field name="min_quantity" position="after">
+                <field name="plan_id" options="{'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_pricelist_item_tree_view_from_product_inherit_recurring" model="ir.ui.view">
+        <field name="name">product.pricelist.item.list.from.product.inherit.recurring</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="inherit_id" ref="product.product_pricelist_item_tree_view_from_product"/>
+        <field name="arch" type="xml">
+            <field name="min_quantity" position="after">
+                <field name="plan_id" optional="show" options="{'no_create': True}"/>
+            </field>
         </field>
     </record>
 </odoo>

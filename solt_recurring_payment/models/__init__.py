@@ -3,6 +3,7 @@ from . import account_move
 from . import account_move_line
 from . import payment_token
 from . import product_pricelist
+from . import product_pricelist_item
 from . import product_product
 from . import product_template
 from . import product_supplierinfo

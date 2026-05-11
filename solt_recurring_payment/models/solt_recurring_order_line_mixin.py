@@ -128,11 +128,21 @@ class RecurringOrderLineMixin(models.AbstractModel):
             'product_id': self.product_id.id,
             'name': self.name,
             'product_uom_qty': self._get_product_qty(),
-            'product_uom': self.product_uom.id,
+            'product_uom_id': self.product_uom.id,
             'price_unit': self.price_unit,
             'tax_ids': [(6, 0, self._get_tax_ids().ids)],
             'free_periods': self.free_periods,
         }
+
+    def _prepare_subscription_downpayment_line_values(self):
+        """Return an EXTRA downpayment subscription line for this order line, or
+        an empty dict if no downpayment applies.
+
+        Default: no downpayment. Sale order lines override this to emit a
+        prepaid downpayment line when ``solt.recurring.pricing.prepaid`` is set.
+        """
+        self.ensure_one()
+        return {}
 
     def _get_product_qty(self):
         """Get product quantity. Override in subclasses."""

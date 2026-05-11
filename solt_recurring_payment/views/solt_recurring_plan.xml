@@ -29,6 +29,7 @@
                                 <field name="billing_period_value" class="oe_inline"/>
                                 <field name="billing_period_unit" class="oe_inline"/>
                             </div>
+                            <field name="prepaid"/>
                             <field name="auto_close_limit"/>
                             <field name="auto_archive_delay"/>
                         </group>
@@ -54,10 +55,12 @@
                                 <list editable="bottom">
                                     <field name="product_template_id"/>
                                     <field name="product_variant_ids" widget="many2many_tags" optional="show"/>
-                                    <field name="required_recurring_quantity" optional="show"/>
+                                    <field name="prepaid" column_invisible="True"/>
+                                    <field name="required_recurring_quantity"
+                                           optional="show"
+                                           readonly="prepaid"
+                                           force_save="1"/>
                                     <field name="free_periods" optional="show"/>
-                                    <field name="prepaid" optional="show"/>
-                                    <field name="pricelist_id" optional="show"/>
                                     <field name="price"/>
                                     <field name="currency_id" groups="base.group_multi_currency"/>
                                 </list>

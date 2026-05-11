@@ -384,15 +384,19 @@ class SoltSaleSubscriptionLine(models.Model):
         pricelist = self.subscription_id.pricelist_id
 
         if plan:
-            pricing = self.env['solt.recurring.pricing']._get_first_suitable_recurring_pricing(
-                self.product_id, plan, pricelist
-            )
+            Pricing = self.env['solt.recurring.pricing']
+            pricing = Pricing._get_first_suitable_recurring_pricing(self.product_id, plan)
             if pricing:
-                return pricing.currency_id._convert(
+                base_price = pricing.currency_id._convert(
                     pricing.price,
                     self.currency_id,
                     self.company_id,
                     fields.Date.today(),
+                )
+                return Pricing._apply_pricelist_rule(
+                    base_price, pricelist, self.product_id, plan,
+                    self.product_uom_qty or 1.0, self.product_uom_id,
+                    fields.Date.today(), currency=self.currency_id,
                 )
         # Fallback to product price
         return self.product_id.lst_price
@@ -446,15 +450,18 @@ class SoltSaleSubscriptionLine(models.Model):
     @api.model
     def _get_price_from_pricing(self, product, plan, pricelist, currency, company):
         """Get the price for a product based on subscription pricing."""
-        pricing = self.env['solt.recurring.pricing']._get_first_suitable_recurring_pricing(
-            product, plan, pricelist
-        )
+        Pricing = self.env['solt.recurring.pricing']
+        pricing = Pricing._get_first_suitable_recurring_pricing(product, plan)
         if pricing:
-            return pricing.currency_id._convert(
+            base_price = pricing.currency_id._convert(
                 pricing.price,
                 currency,
                 company,
                 fields.Date.today(),
+            )
+            return Pricing._apply_pricelist_rule(
+                base_price, pricelist, product, plan,
+                1.0, product.uom_id, fields.Date.today(), currency=currency,
             )
         return product.lst_price
 
@@ -471,12 +478,17 @@ class SoltSaleSubscriptionLine(models.Model):
             old_plan: solt.recurring.plan - the source plan
         """
         self.ensure_one()
-        pricing = self.env['solt.recurring.pricing']._get_first_suitable_recurring_pricing(
-            self.product_id, new_plan, self.subscription_id.pricelist_id
-        )
+        Pricing = self.env['solt.recurring.pricing']
+        pricing = Pricing._get_first_suitable_recurring_pricing(self.product_id, new_plan)
         if pricing:
-            self.price_unit = pricing.currency_id._convert(
-                pricing.price, self.currency_id, self.company_id, fields.Date.today()
+            base_price = pricing.currency_id._convert(
+                pricing.price, self.currency_id, self.company_id, fields.Date.today(),
+            )
+            self.price_unit = Pricing._apply_pricelist_rule(
+                base_price, self.subscription_id.pricelist_id,
+                self.product_id, new_plan,
+                self.product_uom_qty or 1.0, self.product_uom_id,
+                fields.Date.today(), currency=self.currency_id,
             )
         else:
             # Proportional fallback: normalize to monthly then convert to new period
@@ -484,22 +496,15 @@ class SoltSaleSubscriptionLine(models.Model):
             new_monthly_factor = INTERVAL_FACTOR.get(new_plan.billing_period_unit, 1.0) / new_plan.billing_period_value
             self.price_unit = self.price_unit * old_monthly_factor / new_monthly_factor
 
-    def _convert_to_tax_base_line_dict(self, **kwargs):
-        """ Convert the current record to a dictionary in order to use the generic taxes computation method
-        defined on account.tax.
-
-        :return: A python dictionary.
-        """
+    def _prepare_base_line_for_taxes_computation(self, **kwargs):
+        """Convert the current record to a base line dict for the generic taxes computation."""
         self.ensure_one()
-        return self.env['account.tax']._convert_to_tax_base_line_dict(
-            self,
-            partner=self.subscription_id.partner_id,
-            currency=self.subscription_id.currency_id,
-            product=self.product_id,
-            taxes=self.tax_ids,
-            price_unit=self.price_unit,
-            quantity=self.product_uom_qty,
-            discount=self.discount,
-            price_subtotal=self.price_subtotal,
-            **kwargs,
-        )
+        company = self.subscription_id.company_id or self.env.company
+        base_values = {
+            'tax_ids': self.tax_ids,
+            'quantity': self.product_uom_qty,
+            'partner_id': self.subscription_id.partner_id,
+            'currency_id': self.subscription_id.currency_id or company.currency_id,
+        }
+        base_values.update(kwargs)
+        return self.env['account.tax']._prepare_base_line_for_taxes_computation(self, **base_values)

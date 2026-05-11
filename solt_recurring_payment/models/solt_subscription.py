@@ -356,9 +356,17 @@ class SoltSaleSubscription(models.Model):
     @api.depends_context('lang')
     @api.depends('subscription_line_ids.tax_ids', 'subscription_line_ids.price_subtotal', 'amount_total', 'amount_untaxed')
     def _compute_tax_totals(self):
+        """Compute the tax totals summary for display in the subscription form."""
+        AccountTax = self.env['account.tax']
         for order in self:
-            subscription_line_idss = order.subscription_line_ids
-            order.tax_totals = self.env['account.tax']._prepare_tax_totals([x._convert_to_tax_base_line_dict() for x in subscription_line_idss], order.currency_id or order.company_id.currency_id, )
+            base_lines = [line._prepare_base_line_for_taxes_computation() for line in order.subscription_line_ids]
+            AccountTax._add_tax_details_in_base_lines(base_lines, order.company_id)
+            AccountTax._round_base_lines_tax_details(base_lines, order.company_id)
+            order.tax_totals = AccountTax._get_tax_totals_summary(
+                base_lines=base_lines,
+                currency=order.currency_id or order.company_id.currency_id,
+                company=order.company_id,
+            )
 
     @api.depends('plan_id', 'subscription_line_ids.product_id.product_subscription_pricing_ids')
     def _compute_available_plan_ids(self):
@@ -1128,6 +1136,10 @@ class SoltSaleSubscription(models.Model):
                     if has_pending_initial_dp:
                         continue
                     invoice_line_vals.append(Command.create(line._prepare_invoice_line()))
+            if not invoice_line_vals:
+                # All subscription lines were skipped (free_periods window or
+                # exhausted prepaid balance). Don't emit an empty invoice.
+                continue
             invoice_vals['invoice_line_ids'] += invoice_line_vals
             invoice_vals_list.append(invoice_vals)
 
@@ -1199,6 +1211,36 @@ class SoltSaleSubscription(models.Model):
         if not free_periods or not self.start_date or not self.plan_id.billing_period:
             return False
         return self.start_date + (self.plan_id.billing_period * int(free_periods))
+
+    def _mark_prepaid_initial_invoiced(self, invoice_lines):
+        """Sync the downpayment subscription line state when the SO origin
+        posts the initial prepaid invoice.
+
+        The downpayment subscription line is created up front (in
+        ``_prepare_subscription_downpayment_line_values``) in the pre-initial
+        state ``initial_invoice_done=False, qty_invoiced=0``. When the SO
+        origin invoices the prepaid amount directly (qty expanded by
+        ``required_recurring_quantity``), the line should jump to the
+        post-initial state so the next cron tick applies monthly negative
+        lines instead of re-emitting the prepaid invoice from the cron.
+        """
+        self.ensure_one()
+        for inv_line in invoice_lines:
+            origin_line = None
+            if 'sale_line_ids' in inv_line._fields and inv_line.sale_line_ids:
+                origin_line = inv_line.sale_line_ids[:1]
+            if not origin_line:
+                continue
+            # ``origin_line.subscription_line_ids`` (One2many with a Reference
+            # inverse) is not navigable in Odoo; search by origin_line_id directly.
+            downpayment_lines = self.env['solt.subscription.line'].search([
+                ('origin_line_id', '=', f'{origin_line._name},{origin_line.id}'),
+                ('is_downpayment', '=', True),
+                ('initial_invoice_done', '=', False),
+            ])
+            for downpayment_line in downpayment_lines:
+                downpayment_line.qty_invoiced = downpayment_line.product_uom_qty
+                downpayment_line.initial_invoice_done = True
 
     def _get_invoice_periods_advanced(self, invoice_lines):
         """How many billing periods this invoice covers for the subscription.

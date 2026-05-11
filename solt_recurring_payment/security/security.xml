@@ -38,9 +38,7 @@
     <record id="solt_recurring_pricing_rule_company" model="ir.rule">
         <field name="name">Subscription Pricing multi-company</field>
         <field name="model_id" ref="model_solt_recurring_pricing"/>
-        <field name="domain_force">['&amp;', ('company_id', 'in', [False] + company_ids), '|',
-                                    ('pricelist_id', '=', False),
-                                    ('pricelist_id.company_id', 'in', [False] + company_ids)]</field>
+        <field name="domain_force">[('company_id', 'in', [False] + company_ids)]</field>
     </record>
 
     <!-- Mail activity plans -->

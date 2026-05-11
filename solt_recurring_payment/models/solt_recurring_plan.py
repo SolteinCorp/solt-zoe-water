@@ -34,6 +34,13 @@ class SoltSaleRecurringPlan(models.Model):
         default=1,
         help="Number of periods between each billing cycle"
     )
+    prepaid = fields.Boolean(
+        string="Prepaid",
+        default=False,
+        help="When enabled, all subscriptions to this plan are billed upfront for the full "
+             "``billing_period_value`` periods. The first invoice charges qty × billing_period_value × "
+             "price; subsequent monthly invoices apply the prepaid balance until exhausted.",
+    )
     billing_period_unit = fields.Selection(
         [("day", "Days"), ("week", "Weeks"), ("month", "Months"), ('year', 'Years')],
         string="Unit",
@@ -157,6 +164,17 @@ class SoltSaleRecurringPlan(models.Model):
             return relativedelta()
         return get_timedelta(self.billing_period_value, self.billing_period_unit)
 
+    @api.depends('name', 'prepaid')
+    def _compute_display_name(self):  # pylint: disable=W8110
+        """Append ``(Prepago)`` to the plan display name when it's flagged as
+        prepaid, so the prepaid nature is visible everywhere the plan is
+        referenced (M2O dropdowns, breadcrumbs, list views, etc).
+        """
+        super()._compute_display_name()
+        for plan in self:
+            if plan.prepaid and plan.display_name:
+                plan.display_name = f"{plan.display_name} (Prepago)"
+
     @api.depends('billing_period_value', 'billing_period_unit')
     def _compute_billing_period_display(self):
         labels = dict(self._fields['billing_period_unit']._description_selection(self.env))
@@ -196,3 +214,18 @@ class SoltSaleRecurringPlan(models.Model):
                 raise ValidationError(
                     _('Recurring period must be a positive number. Please ensure the input is a valid positive numeric value.')
                 )
+
+    @api.constrains('prepaid', 'billing_period_value')
+    def _check_prepaid_billing_period_value(self):
+        """Prepaid plans must cover more than one period — otherwise the
+        prepaid commitment collapses to a single regular billing cycle and the
+        feature has no effect. Moved here from ``solt.recurring.pricing`` (the
+        old constraint checked ``required_recurring_quantity``); ``prepaid`` is
+        now defined at the plan level.
+        """
+        for plan in self:
+            if plan.prepaid and plan.billing_period_value <= 1:
+                raise ValidationError(_(
+                    "Prepaid plans require 'Billing Period Value' to be greater than 1. "
+                    "If only one period is covered, the plan is not prepaid."
+                ))
