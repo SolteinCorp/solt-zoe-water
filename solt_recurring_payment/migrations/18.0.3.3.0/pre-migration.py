@@ -11,14 +11,38 @@ auto-computed to ``plan.billing_period_value`` when prepaid.
 We promote the per-pricing flag to the plan level before Odoo recomputes the
 new related/stored field — which would otherwise reset every existing
 ``pricing.prepaid`` to False (the plan's default).
+
+Safe on fresh DBs where the old ``solt_recurring_pricing.prepaid`` column
+never existed: we check ``information_schema.columns`` first and skip the
+data carry-over when nothing needs to be migrated.
 """
 
 
+def _column_exists(cr, table, column):
+    cr.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = %s AND column_name = %s
+        """,
+        (table, column),
+    )
+    return cr.fetchone() is not None
+
+
 def migrate(cr, version):
+    # Pre-create the prepaid column on solt_recurring_plan so we can populate
+    # it BEFORE _auto_init runs. The IF NOT EXISTS makes the migration safe to
+    # re-run.
     cr.execute("""
         ALTER TABLE solt_recurring_plan
         ADD COLUMN IF NOT EXISTS prepaid BOOLEAN DEFAULT FALSE
     """)
+    # Carry over only if the legacy column actually exists in this DB.
+    # Fresh installs and DBs that never had the old per-pricing prepaid flag
+    # simply skip this step.
+    if not _column_exists(cr, "solt_recurring_pricing", "prepaid"):
+        return
     cr.execute("""
         UPDATE solt_recurring_plan p
         SET prepaid = TRUE,
