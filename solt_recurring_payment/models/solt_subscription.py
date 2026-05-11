@@ -178,11 +178,13 @@ class SoltSaleSubscription(models.Model):
     prepaid_periods_remaining = fields.Float(
         string='Prepaid Periods Remaining',
         compute='_compute_prepaid_info',
+        store=True,
         help="Number of prepaid periods not yet applied to monthly invoices.",
     )
     prepaid_amount_total = fields.Monetary(
         string='Prepaid Amount',
         compute='_compute_prepaid_info',
+        store=True,
         help="Total amount charged on the prepaid invoice (sum of downpayment line "
              "subtotals × periods).",
     )

@@ -29,7 +29,6 @@ class SoltSaleSubscriptionLine(models.Model):
     subscription_type = fields.Selection(
         related='subscription_id.type',
         string='Type',
-        default='sale'
     )
     origin_line_id = fields.Reference(
         [('sale.order.line', 'Sale Order Line'), ('purchase.order.line', 'Purchase Order Line')],
