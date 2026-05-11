@@ -15,21 +15,58 @@
         </xpath>
     </template>
 
-    <!-- Product page: replace standard price with subscription plan selector -->
+    <!-- Rich-content label for a plan option (strikethrough + badge + prepaid
+         breakdown survive). Mirrors the OWL ``PlanOptionLabel`` template
+         used by the JS render. -->
+    <template id="plan_option_label">
+        <span class="o_plan_name"><t t-esc="pricing['table_name']"/>: </span>
+        <span t-if="pricing.get('has_discount')" class="text-decoration-line-through text-muted me-1">
+            <t t-esc="pricing['table_list_price']"/>
+        </span>
+        <span class="fw-bold"><t t-esc="pricing['table_price']"/></span>
+        <t t-if="pricing.get('has_discount') and pricing.get('list_price_value', 0) &gt; 0">
+            <span class="badge text-bg-danger ms-1">
+                -<t t-esc="round((1 - pricing['price_value'] / pricing['list_price_value']) * 100)"/>%
+            </span>
+        </t>
+        <span t-if="pricing.get('breakdown')" class="ms-2 text-muted small">
+            (<t t-esc="pricing['breakdown']"/>)
+        </span>
+    </template>
+
+    <!-- Product page: replace standard price with subscription plan selector.
+         Custom Bootstrap dropdown (replacing the native <select>) so each
+         option can render rich HTML (strikethrough, badge, etc). -->
     <template id="subscription_product_price" inherit_id="website_sale.product_price" name="Subscription Product Price">
         <xpath expr="//h3[hasclass('css_editable_mode_hidden')]" position="attributes">
             <attribute name="t-att-hidden">combination_info.get('is_subscription', False)</attribute>
         </xpath>
         <xpath expr="//h3[hasclass('css_editable_mode_hidden')]" position="after">
             <t t-if="combination_info.get('is_subscription') and combination_info['pricings']">
-                <select name="plan_id" class="form-select plan_select fs-5" required="1">
-                    <t t-foreach="combination_info['pricings']" t-as="pricing">
-                        <option t-att-value="pricing['plan_id']"
-                                t-att-selected="pricing['plan_id'] == combination_info['subscription_default_pricing_plan_id']">
-                            <t t-esc="pricing['price']"/>
-                        </option>
-                    </t>
-                </select>
+                <div class="o_subscription_plan_dropdown dropdown">
+                    <input type="hidden" name="plan_id" class="plan_select"
+                           t-att-value="combination_info['subscription_default_pricing_plan_id']"/>
+                    <button class="btn btn-light dropdown-toggle border w-100 text-start fs-5 o_plan_select_toggle"
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="o_plan_label">
+                            <t t-foreach="combination_info['pricings']" t-as="pricing">
+                                <t t-if="pricing['plan_id'] == combination_info['subscription_default_pricing_plan_id']"
+                                   t-call="website_solt_sale_recurring_payment.plan_option_label"/>
+                            </t>
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu o_plan_dropdown_menu"
+                        style="min-width: 100%; width: max-content; max-width: min(90vw, 600px);">
+                        <t t-foreach="combination_info['pricings']" t-as="pricing">
+                            <li>
+                                <button type="button" class="dropdown-item o_plan_option text-wrap"
+                                        t-att-data-plan-id="pricing['plan_id']">
+                                    <t t-call="website_solt_sale_recurring_payment.plan_option_label"/>
+                                </button>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
                 <t t-if="is_view_active('website_sale.tax_indication')" t-call="website_sale.tax_indication"/>
             </t>
         </xpath>

@@ -42,23 +42,23 @@ class SaleOrder(models.Model):
         )
 
         if plan and order_line and order_line.exists() and quantity > 0:
-            pricing = (
-                self.env["solt.recurring.pricing"]
-                .sudo()
-                ._get_first_suitable_recurring_pricing(
-                    cart_product, plan, self.pricelist_id
-                )
-            )
+            Pricing = self.env["solt.recurring.pricing"].sudo()
+            pricing = Pricing._get_first_suitable_recurring_pricing(cart_product, plan)
             if pricing:
-                price = pricing.currency_id._convert(
+                base_price = pricing.currency_id._convert(
                     pricing.price,
                     order_line.currency_id,
                     order_line.company_id,
                     fields.Date.today(),
                 )
+                final_price = Pricing._apply_pricelist_rule(
+                    base_price, self.pricelist_id, cart_product, plan,
+                    order_line.product_uom_qty or 1.0, order_line.product_uom,
+                    fields.Date.today(), currency=order_line.currency_id,
+                )
                 order_line.write({
                     'plan_id': plan.id,
-                    'price_unit': price,
+                    'price_unit': final_price,
                     'required_recurring_quantity': pricing.required_recurring_quantity,
                 })
 

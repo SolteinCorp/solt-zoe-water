@@ -21,5 +21,5 @@ class ProductProduct(models.Model):
             product=self
         )
 
-    def _get_pricelist_pricings(self, pricelist):
-        return self.product_tmpl_id._get_pricelist_pricings(pricelist, product=self)
+    def _iter_subscription_pricings(self, product=None):
+        return self.product_tmpl_id._iter_subscription_pricings(product=self)

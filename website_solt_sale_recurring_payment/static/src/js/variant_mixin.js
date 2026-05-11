@@ -20,7 +20,7 @@ VariantMixin._onChangeCombinationSubscription = function (ev, $parent, combinati
     const subscriptionPrice = parentElement.querySelector(".o_subscription_price") || parentElement.querySelector(".product_price h5");
     const pricingSelector =
         parentElement.querySelector(".js_main_product h5:has(.o_subscription_price)") ||
-        parentElement.querySelector(".js_main_product select.plan_select");
+        parentElement.querySelector(".js_main_product .o_subscription_plan_dropdown");
     const addToCartButton = document.querySelector('#add_to_cart');
     if (addToCartButton) {
         addToCartButton.dataset.subscriptionPlanId = combination.pricings.length > 0 ? combination.subscription_default_pricing_plan_id : '';
@@ -32,6 +32,8 @@ VariantMixin._onChangeCombinationSubscription = function (ev, $parent, combinati
         subscriptionPrice.textContent = combination.subscription_default_pricing_price;
     }
     if (pricingSelector) {
+        // Snapshot the user's current plan selection (hidden input) before re-render
+        const previousValue = pricingSelector.querySelector("input.plan_select")?.value;
         combination.formated_compared_price = pricingSelector.querySelector("del")?.textContent;
         pricingSelector.replaceWith(
             renderToElement("website_solt_sale_recurring_payment.SubscriptionPricingSelect", {
@@ -40,10 +42,19 @@ VariantMixin._onChangeCombinationSubscription = function (ev, $parent, combinati
         );
 
         // Restore user's plan selection if still available in new combination
-        if (combination.pricings.find(planPricing => planPricing.plan_id === parseInt(pricingSelector.value))) {
-            const newPricingSelector = parentElement.querySelector(".js_main_product h5:has(.o_subscription_price)") ||
-                parentElement.querySelector(".js_main_product select.plan_select");
-            newPricingSelector.value = pricingSelector.value;
+        if (previousValue && combination.pricings.find(p => p.plan_id === parseInt(previousValue))) {
+            const newDropdown = parentElement.querySelector(".js_main_product .o_subscription_plan_dropdown");
+            if (newDropdown) {
+                const newHidden = newDropdown.querySelector("input.plan_select");
+                if (newHidden) {
+                    newHidden.value = previousValue;
+                }
+                const newLabel = newDropdown.querySelector(".o_plan_select_toggle .o_plan_label");
+                const newOption = newDropdown.querySelector(`.o_plan_option[data-plan-id="${previousValue}"]`);
+                if (newLabel && newOption) {
+                    newLabel.innerHTML = newOption.innerHTML;
+                }
+            }
         }
     } else {
         // No pricing element exists yet — append one for the first time

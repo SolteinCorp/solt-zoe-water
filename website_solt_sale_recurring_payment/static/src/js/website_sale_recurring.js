@@ -22,19 +22,6 @@ WebsiteSale.include({
     },
 
     /**
-     * Disable non-selected plan options during the add-to-cart process
-     * to prevent accidental changes.
-     *
-     * @override
-     */
-    _handleAdd($form) {
-        $form.find('.plan_select > option').each(function() {
-            this.disabled = !this.selected;
-        });
-        return this._super(...arguments);
-    },
-
-    /**
      * Update subscription pricing display when the variant combination changes.
      *
      * @override
@@ -43,4 +30,30 @@ WebsiteSale.include({
         this._super.apply(this, arguments);
         VariantMixin._onChangeCombinationSubscription.apply(this, arguments);
     },
+});
+
+
+// Delegated click handler for the custom dropdown options — updates the
+// hidden ``plan_select`` input + the visible button label so HTML survives
+// (strikethrough, badge, etc). Using document-level delegation so it keeps
+// working after the dropdown is re-rendered on variant change.
+document.addEventListener("click", function (ev) {
+    const optionEl = ev.target.closest(".o_plan_option");
+    if (!optionEl) {
+        return;
+    }
+    const dropdown = optionEl.closest(".o_subscription_plan_dropdown");
+    if (!dropdown) {
+        return;
+    }
+    const planId = optionEl.dataset.planId;
+    const hidden = dropdown.querySelector("input.plan_select");
+    if (hidden) {
+        hidden.value = planId;
+        hidden.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    const label = dropdown.querySelector(".o_plan_select_toggle .o_plan_label");
+    if (label) {
+        label.innerHTML = optionEl.innerHTML;
+    }
 });
