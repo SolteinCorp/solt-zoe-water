@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from odoo import models
+from odoo import Command, models
 
 _logger = logging.getLogger(__name__)
 
@@ -14,6 +14,32 @@ class SaleOrder(models.Model):
         res = super()._action_confirm()
         self._create_subscriptions()
         return res
+
+    def _create_invoices(self, grouped=False, final=False, date=None):
+        """Split prepaid invoice lines into ``(first period, downpayment for
+        remaining N-1 periods)`` so the journal entry of the origin invoice
+        recognises only the first month as revenue and parks the rest in the
+        customer advance account. Mirrors ``sale.advance.payment.inv``'s
+        accounting (uses the product's category ``downpayment`` account).
+        """
+        moves = super()._create_invoices(grouped=grouped, final=final, date=date)
+        for move in moves.filtered(lambda m: m.state == "draft"):
+            downpayment_commands = []
+            for inv_line in move.invoice_line_ids:
+                if not inv_line.sale_line_ids:
+                    continue
+                origin_line = inv_line.sale_line_ids[:1]
+                periods = origin_line._get_prepaid_periods_for_invoice()
+                if periods <= 1:
+                    continue
+                downpayment_vals = origin_line._prepare_invoice_downpayment_line(
+                    inv_line=inv_line, periods=periods,
+                )
+                if downpayment_vals:
+                    downpayment_commands.append(Command.create(downpayment_vals))
+            if downpayment_commands:
+                move.write({"invoice_line_ids": downpayment_commands})
+        return moves
 
     def _action_cancel(self):
         res = super()._action_cancel()
@@ -92,3 +118,24 @@ class SaleOrder(models.Model):
     def _get_name_tax_totals_view(self):
         self.ensure_one()
         return "solt_recurring_payment.subscription_period_total" if self.is_subscription else super()._get_name_tax_totals_view()
+
+    def _get_max_prepaid_periods(self):
+        """Return the largest ``required_recurring_quantity`` among prepaid lines
+        on this order, or 1 if no prepaid line is present. Used to scale the
+        delivery line so the customer pays for the shipments covering the full
+        prepaid commitment.
+        """
+        self.ensure_one()
+        max_periods = 1
+        for line in self.order_line:
+            pricing = line._get_prepaid_pricing() if hasattr(line, "_get_prepaid_pricing") else None
+            if pricing and pricing.required_recurring_quantity > 1:
+                max_periods = max(max_periods, pricing.required_recurring_quantity)
+        return max_periods
+
+    # NOTE: the delivery line is created with the standard per-shipment qty=1.
+    # The N-period expansion (so the customer pays the prepaid commitment
+    # upfront) is applied at the tax-computation layer for the SO total, and
+    # split into a regular line + a downpayment line at invoice time. See
+    # ``sale.order.line._prepare_base_line_for_taxes_computation`` and the
+    # ``_create_invoices`` override below.
