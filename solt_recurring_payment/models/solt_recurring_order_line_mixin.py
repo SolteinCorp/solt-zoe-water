@@ -72,11 +72,11 @@ class RecurringOrderLineMixin(models.AbstractModel):
         help="Domain used to filter available subscription plans for this product line."
     )
 
-    @api.depends('product_id')
+    @api.depends('product_id', 'plan_id')
     def _compute_recurring_invoice(self):
         """Compute whether the line is a recurring invoice based on the product."""
         for line in self:
-            line.recurring_ok = bool(line.product_id and line.product_id.recurring_ok)
+            line.recurring_ok = bool(line.product_id and line.product_id.recurring_ok and line.plan_id)
 
     @api.constrains('free_periods')
     def _check_free_periods(self):
@@ -94,7 +94,7 @@ class RecurringOrderLineMixin(models.AbstractModel):
         """Compute domain for available plans based on product's subscription pricing."""
         for record in self:
             domain = [(0, '=', 1)]  # Default to empty domain
-            if record.product_id and record.recurring_ok:
+            if record.product_id and record.product_id.recurring_ok:
                 pricings = record.product_id.product_subscription_pricing_ids
                 plan_ids = pricings.mapped('plan_id').ids
                 if plan_ids:
