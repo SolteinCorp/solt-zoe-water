@@ -12,7 +12,7 @@ from psycopg2._psycopg import TransactionRollbackError
 
 _logger = logging.getLogger(__name__)
 
-SUBSCRIPTION_STATES = [('draft', 'Draft'), ('active', 'Active'), ('closed', 'Closed')]
+SUBSCRIPTION_STATES = [('draft', 'Draft'), ('active', 'Active'), ('closed', 'Cancelled')]
 
 # Progressive retry schedule: days after next_invoice_date to retry token payment.
 # Days 1-3: daily retries, Day 7: weekly retry, Day 15: final retry (close if fails).
@@ -134,13 +134,13 @@ class SoltSaleSubscription(models.Model):
     )
     close_reason_id = fields.Many2one(
         'solt.subscription.close.reason',
-        string='Close Reason',
+        string='Cancellation Reason',
         tracking=True,
         copy=False,
         help="The reason for closing the subscription, if applicable."
     )
     close_date = fields.Date(
-        string='Close Date',
+        string='Cancellation Date',
         tracking=True,
         copy=False,
         help="The date when the subscription was actually closed.",
@@ -939,7 +939,7 @@ class SoltSaleSubscription(models.Model):
         """Open the close subscription wizard."""
         self.ensure_one()
         return {
-            'name': _('Close Subscription'),
+            'name': _('Cancel Subscription'),
             'type': 'ir.actions.act_window',
             'res_model': 'solt.subscription.close.wizard',
             'view_mode': 'form',

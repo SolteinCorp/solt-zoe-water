@@ -1141,19 +1141,19 @@ msgstr "Se puede cerrar"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__close_date
-msgid "Close Date"
-msgstr "Fecha de cierre"
+msgid "Cancellation Date"
+msgstr "Fecha de cancelación"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription__close_reason_id
 #: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__close_reason_id
-msgid "Close Reason"
+msgid "Cancellation Reason"
 msgstr "Motivo de cierre"
 
 #. module: solt_recurring_payment
 #: model:ir.actions.act_window,name:solt_recurring_payment.solt_subscription_close_reason_action
 #: model:ir.ui.menu,name:solt_recurring_payment.menu_solt_recurring_close_reason_action
-msgid "Close Reasons"
+msgid "Cancellation Reasons"
 msgstr "Motivos de cierre"
 
 #. module: solt_recurring_payment
@@ -1162,15 +1162,15 @@ msgstr "Motivos de cierre"
 #: model:ir.actions.act_window,name:solt_recurring_payment.solt_subscription_close_wizard_action
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_close_wizard_view_form
 #, python-format
-msgid "Close Subscription"
-msgstr "Cerrar suscripción"
+msgid "Cancel Subscription"
+msgstr "Cancelar suscripción"
 
 #. module: solt_recurring_payment
 #: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription__state__closed
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_form
 #: model_terms:ir.ui.view,arch_db:solt_recurring_payment.solt_subscription_view_search
-msgid "Closed"
-msgstr "Cerrado"
+msgid "Cancelled"
+msgstr "Cancelado"
 
 #. module: solt_recurring_payment
 #. odoo-python

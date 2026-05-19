@@ -4,22 +4,22 @@
         <field name="name">solt.subscription.close.wizard.form</field>
         <field name="model">solt.subscription.close.wizard</field>
         <field name="arch" type="xml">
-            <form string="Close Subscription">
+            <form string="Cancel Subscription">
                 <group>
                     <field name="subscription_id" readonly="1"/>
                     <field name="close_reason_id" options="{'no_create': True}"/>
                     <field name="closing_note"/>
                 </group>
                 <footer>
-                    <button name="action_close" string="Close Subscription" type="object" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button name="action_close" string="Cancel Subscription" type="object" class="btn-primary"/>
+                    <button string="Back" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
     <record id="solt_subscription_close_wizard_action" model="ir.actions.act_window">
-        <field name="name">Close Subscription</field>
+        <field name="name">Cancel Subscription</field>
         <field name="res_model">solt.subscription.close.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
