@@ -3969,3 +3969,35 @@ msgstr ""
 #: model:mail.template,subject:solt_recurring_payment.mail_template_subscription_rating
 msgid "{{ object.company_id.name }}: Service Rating Request"
 msgstr "{{ object.company_id.name }}: Solicitud de valoración del servicio"
+
+#. module: solt_recurring_payment
+msgid "Honor paid period (keep deliveries until prepaid is consumed)"
+msgstr "Respetar el periodo pagado (continuar entregas hasta consumir el prepago)"
+
+#. module: solt_recurring_payment
+msgid "Cancel now and refund pending prepaid periods"
+msgstr "Cancelar ahora y reembolsar los periodos prepagados pendientes"
+
+#. module: solt_recurring_payment
+msgid "Cancel now and ship all remaining products at once"
+msgstr "Cancelar ahora y enviar todos los productos restantes en un solo envío"
+
+#. module: solt_recurring_payment
+msgid "Cancellation Method"
+msgstr "Método de cancelación"
+
+#. module: solt_recurring_payment
+msgid "Cancellation note: %s"
+msgstr "Nota de cancelación: %s"
+
+#. module: solt_recurring_payment
+msgid "Cancellation scheduled (honor paid period). Subscription will close on %s."
+msgstr "Cancelación programada (respetando periodo pagado). La suscripción se cerrará el %s."
+
+#. module: solt_recurring_payment
+msgid "Refund and bulk-shipment cancellations only apply to prepaid subscriptions."
+msgstr "Las cancelaciones con reembolso o envío único solo aplican a suscripciones con prepago."
+
+#. module: solt_recurring_payment
+msgid "Only active subscriptions can be cancelled."
+msgstr "Solo las suscripciones activas pueden cancelarse."

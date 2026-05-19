@@ -3969,3 +3969,47 @@ msgstr ""
 #: model:mail.template,subject:solt_recurring_payment.mail_template_subscription_rating
 msgid "{{ object.company_id.name }}: Service Rating Request"
 msgstr "{{ object.company_id.name }}: Solicitud de valoración del servicio"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_close_wizard__cancel_mode__honor
+msgid "Honor paid period (keep deliveries until prepaid is consumed)"
+msgstr "Respetar el periodo pagado (continuar entregas hasta consumir el prepago)"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_close_wizard__cancel_mode__refund
+msgid "Cancel now and refund pending prepaid periods"
+msgstr "Cancelar ahora y reembolsar los periodos prepagados pendientes"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields.selection,name:solt_recurring_payment.selection__solt_subscription_close_wizard__cancel_mode__bulk_ship
+msgid "Cancel now and ship all remaining products at once"
+msgstr "Cancelar ahora y enviar todos los productos restantes en un solo envío"
+
+#. module: solt_recurring_payment
+#: model:ir.model.fields,field_description:solt_recurring_payment.field_solt_subscription_close_wizard__cancel_mode
+msgid "Cancellation Method"
+msgstr "Método de cancelación"
+
+#. module: solt_recurring_payment
+msgid "Cancellation note: %s"
+msgstr "Nota de cancelación: %s"
+
+#. module: solt_recurring_payment
+msgid "%(product)s - Refund of %(periods)s pending prepaid period(s)"
+msgstr "%(product)s - Reembolso de %(periods)s periodo(s) prepagado(s) pendiente(s)"
+
+#. module: solt_recurring_payment
+msgid "Cancellation scheduled (honor paid period). Subscription will close on %s."
+msgstr "Cancelación programada (respetando periodo pagado). La suscripción se cerrará el %s."
+
+#. module: solt_recurring_payment
+msgid "Refund and bulk-shipment cancellations only apply to prepaid subscriptions."
+msgstr "Las cancelaciones con reembolso o envío único solo aplican a suscripciones con prepago."
+
+#. module: solt_recurring_payment
+msgid "Only active subscriptions can be cancelled."
+msgstr "Solo las suscripciones activas pueden cancelarse."
+
+#. module: solt_recurring_payment
+msgid "Invalid cancellation mode: %s"
+msgstr "Modo de cancelación no válido: %s"
