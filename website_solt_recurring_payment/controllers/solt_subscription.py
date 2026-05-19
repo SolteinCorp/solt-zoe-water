@@ -674,37 +674,36 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
                 url += f"?access_token={token}"
             return url
 
-        # Validaciones según el tipo de acción
+        # Renew: reactivate directly via action_reopen (next_invoice_date = today).
         if action_type == "renew":
             if not subscription_sudo.user_extend or subscription_sudo.state != "closed":
                 return request.redirect(_redirect_url(subscription_id, access_token))
-        elif action_type == "change_plan":
-            # Plan change only allowed for active subscriptions
-            if not subscription_sudo.plan_id.related_plan_ids or subscription_sudo.state != "active":
-                return request.redirect(_redirect_url(subscription_id, access_token))
-        else:
+            try:
+                subscription_sudo.sudo().action_reopen()
+            except Exception as e:
+                _logger.exception("Error reactivating subscription: %s", str(e))
             return request.redirect(_redirect_url(subscription_id, access_token))
 
-        # Crear y ejecutar el wizard con sudo
-        extend_months = int(kw.get("extend_months", 12))
-        wizard = (
-            request.env["solt.subscription.renew.wizard"]
-            .sudo()
-            .create(
-                {
-                    "subscription_id": subscription_sudo.id,
-                    "action_type": action_type,
-                    "extend_months": extend_months,
-                    "new_plan_id": int(kw.get("new_plan_id")) if kw.get("new_plan_id") else False,
-                }
+        # Change plan: keep the existing wizard flow.
+        if action_type == "change_plan":
+            if not subscription_sudo.plan_id.related_plan_ids or subscription_sudo.state != "active":
+                return request.redirect(_redirect_url(subscription_id, access_token))
+            wizard = (
+                request.env["solt.subscription.renew.wizard"]
+                .sudo()
+                .create(
+                    {
+                        "subscription_id": subscription_sudo.id,
+                        "action_type": action_type,
+                        "new_plan_id": int(kw.get("new_plan_id")) if kw.get("new_plan_id") else False,
+                    }
+                )
             )
-        )
-
-        # Ejecutar directamente la acción
-        try:
-            wizard.sudo().action_confirm()
-        except Exception as e:
-            _logger.exception("Error executing subscription action: %s", str(e))
+            try:
+                wizard.sudo().action_confirm()
+            except Exception as e:
+                _logger.exception("Error executing subscription action: %s", str(e))
+            return request.redirect(_redirect_url(subscription_id, access_token))
 
         return request.redirect(_redirect_url(subscription_id, access_token))
 

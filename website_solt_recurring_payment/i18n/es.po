@@ -136,17 +136,17 @@ msgstr "<i class=\"fa fa-fw fa-repeat\"/> Para renovar"
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscriptions_list
-msgid "<i class=\"fa fa-fw fa-times\"/> Closed"
-msgstr "<i class=\"fa fa-fw fa-times\"/> Cerrado"
+msgid "<i class=\"fa fa-fw fa-times\"/> Cancelled"
+msgstr "<i class=\"fa fa-fw fa-times\"/> Cancelado"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
 msgid ""
 "<i class=\"fa fa-info-circle me-2\"/>\n"
-"                                                    This subscription has been closed."
+"                                                    This subscription has been cancelled."
 msgstr ""
 "<i class=\"fa fa-info-circle me-2\"/>\n"
-"                                                    Esta suscripción ha sido cerrada."
+"                                                    Esta suscripción ha sido cancelada."
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_payment_method
@@ -170,8 +170,8 @@ msgstr "<i class=\"fa fa-refresh me-1\"/> Renovar suscripción"
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
-msgid "<i class=\"fa fa-times me-1\"/> Close Subscription"
-msgstr "<i class=\"fa fa-times me-1\"/> Cerrar suscripción"
+msgid "<i class=\"fa fa-times me-1\"/> Cancel Subscription"
+msgstr "<i class=\"fa fa-times me-1\"/> Cancelar suscripción"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
@@ -320,8 +320,8 @@ msgstr "Cerrar"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
-msgid "Close Subscription"
-msgstr "Cerrar suscripción"
+msgid "Cancel Subscription"
+msgstr "Cancelar suscripción"
 
 #. module: website_solt_recurring_payment
 #. odoo-python
@@ -745,8 +745,8 @@ msgstr "Sí"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
-msgid "You are about to permanently close your subscription"
-msgstr "Está a punto de cerrar permanentemente su suscripción"
+msgid "You are about to permanently cancel your subscription"
+msgstr "Está a punto de cancelar permanentemente su suscripción"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions

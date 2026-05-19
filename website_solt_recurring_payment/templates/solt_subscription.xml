@@ -276,7 +276,7 @@
                                     </span>
                                     <span t-elif="solt_subscription.state == 'closed'"
                                           class="badge rounded-pill text-bg-dark">
-                                        <i class="fa fa-fw fa-times"/> Closed
+                                        <i class="fa fa-fw fa-times"/> Cancelled
                                     </span>
                                     <span t-else="" class="badge rounded-pill text-bg-secondary">
                                         <t t-out="solt_subscription.state"/>
@@ -689,7 +689,7 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="alert"
                                                             aria-label="Close"/>
                                                     <i class="fa fa-info-circle me-2"/>
-                                                    This subscription has been closed.
+                                                    This subscription has been cancelled.
                                                     <span t-if="subscription.close_reason_id">
                                                         Reason: <strong t-field="subscription.close_reason_id"/>
                                                     </span>
@@ -778,7 +778,7 @@
                                                                role="button" class="btn btn-danger d-block"
                                                                data-bs-toggle="modal"
                                                                data-bs-target="#wc-modal-close-init" href="#">
-                                                                <i class="fa fa-times me-1"/> Close Subscription
+                                                                <i class="fa fa-times me-1"/> Cancel Subscription
                                                             </a>
                                                         </div>
 
@@ -805,7 +805,7 @@
                                                                     class="fa fa-fw fa-check"/> Active</span>
                                                             <span t-elif="subscription.state == 'closed'"
                                                                   class="badge text-bg-dark"><i
-                                                                    class="fa fa-fw fa-times"/> Closed</span>
+                                                                    class="fa fa-fw fa-times"/> Cancelled</span>
                                                         </div>
 
                                                         <!-- Payment Token -->
@@ -868,7 +868,7 @@
                 <div class="modal-content">
                     <header class="modal-header">
                         <h4 class="modal-title">
-                            Close Subscription <span t-field="subscription.display_name" class="text-primary"/>
+                            Cancel Subscription <span t-field="subscription.display_name" class="text-primary"/>
                         </h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
                     </header>
@@ -877,7 +877,7 @@
                         <input class="d-none" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <main class="modal-body">
                             <p class="fst-italic text-muted">
-                                You are about to permanently close your subscription
+                                You are about to permanently cancel your subscription
                                 <t t-if="subscription.next_invoice_date">
                                     that is valid until <span t-field="subscription.next_invoice_date"/>.
                                 </t>
@@ -907,7 +907,7 @@
                         <footer class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-danger">
-                                <i class="fa fa-times me-1"/> Close Subscription
+                                <i class="fa fa-times me-1"/> Cancel Subscription
                             </button>
                         </footer>
                     </form>
@@ -931,23 +931,11 @@
                         <input class="d-none" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <input type="hidden" name="action_type" value="renew"/>
                         <main class="modal-body">
-                            <div class="mb-3">
-                                <label for="extend_months" class="form-label">Extend subscription by:</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="extend_months"
-                                           name="extend_months" value="12" min="1" max="60" required="required"/>
-                                    <span class="input-group-text">months</span>
-                                </div>
-                            </div>
-                            <p class="fst-italic text-muted">
-                                Current end date: <span t-field="subscription.end_date" t-if="subscription.end_date"
-                                                        class="text-primary"/>
-                                <span t-else="">Not set</span>
-                            </p>
+                            <p>Are you sure you want to reactivate this subscription? The next invoice will be issued today.</p>
                         </main>
                         <footer class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Renew Subscription</button>
+                            <button type="submit" class="btn btn-primary">Reactivate Subscription</button>
                         </footer>
                     </form>
                 </div>
