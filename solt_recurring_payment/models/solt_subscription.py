@@ -190,20 +190,50 @@ class SoltSaleSubscription(models.Model):
     )
 
     @api.depends(
+        'plan_id', 'plan_id.prepaid', 'plan_id.billing_period_value',
         'subscription_line_ids.is_downpayment',
         'subscription_line_ids.product_uom_qty',
         'subscription_line_ids.qty_invoiced',
         'subscription_line_ids.price_unit',
+        'invoice_count',
     )
     def _compute_prepaid_info(self):
+        """Compute prepaid totals.
+
+        A subscription is considered prepaid when either:
+          (a) its plan is flagged as ``prepaid``, or
+          (b) at least one subscription line is flagged as ``is_downpayment``.
+
+        ``prepaid_periods`` / ``prepaid_periods_remaining`` / ``prepaid_amount_total``
+        are derived from explicit downpayment lines when they exist; otherwise we
+        fall back to the plan's ``billing_period_value`` and the number of cycles
+        already invoiced.
+        """
         for sub in self:
             dp_lines = sub.subscription_line_ids.filtered('is_downpayment')
-            sub.is_prepaid = bool(dp_lines)
-            sub.prepaid_periods = int(sum(dp_lines.mapped('product_uom_qty')))
-            sub.prepaid_periods_remaining = sum(dp_lines.mapped('qty_invoiced'))
-            sub.prepaid_amount_total = sum(
-                line.product_uom_qty * line.price_unit for line in dp_lines
-            )
+            plan_is_prepaid = bool(sub.plan_id and sub.plan_id.prepaid)
+            sub.is_prepaid = bool(dp_lines) or plan_is_prepaid
+
+            if dp_lines:
+                sub.prepaid_periods = int(sum(dp_lines.mapped('product_uom_qty')))
+                sub.prepaid_periods_remaining = sum(dp_lines.mapped('qty_invoiced'))
+                sub.prepaid_amount_total = sum(
+                    line.product_uom_qty * line.price_unit for line in dp_lines
+                )
+            elif plan_is_prepaid:
+                periods_total = int(sub.plan_id.billing_period_value or 0)
+                consumed = max(int(sub.invoice_count or 0), 0)
+                sub.prepaid_periods = periods_total
+                sub.prepaid_periods_remaining = max(periods_total - consumed, 0)
+                sub.prepaid_amount_total = sum(
+                    line.product_uom_qty * line.price_unit * periods_total
+                    for line in sub.subscription_line_ids
+                    if not line.is_downpayment
+                )
+            else:
+                sub.prepaid_periods = 0
+                sub.prepaid_periods_remaining = 0
+                sub.prepaid_amount_total = 0.0
 
     # === PAYMENT FIELDS === #
     payment_token_id = fields.Many2one('payment.token', string='Payment Token', check_company=True, domain="[('partner_id', 'child_of', commercial_partner_id), ('company_id', '=', company_id)]", copy=True,
@@ -919,6 +949,145 @@ class SoltSaleSubscription(models.Model):
             subscription._post_close()
         return True
 
+    # === CUSTOMER CANCELLATION (3 modes) === #
+
+    CANCEL_MODES = ('honor', 'refund', 'bulk_ship')
+
+    def action_cancel_subscription(self, cancel_mode='honor', close_reason_id=None, closing_note=None):
+        """Cancel the subscription with one of three customer-selectable modes.
+
+        Modes:
+          - 'honor' (default, only mode for non-prepaid): the subscription is NOT closed
+            immediately. ``end_date`` is set to the last paid date and the cron
+            ``_subscription_auto_close`` closes it automatically when reached. Future
+            invoices/shipments still happen normally until ``end_date``.
+          - 'refund' (prepaid only): immediate close + credit note for the full pending
+            prepaid periods + cancel any pending future shipments.
+          - 'bulk_ship' (prepaid only): immediate close + cancel pending shipments +
+            create one final sale order with all remaining storable goods at once.
+            No refund.
+        """
+        self.ensure_one()
+        if cancel_mode not in self.CANCEL_MODES:
+            raise UserError(_("Invalid cancellation mode: %s", cancel_mode))
+        if cancel_mode in ('refund', 'bulk_ship') and not self.is_prepaid:
+            raise UserError(_("Refund and bulk-shipment cancellations only apply to prepaid subscriptions."))
+        if self.state != 'active':
+            raise UserError(_("Only active subscriptions can be cancelled."))
+
+        if closing_note:
+            self.message_post(body=_("Cancellation note: %s", closing_note))
+
+        if cancel_mode == 'honor':
+            self._schedule_honor_end_date()
+            if close_reason_id:
+                self.close_reason_id = close_reason_id
+            self.message_post(body=_(
+                "Cancellation scheduled (honor paid period). Subscription will close on %s.",
+                self.end_date or _('the next invoice date'),
+            ))
+            return True
+
+        # 'refund' and 'bulk_ship' both cancel pending shipments and close immediately
+        self._cancel_pending_future_shipments()
+
+        if cancel_mode == 'refund':
+            self._create_prepaid_remaining_credit_note()
+        elif cancel_mode == 'bulk_ship':
+            self._create_bulk_remaining_shipment()
+
+        self.set_close(close_reason_id=close_reason_id)
+        return True
+
+    def _schedule_honor_end_date(self):
+        """Set ``end_date`` to honor what the customer already paid.
+
+        Prepaid → ``next_invoice_date + prepaid_periods_remaining * plan.billing_period``
+        (covers every pending paid period).
+        Non-prepaid → ``next_invoice_date`` (current period is the last one).
+        """
+        self.ensure_one()
+        if not self.next_invoice_date or not self.plan_id or not self.plan_id.billing_period:
+            return False
+        if self.is_prepaid and self.prepaid_periods_remaining > 0:
+            target = self.next_invoice_date + self.plan_id.billing_period * int(self.prepaid_periods_remaining)
+        else:
+            target = self.next_invoice_date
+        self.end_date = target
+        return target
+
+    def _create_prepaid_remaining_credit_note(self):
+        """Generate a credit note refunding the full pending prepaid periods.
+
+        Strategy:
+          1. If there are explicit downpayment subscription lines, refund
+             ``qty_invoiced × price_unit`` per line (per-period unit price).
+          2. Otherwise (plan-based prepaid, no downpayment line), refund every
+             non-downpayment line ``product_uom_qty × price_unit ×
+             prepaid_periods_remaining`` (the per-period subtotal × pending
+             periods).
+        """
+        self.ensure_one()
+        if not self.is_prepaid:
+            return self.env['account.move']
+
+        credit_line_data = []
+        downpayment_lines = self.subscription_line_ids.filtered('is_downpayment')
+        if downpayment_lines:
+            for line in downpayment_lines:
+                remaining = line.qty_invoiced
+                if remaining <= 0 or line.price_unit <= 0:
+                    continue
+                credit_line_data.append({
+                    'product_id': line.product_id.id,
+                    'description': _(
+                        "%(product)s - Refund of %(periods)s pending prepaid period(s)",
+                        product=line.product_id.display_name,
+                        periods=remaining,
+                    ),
+                    'quantity': remaining,
+                    'price_unit': line.price_unit,
+                    'tax_ids': line.tax_ids.ids,
+                })
+        else:
+            remaining = int(self.prepaid_periods_remaining or 0)
+            if remaining > 0:
+                for line in self.subscription_line_ids.filtered(lambda sub_line: not sub_line.is_downpayment):
+                    if line.price_unit <= 0 or line.product_uom_qty <= 0:
+                        continue
+                    credit_line_data.append({
+                        'product_id': line.product_id.id,
+                        'description': _(
+                            "%(product)s - Refund of %(periods)s pending prepaid period(s)",
+                            product=line.product_id.display_name,
+                            periods=remaining,
+                        ),
+                        'quantity': line.product_uom_qty * remaining,
+                        'price_unit': line.price_unit,
+                        'tax_ids': line.tax_ids.ids,
+                    })
+
+        if not credit_line_data:
+            return self.env['account.move']
+
+        return self._create_proration_move(credit_line_data, move_type='out_refund')
+
+    def _cancel_pending_future_shipments(self):
+        """Hook: cancel pending shipments/sale-orders for upcoming periods.
+
+        No-op in the base module. Overridden in ``solt_sale_recurring_payment`` to
+        cancel pending stock pickings tied to this subscription.
+        """
+        return True
+
+    def _create_bulk_remaining_shipment(self):
+        """Hook: create one final sale order with all remaining storable goods.
+
+        No-op in the base module. Overridden in ``solt_sale_recurring_payment`` to
+        create + confirm a sale.order containing storable products × pending periods.
+        """
+        return self.env['sale.order'].browse()
+
     def action_reopen(self):
         """Reopen a closed subscription back to active state."""
         today = fields.Date.today()
@@ -962,17 +1131,18 @@ class SoltSaleSubscription(models.Model):
     def action_view_invoices(self):
         """Open the related invoices using the action matching the subscription type."""
         self.ensure_one()
-        if self.type == 'purchase':
-            action = self.env['ir.actions.actions']._for_xml_id('account.action_move_in_invoice_type')
+        if self.type == "purchase":
+            action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_in_invoice_type")
         else:
-            action = self.env['ir.actions.actions']._for_xml_id('account.action_move_out_invoice_type')
+            action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_out_invoice_type")
         if self.invoice_count > 1:
-            action['domain'] = [('id', 'in', self.invoice_ids.ids)]
+            action["domain"] = [("id", "in", self.invoice_ids.ids)]
         elif self.invoice_count == 1:
-            action['view_mode'] = 'form'
-            action['res_id'] = self.invoice_ids.id
+            action["view_mode"] = "form"
+            action["views"] = [(False, "form")]
+            action["res_id"] = self.invoice_ids.id
         else:
-            action = {'type': 'ir.actions.act_window_close'}
+            action = {"type": "ir.actions.act_window_close"}
         return action
 
     # === INVOICING METHODS === #

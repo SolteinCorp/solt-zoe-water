@@ -7,8 +7,12 @@
             <form string="Cancel Subscription">
                 <group>
                     <field name="subscription_id" readonly="1"/>
+                    <field name="is_prepaid" invisible="1"/>
                     <field name="close_reason_id" options="{'no_create': True}"/>
                     <field name="closing_note"/>
+                </group>
+                <group string="Cancellation Method" invisible="not is_prepaid">
+                    <field name="cancel_mode" widget="radio"/>
                 </group>
                 <footer>
                     <button name="action_close" string="Cancel Subscription" type="object" class="btn-primary"/>
