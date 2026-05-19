@@ -652,10 +652,25 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         if subscription_sudo.user_closable:
             close_reason_id = int(kw.get("close_reason_id", 0))
             close_reason = request.env["solt.subscription.close.reason"].browse(close_reason_id)
+            cancel_mode = kw.get("cancel_mode", "honor")
+            if cancel_mode not in ("honor", "refund", "bulk_ship"):
+                cancel_mode = "honor"
+            # Non-prepaid subscriptions can only use 'honor' mode.
+            if cancel_mode != "honor" and not subscription_sudo.is_prepaid:
+                cancel_mode = "honor"
             if close_reason:
-                if kw.get("closing_text"):
-                    subscription_sudo.message_post(body=_("Closing text: %s", kw.get("closing_text")))
-                subscription_sudo.sudo().set_close(close_reason_id=close_reason.id)
+                try:
+                    subscription_sudo.sudo().action_cancel_subscription(
+                        cancel_mode=cancel_mode,
+                        close_reason_id=close_reason.id,
+                        closing_note=kw.get("closing_text") or None,
+                    )
+                except Exception:
+                    _logger.exception(
+                        "Error cancelling subscription %s (mode=%s)",
+                        subscription_sudo.id,
+                        cancel_mode,
+                    )
 
         return request.redirect(_redirect_url(subscription_id, access_token))
 

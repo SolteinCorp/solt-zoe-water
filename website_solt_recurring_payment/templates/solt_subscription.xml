@@ -903,6 +903,37 @@
                                 <textarea class="form-control" id="closing_text" name="closing_text" rows="3"
                                           placeholder="Let us know if there's anything we could have done better..."></textarea>
                             </div>
+
+                            <!-- Cancellation method: only relevant for prepaid subscriptions -->
+                            <t t-if="subscription.is_prepaid">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">How do you want us to handle the pending prepaid periods?</label>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="cancel_mode" id="cancel_mode_honor" value="honor" checked="checked"/>
+                                        <label class="form-check-label" for="cancel_mode_honor">
+                                            <strong>Honor what I already paid.</strong>
+                                            Keep delivering monthly until the prepaid period ends. The subscription will stop renewing afterwards.
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="cancel_mode" id="cancel_mode_refund" value="refund"/>
+                                        <label class="form-check-label" for="cancel_mode_refund">
+                                            <strong>Cancel now and refund the pending periods.</strong>
+                                            Future deliveries are cancelled and you get a credit note for the unused prepaid periods.
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="cancel_mode" id="cancel_mode_bulk_ship" value="bulk_ship"/>
+                                        <label class="form-check-label" for="cancel_mode_bulk_ship">
+                                            <strong>Cancel now and ship everything at once.</strong>
+                                            Receive the remaining merchandise in a single shipment and close the subscription. No refund.
+                                        </label>
+                                    </div>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <input type="hidden" name="cancel_mode" value="honor"/>
+                            </t>
                         </main>
                         <footer class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
