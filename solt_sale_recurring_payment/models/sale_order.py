@@ -68,22 +68,37 @@ class SaleOrder(models.Model):
         """
         return super()._get_recurring_order_line().filtered(lambda line: not line.subscription_id)
 
+    def _invoice_subscription_sale_order(self):
+        """Invoice this sale order as part of a subscription billing cycle.
+
+        Used by ``solt.subscription._create_sale_order_for_subscription`` and
+        ``_create_bulk_remaining_shipment``. Sets a context flag so
+        ``_get_invoiceable_lines`` does not strip out subscription-linked
+        lines (the default behaviour assumes the cron invoices them from the
+        subscription, which is no longer the case in this flow).
+
+        The generated invoices are posted immediately so the customer receives
+        them and accounting is up to date.
+        """
+        self.ensure_one()
+        invoices = self.with_context(solt_invoice_from_subscription=True)._create_invoices(final=True)
+        invoices.filtered(lambda move: move.state == "draft").action_post()
+        return invoices
+
     def _get_invoiceable_lines(self, final=False):
         """Return invoiceable lines, removing only:
-          - Lines from cron-generated monthly SOs (subscription_id set AND the
-            current SO is not the subscription's origin); the cron handles their
-            invoicing from the subscription itself.
+          - Lines from cron-generated monthly SOs when invoiced outside the
+            subscription billing flow. When the subscription itself triggers
+            ``_invoice_subscription_sale_order``, the context flag
+            ``solt_invoice_from_subscription`` keeps these lines invoiceable.
           - Lines whose free_periods window has not elapsed yet (the subscription
             checks per line at invoicing time).
-
-        Lines on the original SO always pass: the first invoice (with qty
-        expanded for prepaid pricings) is generated from the SO origin like in
-        the standard Odoo flow.
         """
         parent_lines = super()._get_invoiceable_lines(final=final)
+        invoicing_from_subscription = self.env.context.get("solt_invoice_from_subscription")
         subscription_lines_to_remove = parent_lines.filtered(
             lambda ln: not ln.display_type and ln.recurring_ok and (
-                (ln.subscription_id and ln.order_id != ln.subscription_id.origin_id)
+                (not invoicing_from_subscription and ln.subscription_id and ln.order_id != ln.subscription_id.origin_id)
                 or ln.free_periods > 0
             )
         )

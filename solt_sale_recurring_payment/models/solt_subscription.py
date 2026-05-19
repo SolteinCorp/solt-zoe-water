@@ -132,14 +132,15 @@ class SoltSubscription(models.Model):
         }
 
     def _create_sale_order_for_subscription(self):
-        """Crea y confirma una orden de venta desde la suscripción.
+        """Crea, confirma y factura una orden de venta desde la suscripción.
 
-        La OV se crea y confirma para que sale_stock genere el picking de envío.
-        Las líneas de la OV llevan subscription_id para trazabilidad y para que
-        _get_recurring_order_line() las excluya al confirmar (evita suscripciones
-        duplicadas).
+        La OV se crea y confirma para que ``sale_stock`` genere el picking. Tras
+        confirmar se llama ``_create_invoices()`` y ``action_post()`` sobre la
+        propia OV para que el ciclo contable de la venta quede cerrado y el
+        ``invoice_status`` no quede en ``to invoice`` indefinidamente.
 
-        Retorna la sale.order creada y confirmada.
+        Retorna la tupla ``(sale.order, account.move)`` con la OV confirmada y
+        la(s) factura(s) generada(s).
         """
         self.ensure_one()
         sale_order_values = self._prepare_sale_order_values()
@@ -153,12 +154,15 @@ class SoltSubscription(models.Model):
         new_sale_order = self.env["sale.order"].sudo().create(sale_order_values)
         new_sale_order.sudo().action_confirm()
 
+        invoices = new_sale_order.sudo()._invoice_subscription_sale_order()
+
         _logger.info(
-            "Orden de venta '%s' creada y confirmada desde suscripción '%s'.",
+            "Orden de venta '%s' creada, confirmada y facturada (%d factura(s)) desde suscripción '%s'.",
             new_sale_order.name,
+            len(invoices),
             self.name,
         )
-        return new_sale_order
+        return new_sale_order, invoices
 
     # === CANCELLATION HOOKS === #
 
@@ -222,10 +226,12 @@ class SoltSubscription(models.Model):
 
             new_so = self.env["sale.order"].sudo().create(sale_order_values)
             new_so.sudo().action_confirm()
+            invoices = new_so.sudo()._invoice_subscription_sale_order()
             new_sale_orders |= new_so
             _logger.info(
-                "Bulk shipment sale order '%s' created for subscription '%s' (%d periods, %d storable lines).",
+                "Bulk shipment sale order '%s' created, confirmed and invoiced (%d invoice(s)) for subscription '%s' (%d periods, %d storable lines).",
                 new_so.name,
+                len(invoices),
                 subscription.name,
                 remaining_periods,
                 len(storable_lines),
@@ -233,29 +239,34 @@ class SoltSubscription(models.Model):
         return new_sale_orders
 
     def _create_invoices(self, final=False):
-        """Override para crear OV antes de facturar suscripciones con productos almacenables.
+        """Override to create+confirm+invoice a sale.order for storable subscriptions.
 
-        Para suscripciones type='sale' con al menos un producto almacenable:
-          1. Crea una sale.order con todas las líneas de la suscripción.
-          2. Confirma la sale.order → sale_stock genera el picking de envío.
-          3. Delega a super() para crear la factura normalmente.
+        For ``type='sale'`` subscriptions with at least one storable line:
+          1. Create a sale.order with every subscription line.
+          2. Confirm the sale.order → ``sale_stock`` generates the picking.
+          3. **Invoice the sale.order itself** (``_invoice_subscription_sale_order``)
+             so its ``invoice_status`` is closed and the customer gets one invoice
+             per ciclo, anchored to the SO (not the subscription).
 
-        La factura se crea desde la suscripción (no desde la OV). El flujo posterior
-        del cron (_handle_automatic_invoices) se encarga de:
-          - Publicar la factura (action_post).
-          - Procesar el pago automático si hay payment_token.
-          - Confirmar la suscripción y avanzar next_invoice_date (en _post()).
+        Returns the union of:
+          - Invoices created from confirmed sale orders (storable subscriptions).
+          - Invoices created directly from non-storable subscriptions via ``super()``.
         """
-        sale_subscriptions_with_storable = self.filtered(
+        storable_subscriptions = self.filtered(
             lambda subscription: subscription.type == "sale" and subscription._has_storable_subscription_lines()
         )
+        non_storable_subscriptions = self - storable_subscriptions
 
-        for subscription in sale_subscriptions_with_storable:
+        all_invoices = self.env["account.move"]
+        for subscription in storable_subscriptions:
+            scoped_subscription = subscription
             if subscription.partner_id.lang:
-                subscription = subscription.with_context(lang=subscription.partner_id.lang)
-            subscription = subscription.with_company(subscription.company_id)
-            subscription._create_sale_order_for_subscription()
+                scoped_subscription = scoped_subscription.with_context(lang=subscription.partner_id.lang)
+            scoped_subscription = scoped_subscription.with_company(subscription.company_id)
+            _so, invoices = scoped_subscription._create_sale_order_for_subscription()
+            all_invoices |= invoices
 
-        # Crear facturas para TODAS las suscripciones (incluyendo las que generaron OV).
-        # El flujo normal del cron maneja la publicación y el pago automático.
-        return super()._create_invoices(final=final)
+        if non_storable_subscriptions:
+            all_invoices |= super(SoltSubscription, non_storable_subscriptions)._create_invoices(final=final)
+
+        return all_invoices
