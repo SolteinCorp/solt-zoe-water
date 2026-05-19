@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from odoo import Command, api, fields, models
+from odoo import Command, _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -69,13 +69,22 @@ class SoltSubscription(models.Model):
             ]
         return sale_order_action
 
-    def _has_storable_subscription_lines(self):
-        """Retorna True si al menos una línea de suscripción tiene un producto almacenable.
+    def _is_storable_product(self, product):
+        """Return True if the product is storable (tracks inventory).
 
-        Un producto almacenable tiene product.type == 'product', valor que agrega el
-        módulo stock cuando detailed_type == 'product' (Producto Almacenable).
+        Odoo 18 removed the ``'product'`` value from ``product.type``. The
+        storable flag now lives on the Boolean ``is_storable`` field added by
+        the ``stock`` module. Since this module does not depend on ``stock``,
+        we guard the access with ``hasattr``: if the field is not present
+        (i.e. ``stock`` is not installed), nothing is storable.
         """
-        return any(line.product_id.type == "product" for line in self.subscription_line_ids)
+        if not product:
+            return False
+        return bool(getattr(product, "is_storable", False))
+
+    def _has_storable_subscription_lines(self):
+        """Return True if at least one subscription line has a storable product."""
+        return any(self._is_storable_product(line.product_id) for line in self.subscription_line_ids)
 
     def _prepare_sale_order_values(self):
         """Prepara el dict de valores para crear una sale.order en estado borrador.
@@ -116,11 +125,10 @@ class SoltSubscription(models.Model):
             "plan_id": self.plan_id.id,
             "name": subscription_line.name,
             "product_uom_qty": subscription_line.product_uom_qty,
-            "product_uom": subscription_line.product_uom.id,
+            "product_uom": subscription_line.product_uom_id.id,
             "price_unit": subscription_line.price_unit,
             "tax_id": [Command.set(applicable_sale_taxes.ids)],
             "subscription_id": self.id,
-            "analytic_distribution": subscription_line._get_analytic_distribution(),
         }
 
     def _create_sale_order_for_subscription(self):
@@ -151,6 +159,78 @@ class SoltSubscription(models.Model):
             self.name,
         )
         return new_sale_order
+
+    # === CANCELLATION HOOKS === #
+
+    def _cancel_pending_future_shipments(self):
+        """Cancel pending stock pickings linked to sale orders of this subscription.
+
+        Pickings already done are left untouched (they were shipped). Anything
+        in waiting/confirmed/assigned/draft is cancelled so future periods do not
+        ship. SOs themselves are not cancelled — only their non-delivered pickings.
+        """
+        super()._cancel_pending_future_shipments()
+        for subscription in self:
+            pending_pickings = subscription.sale_order_ids.picking_ids.filtered(
+                lambda picking: picking.state not in ("done", "cancel")
+            )
+            if pending_pickings:
+                pending_pickings.sudo().action_cancel()
+                _logger.info(
+                    "Cancelled %d pending picking(s) for subscription '%s'.",
+                    len(pending_pickings),
+                    subscription.name,
+                )
+        return True
+
+    def _create_bulk_remaining_shipment(self):
+        """Create one final sale order shipping all remaining storable goods at once.
+
+        Iterates non-downpayment storable lines and multiplies the per-period
+        quantity by ``prepaid_periods_remaining``. ``price_unit`` is forced to 0
+        because the customer already paid the prepaid invoice. The created
+        sale.order is confirmed so ``sale_stock`` generates the bulk picking.
+        """
+        super()._create_bulk_remaining_shipment()
+        new_sale_orders = self.env["sale.order"]
+        for subscription in self:
+            if subscription.type != "sale" or not subscription.is_prepaid:
+                continue
+            remaining_periods = int(subscription.prepaid_periods_remaining or 0)
+            if remaining_periods <= 0:
+                continue
+            storable_lines = subscription.subscription_line_ids.filtered(
+                lambda sub_line: subscription._is_storable_product(sub_line.product_id) and not sub_line.is_downpayment
+            )
+            if not storable_lines:
+                continue
+
+            sale_order_values = subscription._prepare_sale_order_values()
+            sale_order_values["origin"] = _("%s - Final bulk shipment", subscription.name)
+            order_line_commands = []
+            for sub_line in storable_lines:
+                line_values = subscription._prepare_sale_order_line_values(sub_line)
+                line_values["product_uom_qty"] = sub_line.product_uom_qty * remaining_periods
+                line_values["price_unit"] = 0.0
+                line_values["name"] = _(
+                    "%(product)s - Remaining %(periods)s period(s) shipped together",
+                    product=sub_line.product_id.display_name,
+                    periods=remaining_periods,
+                )
+                order_line_commands.append(Command.create(line_values))
+            sale_order_values["order_line"] = order_line_commands
+
+            new_so = self.env["sale.order"].sudo().create(sale_order_values)
+            new_so.sudo().action_confirm()
+            new_sale_orders |= new_so
+            _logger.info(
+                "Bulk shipment sale order '%s' created for subscription '%s' (%d periods, %d storable lines).",
+                new_so.name,
+                subscription.name,
+                remaining_periods,
+                len(storable_lines),
+            )
+        return new_sale_orders
 
     def _create_invoices(self, final=False):
         """Override para crear OV antes de facturar suscripciones con productos almacenables.

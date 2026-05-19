@@ -302,3 +302,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:solt_sale_recurring_payment.field_sale_order_line__subscription_period_total
 msgid "Total del Periodo"
 msgstr "Total del período"
+
+#. module: solt_sale_recurring_payment
+msgid "%s - Final bulk shipment"
+msgstr "%s - Envío único final"
+
+#. module: solt_sale_recurring_payment
+msgid "%(product)s - Remaining %(periods)s period(s) shipped together"
+msgstr "%(product)s - %(periods)s periodo(s) restante(s) enviados juntos"
