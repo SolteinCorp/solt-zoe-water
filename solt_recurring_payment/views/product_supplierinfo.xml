@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
         <field name="arch" type="xml">
             <field name="company_id" position="before">
-                <field name="plan_id" options="{'no_create': True}" invisible="not recurring_ok" required="recurring_ok"/>
+                <field name="plan_id" options="{'no_create': True}" invisible="not recurring_ok"/>
                 <field name="required_recurring_quantity" invisible="not recurring_ok"/>
                 <field name="prepaid" invisible="not recurring_ok"/>
                 <field name="recurring_ok" invisible="True"/>
