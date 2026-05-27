@@ -1016,6 +1016,23 @@ class SoltSaleSubscription(models.Model):
         self.end_date = target
         return target
 
+    def action_revert_scheduled_cancellation(self):
+        """Undo a scheduled cancellation: clear end_date and close reason.
+
+        Used by the portal 'Resubscribe' action when the subscription is still
+        active but had an end_date set by a 'honor' cancellation. The recurring
+        billing simply continues as if it had never been cancelled.
+        """
+        for subscription in self:
+            if subscription.state != 'active' or not subscription.end_date:
+                continue
+            subscription.write({
+                'end_date': False,
+                'close_reason_id': False,
+            })
+            subscription.message_post(body=_("Scheduled cancellation reverted. The subscription will keep renewing."))
+        return True
+
     def _create_prepaid_remaining_credit_note(self):
         """Generate a credit note refunding the full pending prepaid periods.
 

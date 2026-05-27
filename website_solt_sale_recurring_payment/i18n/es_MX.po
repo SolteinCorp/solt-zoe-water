@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-06 17:27+0000\n"
-"PO-Revision-Date: 2026-05-06 17:27+0000\n"
+"POT-Creation-Date: 2026-05-27 18:04+0000\n"
+"PO-Revision-Date: 2026-05-27 18:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr "<span class=\"text-start\">Recurrente</span>:"
 #. module: website_solt_sale_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_sale_recurring_payment.sale_order_digest
 msgid "MRR:"
-msgstr ""
+msgstr "MRR:"
 
 #. module: website_solt_sale_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_sale_recurring_payment.sale_order_digest
@@ -56,22 +56,10 @@ msgid "Next invoice date:"
 msgstr "Fecha de la siguiente factura:"
 
 #. module: website_solt_sale_recurring_payment
-#. odoo-python
-#: code:addons/website_solt_sale_recurring_payment/models/product_template.py:0
-msgid "Single purchase"
-msgstr "Compra única"
-
-#. module: website_solt_sale_recurring_payment
 #. odoo-javascript
 #: code:addons/website_solt_sale_recurring_payment/static/src/xml/payment_form_templates.xml:0
 msgid "Please provide another payment method for these subscriptions first."
 msgstr "Primero proporcione otro método de pago para estas suscripciones."
-
-#. module: website_solt_sale_recurring_payment
-#: model_terms:ir.ui.view,arch_db:website_solt_sale_recurring_payment.accordion_subscription_item
-#: model_terms:ir.ui.view,arch_db:website_solt_sale_recurring_payment.product_subscription_details
-msgid "Pricing"
-msgstr "Precios"
 
 #. module: website_solt_sale_recurring_payment
 #: model:ir.model,name:website_solt_sale_recurring_payment.model_product_template
@@ -102,6 +90,12 @@ msgstr "Línea de la orden de venta"
 #: model_terms:ir.ui.view,arch_db:website_solt_sale_recurring_payment.payment_form_inherit
 msgid "Set payment method for subscription"
 msgstr "Establecer método de pago para la suscripción"
+
+#. module: website_solt_sale_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_sale_recurring_payment/models/product_template.py:0
+msgid "Single purchase"
+msgstr "Compra única"
 
 #. module: website_solt_sale_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_sale_recurring_payment.sale_order_digest
@@ -149,7 +143,8 @@ msgstr "¡Advertencia!"
 #. odoo-python
 #: code:addons/website_solt_sale_recurring_payment/models/product_template.py:0
 msgid "You cannot have an optional product that has no common pricing plan."
-msgstr "No puede tener un producto opcional que no tenga un plan de precios común."
+msgstr ""
+"No puede tener un producto opcional que no tenga un plan de precios común."
 
 #. module: website_solt_sale_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_sale_recurring_payment.payment_method_form

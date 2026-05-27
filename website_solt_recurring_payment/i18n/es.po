@@ -782,3 +782,35 @@ msgstr "suscripción"
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_close
 msgid "that is valid until"
 msgstr "que es válido hasta"
+
+#. module: website_solt_recurring_payment
+msgid "Resubscribe"
+msgstr "Volver a suscribirme"
+
+#. module: website_solt_recurring_payment
+msgid "This subscription cannot be cancelled."
+msgstr "Esta suscripción no puede cancelarse."
+
+#. module: website_solt_recurring_payment
+msgid "Please select a cancellation reason."
+msgstr "Por favor, selecciona un motivo de cancelación."
+
+#. module: website_solt_recurring_payment
+msgid "An error occurred while cancelling: %s"
+msgstr "Ocurrió un error al cancelar: %s"
+
+#. module: website_solt_recurring_payment
+msgid "Your subscription will be cancelled on %s."
+msgstr "Tu suscripción se cancelará el %s."
+
+#. module: website_solt_recurring_payment
+msgid "Your subscription has been cancelled."
+msgstr "Tu suscripción ha sido cancelada."
+
+#. module: website_solt_recurring_payment
+msgid "Do you want to keep it active and remove the scheduled cancellation?"
+msgstr "¿Quieres mantenerla activa y quitar la cancelación programada?"
+
+#. module: website_solt_recurring_payment
+msgid "Are you sure you want to reactivate this subscription? The next invoice will be issued today."
+msgstr "¿Seguro que quieres reactivar esta suscripción? La próxima factura se emitirá hoy."

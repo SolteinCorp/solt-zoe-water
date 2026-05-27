@@ -4001,3 +4001,7 @@ msgstr "Las cancelaciones con reembolso o envío único solo aplican a suscripci
 #. module: solt_recurring_payment
 msgid "Only active subscriptions can be cancelled."
 msgstr "Solo las suscripciones activas pueden cancelarse."
+
+#. module: solt_recurring_payment
+msgid "Scheduled cancellation reverted. The subscription will keep renewing."
+msgstr "Cancelación programada revertida. La suscripción seguirá renovándose."

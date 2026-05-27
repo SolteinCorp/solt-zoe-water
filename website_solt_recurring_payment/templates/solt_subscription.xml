@@ -743,12 +743,14 @@
                                                                 <i class="fa fa-exchange me-1"/> Change Plan
                                                             </a>
 
-                                                            <!-- Renew Subscription Button -->
-                                                            <a t-if="subscription.user_extend and subscription.state == 'closed'"
+                                                            <!-- Resubscribe Button: shown when the subscription is
+                                                                 closed OR active with a scheduled end date (treated as
+                                                                 cancelled in the portal). -->
+                                                            <a t-if="(subscription.user_extend and subscription.state == 'closed') or (subscription.state == 'active' and subscription.end_date)"
                                                                role="button" class="btn btn-primary d-block"
                                                                data-bs-toggle="modal"
                                                                data-bs-target="#wc-modal-renew-init" href="#">
-                                                                <i class="fa fa-refresh me-1"/> Renew Subscription
+                                                                <i class="fa fa-refresh me-1"/> Resubscribe
                                                             </a>
 
                                                             <!-- View Invoices Button -->
@@ -773,8 +775,10 @@
                                                                 <t t-else="">Set Payment Method</t>
                                                             </a>
 
-                                                            <!-- Close Subscription Button -->
-                                                            <a t-if="subscription.user_closable and subscription.state == 'active'"
+                                                            <!-- Cancel Subscription Button: hidden once a cancellation
+                                                                 is already scheduled (end_date set) — then the
+                                                                 Resubscribe button is shown instead. -->
+                                                            <a t-if="subscription.user_closable and subscription.state == 'active' and not subscription.end_date"
                                                                role="button" class="btn btn-danger d-block"
                                                                data-bs-toggle="modal"
                                                                data-bs-target="#wc-modal-close-init" href="#">
@@ -948,12 +952,12 @@
     </template>
     <template id="subscription_portal_modal_renew" name="Subscription Portal Modal Renew">
         <div role="dialog" class="modal fade" id="wc-modal-renew-init"
-             t-if="subscription.user_extend and subscription.state == 'closed'" aria-hidden="true">
+             t-if="(subscription.user_extend and subscription.state == 'closed') or (subscription.state == 'active' and subscription.end_date)" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <header class="modal-header">
                         <h4 class="modal-title">
-                            Renew Subscription <span t-field="subscription.display_name" class="text-primary"/>
+                            Resubscribe <span t-field="subscription.display_name" class="text-primary"/>
                         </h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
                     </header>
@@ -962,11 +966,18 @@
                         <input class="d-none" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <input type="hidden" name="action_type" value="renew"/>
                         <main class="modal-body">
-                            <p>Are you sure you want to reactivate this subscription? The next invoice will be issued today.</p>
+                            <t t-if="subscription.state == 'active' and subscription.end_date">
+                                <p>Your subscription is scheduled to be cancelled on
+                                    <span t-field="subscription.end_date" class="text-primary"/>.
+                                    Do you want to keep it active and remove the scheduled cancellation?</p>
+                            </t>
+                            <t t-else="">
+                                <p>Are you sure you want to reactivate this subscription? The next invoice will be issued today.</p>
+                            </t>
                         </main>
                         <footer class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Reactivate Subscription</button>
+                            <button type="submit" class="btn btn-primary">Resubscribe</button>
                         </footer>
                     </form>
                 </div>

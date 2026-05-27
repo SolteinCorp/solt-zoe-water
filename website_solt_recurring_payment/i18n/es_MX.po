@@ -6,14 +6,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-19 14:17+0000\n"
-"PO-Revision-Date: 2026-05-19 14:17+0000\n"
+"POT-Creation-Date: 2026-05-27 18:04+0000\n"
+"PO-Revision-Date: 2026-05-27 18:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid ""
+".\n"
+"                                    Do you want to keep it active and remove the scheduled cancellation?"
+msgstr ".\n                                    ¿Quieres mantenerla activa y quitar la cancelación programada?"
 
 #. module: website_solt_recurring_payment
 #. odoo-python
@@ -163,8 +170,8 @@ msgstr "<i class=\"fa fa-money-bill me-1\"/> Pagar factura"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
-msgid "<i class=\"fa fa-refresh me-1\"/> Renew Subscription"
-msgstr "<i class=\"fa fa-refresh me-1\"/> Renovar suscripción"
+msgid "<i class=\"fa fa-refresh me-1\"/> Resubscribe"
+msgstr "<i class=\"fa fa-refresh me-1\"/> Volver a suscribirme"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
@@ -205,7 +212,7 @@ msgstr "<small class=\"fw-bold font-size-13\">Inicio</small>"
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
 msgid "<small class=\"fw-bold font-size-13\">Total</small>"
-msgstr ""
+msgstr "<small class=\"fw-bold font-size-13\">Total</small>"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
@@ -230,7 +237,7 @@ msgstr "<small class=\"text-muted\">Su contacto</small>"
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_solt_subscription_card
 msgid "<span class=\"fw-bold\">Plan:</span>"
-msgstr ""
+msgstr "<span class=\"fw-bold\">Plan:</span>"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions_menu
@@ -272,12 +279,12 @@ msgstr ""
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
 msgid "<strong>Subtotal</strong>"
-msgstr ""
+msgstr "<strong>Subtotal</strong>"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
 msgid "<strong>Total</strong>"
-msgstr ""
+msgstr "<strong>Total</strong>"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
@@ -307,12 +314,19 @@ msgid "Amount"
 msgstr "Cantidad"
 
 #. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+msgid "An error occurred while cancelling: %s"
+msgstr "Ocurrió un error al cancelar: %s"
+
+#. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
 msgid ""
 "Are you sure you want to reactivate this subscription? The next invoice will"
 " be issued today."
 msgstr ""
-"¿Está seguro de que desea reactivar esta suscripción? La próxima factura se emitirá hoy."
+"¿Está seguro de que desea reactivar esta suscripción? La próxima factura se "
+"emitirá hoy."
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_change_plan
@@ -464,7 +478,7 @@ msgstr "Próxima factura:"
 #. odoo-python
 #: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #. module: website_solt_recurring_payment
 #. odoo-python
@@ -523,12 +537,12 @@ msgstr "Método de pago actualizado desde el portal"
 #. odoo-python
 #: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
 msgid "Plan"
-msgstr ""
+msgstr "Plan"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
 msgid "Plan:"
-msgstr ""
+msgstr "Plan:"
 
 #. module: website_solt_recurring_payment
 #. odoo-javascript
@@ -536,6 +550,12 @@ msgstr ""
 msgid "Please provide another payment method for these subscriptions first."
 msgstr ""
 "Por favor, proporcione primero otro método de pago para estas suscripciones."
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+msgid "Please select a cancellation reason."
+msgstr "Por favor, selecciona un motivo de cancelación."
 
 #. module: website_solt_recurring_payment
 #. odoo-python
@@ -552,11 +572,6 @@ msgstr "Producto"
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
 msgid "Quantity"
 msgstr "Cantidad"
-
-#. module: website_solt_recurring_payment
-#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
-msgid "Reactivate Subscription"
-msgstr "Reactivar suscripción"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription
@@ -580,8 +595,8 @@ msgstr "Referencia"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
-msgid "Renew Subscription"
-msgstr "Renovar suscripción"
+msgid "Resubscribe"
+msgstr "Volver a suscribirme"
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_invoices
@@ -713,6 +728,12 @@ msgstr ""
 "a las siguientes suscripciones activas:"
 
 #. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+msgid "This subscription cannot be cancelled."
+msgstr "Esta suscripción no puede cancelarse."
+
+#. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_content
 msgid "Unit Price"
 msgstr "Precio unitario"
@@ -753,6 +774,23 @@ msgstr "Está a punto de cancelar permanentemente su suscripción"
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscriptions
 msgid "You do not have any active subscriptions."
 msgstr "No tienes suscripciones activas."
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+msgid "Your subscription has been cancelled."
+msgstr "Tu suscripción ha sido cancelada."
+
+#. module: website_solt_recurring_payment
+#: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.subscription_portal_modal_renew
+msgid "Your subscription is scheduled to be cancelled on"
+msgstr "Tu suscripción está programada para cancelarse el"
+
+#. module: website_solt_recurring_payment
+#. odoo-python
+#: code:addons/website_solt_recurring_payment/controllers/solt_subscription.py:0
+msgid "Your subscription will be cancelled on %s."
+msgstr "Tu suscripción se cancelará el %s."
 
 #. module: website_solt_recurring_payment
 #: model_terms:ir.ui.view,arch_db:website_solt_recurring_payment.portal_my_solt_subscription

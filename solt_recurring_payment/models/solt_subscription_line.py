@@ -257,7 +257,7 @@ class SoltSaleSubscriptionLine(models.Model):
         self.name = self.product_id.display_name
         if self.product_id.description_purchase:
             self.name += '\n' + self.product_id.description_purchase
-        self.product_uom = self.product_id.uom_po_id or self.product_id.uom_id
+        self.product_uom_id = self.product_id.uom_po_id or self.product_id.uom_id
 
         # Set default taxes for purchase
         self.tax_ids = self.product_id.supplier_taxes_id.filtered(
@@ -286,7 +286,7 @@ class SoltSaleSubscriptionLine(models.Model):
             return {'price_unit': self.product_id.standard_price, 'discount': 0.0}
 
         # Use existing product_uom or fallback to product defaults
-        product_uom = self.product_uom
+        product_uom = self.product_uom_id
         if not product_uom:
             product_uom = self.product_id.uom_po_id if self.product_id.uom_po_id.id else self.product_id.uom_id
         # Use existing tax_ids or fallback to supplier taxes

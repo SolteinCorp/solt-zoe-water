@@ -636,45 +636,70 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         }
         return request.render("website_solt_recurring_payment.portal_my_solt_subscription", rendering_context)
 
-    @http.route(["/my/subscriptions/<int:subscription_id>/close"], type="http", methods=["POST"], auth="public", website=True)
+    @http.route(["/my/subscriptions/<int:subscription_id>/close"], type="http", methods=["POST"], auth="user", website=True)
     def portal_subscription_close(self, subscription_id, access_token=None, **kw):
         subscription_sudo, redirection = self._get_solt_subscription(access_token, subscription_id)
         if redirection:
             return redirection
 
-        # Helper function to build redirect URL without empty token
-        def _redirect_url(sub_id, token):
+        # Helper to build the detail redirect URL with token + feedback message.
+        def _redirect_url(sub_id, token, message=None, message_class=None):
             url = f"/my/subscriptions/{sub_id}"
+            query = {}
             if token:
-                url += f"?access_token={token}"
+                query["access_token"] = token
+            if message:
+                query["message"] = message
+            if message_class:
+                query["message_class"] = message_class
+            if query:
+                url += "?" + werkzeug.urls.url_encode(query)
             return url
 
-        if subscription_sudo.user_closable:
-            close_reason_id = int(kw.get("close_reason_id", 0))
-            close_reason = request.env["solt.subscription.close.reason"].browse(close_reason_id)
-            cancel_mode = kw.get("cancel_mode", "honor")
-            if cancel_mode not in ("honor", "refund", "bulk_ship"):
-                cancel_mode = "honor"
-            # Non-prepaid subscriptions can only use 'honor' mode.
-            if cancel_mode != "honor" and not subscription_sudo.is_prepaid:
-                cancel_mode = "honor"
-            if close_reason:
-                try:
-                    subscription_sudo.sudo().action_cancel_subscription(
-                        cancel_mode=cancel_mode,
-                        close_reason_id=close_reason.id,
-                        closing_note=kw.get("closing_text") or None,
-                    )
-                except Exception:
-                    _logger.exception(
-                        "Error cancelling subscription %s (mode=%s)",
-                        subscription_sudo.id,
-                        cancel_mode,
-                    )
+        if not subscription_sudo.user_closable:
+            return request.redirect(_redirect_url(
+                subscription_id, access_token,
+                _("This subscription cannot be cancelled."), "alert-warning",
+            ))
 
-        return request.redirect(_redirect_url(subscription_id, access_token))
+        close_reason_id = int(kw.get("close_reason_id") or 0)
+        if not close_reason_id:
+            return request.redirect(_redirect_url(
+                subscription_id, access_token,
+                _("Please select a cancellation reason."), "alert-danger",
+            ))
 
-    @http.route(["/my/subscriptions/<int:subscription_id>/renew"], type="http", methods=["POST"], auth="public", website=True)
+        cancel_mode = kw.get("cancel_mode", "honor")
+        if cancel_mode not in ("honor", "refund", "bulk_ship"):
+            cancel_mode = "honor"
+        # Non-prepaid subscriptions can only use 'honor' mode.
+        if cancel_mode != "honor" and not subscription_sudo.is_prepaid:
+            cancel_mode = "honor"
+
+        try:
+            subscription_sudo.sudo().action_cancel_subscription(
+                cancel_mode=cancel_mode,
+                close_reason_id=close_reason_id,
+                closing_note=kw.get("closing_text") or None,
+            )
+        except Exception as error:
+            _logger.exception(
+                "Error cancelling subscription %s (mode=%s)",
+                subscription_sudo.id,
+                cancel_mode,
+            )
+            return request.redirect(_redirect_url(
+                subscription_id, access_token,
+                _("An error occurred while cancelling: %s", error), "alert-danger",
+            ))
+
+        if cancel_mode == "honor" and subscription_sudo.end_date:
+            feedback = _("Your subscription will be cancelled on %s.", subscription_sudo.end_date)
+        else:
+            feedback = _("Your subscription has been cancelled.")
+        return request.redirect(_redirect_url(subscription_id, access_token, feedback, "alert-success"))
+
+    @http.route(["/my/subscriptions/<int:subscription_id>/renew"], type="http", methods=["POST"], auth="user", website=True)
     def portal_subscription_renew(self, subscription_id, access_token=None, **kw):
         subscription_sudo, redirection = self._get_solt_subscription(access_token, subscription_id)
         if redirection:
@@ -689,8 +714,16 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
                 url += f"?access_token={token}"
             return url
 
-        # Renew: reactivate directly via action_reopen (next_invoice_date = today).
+        # Resubscribe:
+        #   - active + end_date (scheduled cancellation): just clear the end date.
+        #   - closed: reactivate via action_reopen (next_invoice_date = today).
         if action_type == "renew":
+            if subscription_sudo.state == "active" and subscription_sudo.end_date:
+                try:
+                    subscription_sudo.sudo().action_revert_scheduled_cancellation()
+                except Exception as e:
+                    _logger.exception("Error reverting scheduled cancellation: %s", str(e))
+                return request.redirect(_redirect_url(subscription_id, access_token))
             if not subscription_sudo.user_extend or subscription_sudo.state != "closed":
                 return request.redirect(_redirect_url(subscription_id, access_token))
             try:
@@ -748,7 +781,7 @@ class WebsiteSubscriptionCustomerPortal(payment_portal.PaymentPortal):
         subscription_sudo.payment_token_id = token_sudo
         return True
 
-    @http.route(["/my/subscriptions/<int:subscription_id>/assign_payment_method"], type="http", methods=["POST"], auth="public", website=True)
+    @http.route(["/my/subscriptions/<int:subscription_id>/assign_payment_method"], type="http", methods=["POST"], auth="user", website=True)
     def portal_subscription_assign_payment_method(self, subscription_id, access_token=None, token_id=None, **kw):
         """Assign a payment method to subscription."""
         subscription_sudo, redirection = self._get_solt_subscription(access_token, subscription_id)
